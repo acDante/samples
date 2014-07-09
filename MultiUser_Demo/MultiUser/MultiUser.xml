@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf8"?>
+<world name="myworld1">
+  <gravity x="0.0" y="-980.7" z="0.0"/>
+
+<!--   <instanciate class="WheelRobot-nii-v1.xm" type="Robot">
+    <set-attr-value name="name" value="robot_000"/>
+    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="implementation"
+                    value="./CleanUpRobot.so"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="0.0"/>
+    <set-attr-value name="y" value="30.0"/>
+    <set-attr-value name="z" value="10.0"/>
+    <set-attr-value name="collision" value="true"/>
+    <camera id="1"
+            link="LEYE_LINK"
+            position="0.0 0.0 3.0"/>
+    <camera id="2"
+            link="REYE_LINK"
+            position="0.0 0.0 3.0"/>
+  </instanciate> -->
+
+
+<instanciate class="seMultiUserCtr.xml">
+    <set-attr-value name="name" value="multiuserctr_0"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="190.0"/>
+    <set-attr-value name="y" value="200.0"/>
+    <set-attr-value name="z" value="190.0"/>
+    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="implementation"
+                    value="./MultiUserCtr.so"/>
+    <set-attr-value name="collision" value="false"/>
+    <set-attr-value name="graspable" value="false"/>
+  </instanciate>
+
+
+
+
+  <instanciate class="sePetbottle_500ml_empty_c01.xml">
+    <set-attr-value name="name" value="petbottle_0"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="-65.0"/>
+    <set-attr-value name="y" value="82"/>
+    <set-attr-value name="z" value="-60.0"/>
+    <set-attr-value name="collision" value="true"/>
+    <set-attr-value name="graspable" value="true"/>
+  </instanciate>
+
+
+
+  
+
+
+
+<!--
+
+  <instanciate class="Man-nii-v2_red.xml">
+    <set-attr-value name="name" value="man_red"/>l
+
+    <camera id="1"
+            link="HEAD_LINK"
+            direction="0 0 1"
+            position="0.0 0.0 5.0"/>
+    <set-attr-value name="language" value="c++"/>
+
+    <set-attr-value name="implementation"
+ value="./cleanUpUser.so"/>
+
+
+         <set-attr-value name="dynamics" value="false"/>
+
+
+        <set-attr-value name="x" value="100.0"/>
+        <set-attr-value name="y" value="  60.0"/>
+        <set-attr-value name="z" value="-30.0"/>
+        <set-attr-value name="collision" value="true"/>
+
+        <set-attr-value name="qw" value="0.707"/>
+    <set-attr-value name="qy" value="-0.707"/>
+  </instanciate>
+
+-->
+<!--
+  <instanciate class="Man-nii-v2_green.xml">
+    <set-attr-value name="name" value="man_green"/>l
+
+    <camera id="1"
+            link="HEAD_LINK"
+            direction="0 0 1"
+            position="0.0 0.0 5.0"/>
+    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="language" value="c++"/>
+
+    <set-attr-value name="implementation"
+ value="./cleanUpUser2.so"/>
+
+
+         <set-attr-value name="dynamics" value="false"/>
+
+
+        <set-attr-value name="x" value="-100.0"/>
+        <set-attr-value name="y" value="  60.0"/>
+        <set-attr-value name="z" value="-30.0"/>
+        <set-attr-value name="collision" value="true"/>
+
+        <set-attr-value name="qw" value="0.707"/>
+    <set-attr-value name="qy" value="0.707"/>
+  </instanciate>
+
+
+
+-->
+
+<!--
+<instanciate class="seDiningtable_A.xml">
+        <set-attr-value name="name" value="Dinner table1"/>
+        <set-attr-value name="dynamics" value="false"/>
+        <set-attr-value name="x" value="0.0"/>
+        <set-attr-value name="y" value="30.0"/>
+        <set-attr-value name="z" value="-70.0"/>
+        <set-attr-value name="scaley" value="0.79"/>
+        <set-attr-value name="graspable" value="false"/>
+        <set-attr-value name="collision" value="true"/>
+ </instanciate>
+
+-->
+<!--
+
+ <instanciate class="seSidetable_B.xml">
+    <set-attr-value name="name" value="table_0"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="0.0"/>
+    <set-attr-value name="y" value="30.0"/>
+    <set-attr-value name="z" value="-60.0"/>
+    <set-attr-value name="scalex" value="1.5"/>
+    <set-attr-value name="scaley" value="1.5"/>
+    <set-attr-value name="scalez" value="1.5"/>
+    <set-attr-value name="collision" value="false"/>
+    <set-attr-value name="graspable" value="false"/>
+  </instanciate>
+
+
+-->
+
+<instanciate class="seShelf_A.xml">
+    <set-attr-value name="name" value="shelf"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="-90.0"/>
+    <set-attr-value name="y" value="30.0"/>
+    <set-attr-value name="z" value="-70.0"/>
+        <set-attr-value name="qw" value="0.707"/>
+        <set-attr-value name="qy" value="0.707"/>
+        <set-attr-value name="scaley" value="0.79"/>
+    <set-attr-value name="graspable" value="false"/>
+    <set-attr-value name="collision" value="false"/>
+  </instanciate>
+
+<!--
+<instanciate class="seShelf_B.xml">
+    <set-attr-value name="name" value="shelf"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="130.0"/>
+    <set-attr-value name="y" value="30.0"/>
+    <set-attr-value name="z" value="-70.0"/>
+        <set-attr-value name="qw" value="0.707"/>
+        <set-attr-value name="qy" value="0.707"/>
+        <set-attr-value name="scaley" value="0.79"/>
+    <set-attr-value name="graspable" value="false"/>
+    <set-attr-value name="collision" value="true"/>
+  </instanciate>
+-->
+
+
+
+
+<!--
+<instanciate class="A1_kitchen_table.xml">
+    <set-attr-value name="name" value="Kitchen Table1"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="0.0"/>
+    <set-attr-value name="y" value="30.0"/>
+    <set-attr-value name="z" value="-70.0"/>
+        <set-attr-value name="qw" value="0.707"/>
+        <set-attr-value name="qy" value="0.707"/>
+        <set-attr-value name="scaley" value="0.79"/>
+    <set-attr-value name="graspable" value="false"/>
+    <set-attr-value name="collision" value="true"/>
+  </instanciate>
+-->
+
+  <instanciate class="Man-nii-v2_pink.xml">
+    <set-attr-value name="name" value="man_pink"/>
+ <!--C++言語の指定-->
+   <camera id="1"
+            link="HEAD_LINK"
+            direction="0 0 1"
+            position="0.0 0.0 5.0"/>
+    <set-attr-value name="language" value="c++"/>
+ <!--オブジェクトファイルAgentController.soの指<定-->
+    <set-attr-value name="implementation"
+ value="./cleanUpUser2.so"/>
+
+ <!--動力学演算をfalseに設定-->
+         <set-attr-value name="dynamics" value="false"/>
+
+ <!--エージェントの位置(x,y,z)-->
+        <set-attr-value name="x" value="-30.0"/>
+        <set-attr-value name="y" value="  60.0"/>
+        <set-attr-value name="z" value="-40.0"/>
+        <set-attr-value name="collision" value="true"/>
+
+        <set-attr-value name="qw" value="0.0"/>
+    <set-attr-value name="qy" value="1.0" />
+  </instanciate>
+
+
+
+  <instanciate class="Man-nii-v2.xml">
+    <set-attr-value name="name" value="man_blue"/>
+ <!--C++言語の指定-->
+  <camera id="1"
+            link="HEAD_LINK"
+            direction="0 0 1"
+            position="0.0 0.0 5.0"/>
+    <set-attr-value name="language" value="c++"/>
+ <!--オブジェクトファイルAgentController.soの指<定-->
+    <set-attr-value name="implementation"
+ value="./cleanUpUser.so"/>
+
+ <!--動力学演算をfalseに設定-->
+         <set-attr-value name="dynamics" value="false"/>
+
+ <!--エージェントの位置(x,y,z)-->
+        <set-attr-value name="x" value="-30.0"/>
+        <set-attr-value name="y" value="  60.0"/>
+        <set-attr-value name="z" value="-85.0"/>
+        <set-attr-value name="collision" value="true"/>
+<!--
+        <set-attr-value name="qw" value="1.0"/>
+    <set-attr-value name="qy" value="-0.75"/> -->
+  </instanciate>
+
+
+
+<instanciate class="A1_room.xml">
+    <set-attr-value name="name" value="room"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="-300.0"/>
+    <set-attr-value name="y" value="210.0"/>
+    <set-attr-value name="z" value="-140.0"/>
+    <set-attr-value name="scalex" value="1.0"/>
+    <set-attr-value name="scaley" value="1.0"/>
+    <set-attr-value name="scalez" value="1.2"/>
+    <set-attr-value name="collision" value="false"/>
+    <set-attr-value name="graspable" value="false"/>
+  </instanciate>
+
+
+
+  <instanciate class="seCamera.xml">
+    <set-attr-value name="name" value="FixedCam1"/>
+    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="implementation"
+                    value="./Camera.so"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="-200.0"/>
+    <set-attr-value name="y" value="200.0"/>
+    <set-attr-value name="z" value="-200.0"/>
+    <set-attr-value name="qx" value="0"/>
+    <set-attr-value name="qy" value="0.3827"/>
+    <set-attr-value name="qz" value="0"/>
+    <set-attr-value name="qw" value="0.9239"/>
+    <set-attr-value name="scalex" value="0.5"/>
+    <set-attr-value name="scaley" value="0.5"/>
+    <set-attr-value name="scalez" value="0.5"/>
+    <set-attr-value name="collision" value="true"/>
+    <camera id="1"
+            aspectRatio="1.77"
+            direction="0 -0.7 1"
+            position="0.0 0.0 0.0"/>
+  </instanciate>
+
+  <instanciate class="seCamera.xml">
+    <set-attr-value name="name" value="FixedCam2"/>
+    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="implementation"
+                    value="./Camera.so"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="-200.0"/>
+    <set-attr-value name="y" value="200.0"/>
+    <set-attr-value name="z" value="200.0"/>
+    <set-attr-value name="qx" value="0"/>
+    <set-attr-value name="qy" value="0.9239"/>
+    <set-attr-value name="qz" value="0"/>
+    <set-attr-value name="qw" value="0.3827"/>
+    <set-attr-value name="scalex" value="0.5"/>
+    <set-attr-value name="scaley" value="0.5"/>
+    <set-attr-value name="scalez" value="0.5"/>
+    <set-attr-value name="collision" value="true"/>
+    <camera id="1"
+            aspectRatio="1.77"
+            direction="0 -0.7 1"
+            position="0.0 0.0 0.0"/>
+  </instanciate>
+
+  <instanciate class="seCamera.xml">
+    <set-attr-value name="name" value="FixedCam3"/>
+    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="implementation"
+                    value="./Camera.so"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="200.0"/>
+    <set-attr-value name="y" value="200.0"/>
+    <set-attr-value name="z" value="-200.0"/>
+    <set-attr-value name="qx" value="0"/>
+    <set-attr-value name="qy" value="-0.3827"/>
+    <set-attr-value name="qz" value="0"/>
+    <set-attr-value name="qw" value="0.9239"/>
+    <set-attr-value name="scalex" value="0.5"/>
+    <set-attr-value name="scaley" value="0.5"/>
+    <set-attr-value name="scalez" value="0.5"/>
+    <set-attr-value name="collision" value="true"/>
+    <camera id="1"
+            aspectRatio="1.77"
+            direction="0 -0.7 1"
+            position="0.0 0.0 0.0"/>
+  </instanciate>
+
+  <instanciate class="seCamera.xml">
+    <set-attr-value name="name" value="FixedCam4"/>
+    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="implementation"
+                    value="./Camera.so"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="200.0"/>
+    <set-attr-value name="y" value="200.0"/>
+    <set-attr-value name="z" value="200.0"/>
+    <set-attr-value name="qx" value="0"/>
+    <set-attr-value name="qy" value="-0.9239"/>
+    <set-attr-value name="qz" value="0"/>
+    <set-attr-value name="qw" value="0.3827"/>
+    <set-attr-value name="scalex" value="0.5"/>
+    <set-attr-value name="scaley" value="0.5"/>
+    <set-attr-value name="scalez" value="0.5"/>
+    <set-attr-value name="collision" value="true"/>
+    <camera id="1"
+            aspectRatio="1.77"
+            direction="0 -0.7 1"
+            position="0.0 0.0 0.0"/>
+  </instanciate>
+
+
+
+
+
+</world>
