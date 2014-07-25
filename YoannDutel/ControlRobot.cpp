@@ -163,7 +163,7 @@ double ControlRobot::onAction(ActionEvent &evt)
 		
 	}
 	
-	//1秒おきにonActionが呼び出されます
+	// The next time [sec] when onAction will be called
 	return 0.001;
 }
 
@@ -932,7 +932,6 @@ Vector3d ControlRobot::changeBasis_WorldToRobot(Vector3d pos)
 		ret = Vector3d(x_o*cos(rollMy) + y_o*sin(rollMy), y_o*cos(rollMy) - x_o*sin(rollMy), pos.y());
 }
 
-//自身のインスタンスをSIGVerseに返します
 extern "C" Controller * createController() {
   return new ControlRobot;
 }
