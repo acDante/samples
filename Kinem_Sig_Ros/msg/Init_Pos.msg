@@ -1,0 +1,14 @@
+float32 L_JOINT0
+float32 L_JOINT1
+float32 L_JOINT2
+float32 L_JOINT3
+float32 L_JOINT4
+float32 L_JOINT5
+float32 L_JOINT6
+float32 L_JOINT7
+float64 x
+float64 y
+float64 z
+float64 Roll
+float64 Pitch
+float64 Yaw
