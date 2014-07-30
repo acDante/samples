@@ -209,7 +209,7 @@ void ControlRobot::onRecvMsg(RecvMsgEvent &evt)
 	{
 		Vector3d pos,pos2;
 		my->getJointPosition(pos,"RARM_JOINT7");
-		pos2 = changeMark_WorldToRobot(pos);
+		pos2 = changeBasis_WorldToRobot(pos);
 		std::cout << "Coordinate right hand\nx : " << pos2.x() << "\ty : " << pos2.y() << "\tz : " << pos2.z() << std::endl;
 	}
 	else if (msg == "grasp_left")
