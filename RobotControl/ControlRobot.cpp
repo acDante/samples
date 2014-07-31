@@ -478,9 +478,9 @@ bool ControlRobot::moveLeftArm()
 	else j6 = true;
 
 	if(joint_left[6] != m_joint_left[6] )
-		if(joint_left[5] < m_joint_left[6] && m_joint_left[6]-joint_left[5] > error_angle_arm)
+		if(joint_left[6] < m_joint_left[6] && m_joint_left[6]-joint_left[6] > error_angle_arm)
 			my->setJointVelocity("LARM_JOINT7", 0.2, 0.0);
-		else if(joint_left[5] > m_joint_left[6] && joint_left[5]-m_joint_left[6] > error_angle_arm)
+		else if(joint_left[6] > m_joint_left[6] && joint_left[6]-m_joint_left[6] > error_angle_arm)
 			my->setJointVelocity("LARM_JOINT7", -0.2, 0.0);
 		else
 		{
@@ -622,9 +622,9 @@ bool ControlRobot::moveRightArm()
 	else j6 = true;
 
 	if(joint_right[6] != m_joint_right[6] )
-		if(joint_right[5] < m_joint_right[6] && m_joint_right[6]-joint_right[5] > error_angle_arm)
+		if(joint_right[6] < m_joint_right[6] && m_joint_right[6]-joint_right[6] > error_angle_arm)
 			my->setJointVelocity("RARM_JOINT7", 0.2, 0.0);
-		else if(joint_right[5] > m_joint_right[6] && joint_right[5]-m_joint_right[6] > error_angle_arm)
+		else if(joint_right[6] > m_joint_right[6] && joint_right[6]-m_joint_right[6] > error_angle_arm)
 			my->setJointVelocity("RARM_JOINT7", -0.2, 0.0);
 		else 
 		{
