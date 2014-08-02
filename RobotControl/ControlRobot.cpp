@@ -8,7 +8,7 @@
 #include <string>
 
 #define error_angle 0.05
-#define error_distance 1
+#define error_distance 0.4
 #define error_angle_arm 0.05
 #define time_avoid 20
 
@@ -87,6 +87,8 @@ class ControlRobot : public Controller
 		bool m_obstacle;
 		bool m_grasp_right;
 		bool m_grasp_left;
+		
+		FILE * fichier;
 };
 
 /************************************************************************************/
@@ -113,6 +115,8 @@ void ControlRobot::onInit(InitEvent &evt)
 	RangeToPoint = 0;
 	
 	m_view = (ViewService*)connectToService("SIGViewer");
+	
+    fichier = fopen("left_arm.xls", "wb");
 }
 
 double ControlRobot::onAction(ActionEvent &evt)
@@ -276,7 +280,9 @@ void ControlRobot::planning_control()
 
 bool ControlRobot::goTo(Vector3d pos, double rangeToPoint, double Robot_speed)
 {
-  double speed;
+  double speed_droit,speed_tourne;
+  static double time = 0;
+  static double angle;
 
   Vector3d ownPosition;
   my->getPosition(ownPosition);
@@ -284,8 +290,8 @@ bool ControlRobot::goTo(Vector3d pos, double rangeToPoint, double Robot_speed)
   Rotation ownRotation;
   my->getRotation(ownRotation);
 
-  double angle = getAngularXonVect(pos, ownPosition);
   double dist = getDist2D(pos,ownPosition);
+  if (dist > 1) angle = getAngularXonVect(pos, ownPosition);
   double roll = getRoll(ownRotation);
 
   if (angle > 3 || angle < -3) angle = M_PI;
@@ -296,45 +302,59 @@ bool ControlRobot::goTo(Vector3d pos, double rangeToPoint, double Robot_speed)
     if (dist-rangeToPoint < error_distance && dist-rangeToPoint > -error_distance)
     {
       stopRobotMove();
+      time = 0;
+      fprintf(fichier, "destination : \t%f\t%f\n",pos.x(),pos.z());
       return true;
     }
     else
     {
-      speed = dist-rangeToPoint;
-      if (dist-rangeToPoint < 5)
+      speed_tourne = 0;
+      if (dist-rangeToPoint < 3)
+      {
+		speed_droit = dist-rangeToPoint;
         if( dist-rangeToPoint > 0 )
-          my->setWheelVelocity(1, 1);
+          my->setWheelVelocity(speed_droit, speed_droit);
         else
-          my->setWheelVelocity(-1, -1);
-      else if( dist-rangeToPoint > 0 )
-        my->setWheelVelocity(Robot_speed , Robot_speed );
-      else
-        my->setWheelVelocity(-Robot_speed , -Robot_speed );
-      return false;
+          my->setWheelVelocity(-speed_droit, -speed_droit);
+	  }
+      else 
+      {
+		speed_droit = Robot_speed;
+		if( dist-rangeToPoint > 0 )
+			my->setWheelVelocity(speed_droit,speed_droit);
+        else
+			my->setWheelVelocity(-speed_droit,-speed_droit);
+	  }
     }
   else
   {
-    speed = fabs(angle-roll)*4;
-    if (speed/4 > 0.3)
+	speed_droit = 0;
+    speed_tourne = fabs(angle-roll);
+    if (speed_tourne > 0.4)
+    {
+	  speed_tourne = 0.4;
       if (angle < -M_PI_2 && roll > M_PI_2)
-        my->setWheelVelocity(-0.5, 0.5);
+        my->setWheelVelocity(-speed_tourne, speed_tourne);
       else if (angle > M_PI_2 && roll < -M_PI_2)
-          my->setWheelVelocity(0.5, -0.5);
+          my->setWheelVelocity(speed_tourne, -speed_tourne);
       else if (angle < roll)
-          my->setWheelVelocity(0.5, -0.5);
+          my->setWheelVelocity(speed_tourne, -speed_tourne);
       else
-        my->setWheelVelocity(-0.5, 0.5);
+        my->setWheelVelocity(-speed_tourne, speed_tourne);
+    }
     else if (angle < -M_PI_2 && roll > M_PI_2)
-        my->setWheelVelocity(-speed, speed);
+        my->setWheelVelocity(-speed_tourne, speed_tourne);
        else if (angle > M_PI_2 && roll < -M_PI_2)
-          my->setWheelVelocity(speed, -speed);
+          my->setWheelVelocity(speed_tourne, -speed_tourne);
        else if (angle < roll)
-          my->setWheelVelocity(speed, -speed);
+          my->setWheelVelocity(speed_tourne, -speed_tourne);
        else
-        my->setWheelVelocity(-speed, speed);
-
-    return false;
+        my->setWheelVelocity(-speed_tourne, speed_tourne);
   }
+  
+  fprintf(fichier, "%f\t%f\t%f\t%f\t%f\t%f\t%f\n",time,angle*180/M_PI,roll*180/M_PI,0.0,dist-rangeToPoint,speed_droit,speed_tourne);
+  time += 0.001;
+  
   return false;
 }
 
@@ -394,6 +414,7 @@ void ControlRobot::stopRobotMove()
 
 bool ControlRobot::moveLeftArm()
 {
+	static double time;
 	bool j0 = false, j1 = false , j3 = false, j4 = false, j5 = false, j6 = false, j7 = false;
 
 	double joint_left[7];
@@ -404,6 +425,15 @@ bool ControlRobot::moveLeftArm()
 	joint_left[4] = my->getJointAngle("LARM_JOINT5");
 	joint_left[5] = my->getJointAngle("LARM_JOINT6");
 	joint_left[6] = my->getJointAngle("LARM_JOINT7");
+	time += 0.001;
+	
+	fprintf(fichier, "%f\t%f\t%f\t",time,m_joint_left[0], joint_left[0]);
+	fprintf(fichier, "%f\t%f\t",m_joint_left[1], joint_left[1]);
+	fprintf(fichier, "%f\t%f\t",m_joint_left[2], joint_left[2]);
+	fprintf(fichier, "%f\t%f\t",m_joint_left[3], joint_left[3]);
+	fprintf(fichier, "%f\t%f\t",m_joint_left[4], joint_left[4]);
+	fprintf(fichier, "%f\t%f\t",m_joint_left[5], joint_left[5]);
+	fprintf(fichier, "%f\t%f\n",m_joint_left[6], joint_left[6]);
   
 	if(joint_left[0] != m_joint_left[0] )
 		if(joint_left[0] < m_joint_left[0] && m_joint_left[0]-joint_left[0] > error_angle_arm)
@@ -490,7 +520,10 @@ bool ControlRobot::moveLeftArm()
 	else j7 = true;
 
 	if (j0 == true && j1 == true && j3 == true && j4 == true && j5 == true && j6 == true && j7 == true)
+	{
+		time = 0;
 		return true;
+	}
 	else
 		return false;
 
@@ -507,7 +540,7 @@ void ControlRobot::grasp_left_hand(std::string &object)
 
 	double distance = getDist3D(hand,obje);
 
-	if(distance < 9 &&  m_grasp_left == false)
+	if(distance < 11 &&  m_grasp_left == false)
 	{
 		CParts * parts = my->getParts("LARM_LINK7");
 		if (parts->graspObj(object))
@@ -622,9 +655,9 @@ bool ControlRobot::moveRightArm()
 	else j6 = true;
 
 	if(joint_right[6] != m_joint_right[6] )
-		if(joint_right[6] < m_joint_right[6] && m_joint_right[6]-joint_right[6] > error_angle_arm)
+		if(joint_right[5] < m_joint_right[6] && m_joint_right[6]-joint_right[5] > error_angle_arm)
 			my->setJointVelocity("RARM_JOINT7", 0.2, 0.0);
-		else if(joint_right[6] > m_joint_right[6] && joint_right[6]-m_joint_right[6] > error_angle_arm)
+		else if(joint_right[5] > m_joint_right[6] && joint_right[5]-m_joint_right[6] > error_angle_arm)
 			my->setJointVelocity("RARM_JOINT7", -0.2, 0.0);
 		else 
 		{
@@ -651,7 +684,7 @@ void ControlRobot::grasp_right_hand(std::string &object)
 	
 	double distance = getDist3D(hand,obje);
 	
-	if(distance < 9 &&  m_grasp_right == false)
+	if(distance < 11 &&  m_grasp_right == false)
 	{
 		CParts * parts = my->getParts("RARM_LINK7");
         if (parts->graspObj(object))
