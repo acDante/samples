@@ -27,7 +27,7 @@ double tab_joint_right[5][7]= { {0,0,0,0,0,0,0},
 class ControlRobot : public Controller
 {
 	public:
-		//function to use SigVerse
+		//function to use SIGVerse
 		void onInit(InitEvent &evt);
 		double onAction(ActionEvent &evt);
 		void onRecvMsg(RecvMsgEvent &evt);
@@ -92,7 +92,7 @@ class ControlRobot : public Controller
 };
 
 /************************************************************************************/
-/****************************Function to use SigVerse********************************/
+/*************************** Function to use SIGVerse *******************************/
 /************************************************************************************/
 
 void ControlRobot::onInit(InitEvent &evt)
@@ -101,12 +101,12 @@ void ControlRobot::onInit(InitEvent &evt)
 	m_grasp_right = false;
 	m_grasp_left = false;
 
-	control_state = 0;
+	control_state  = 0;
 	planning_state = 0;
 	
 	for (int i=0; i<7; i++)
 	{
-		m_joint_left[i] = 0;
+		m_joint_left[i]  = 0;
 		m_joint_right[i] = 0;	
 	}
 	
