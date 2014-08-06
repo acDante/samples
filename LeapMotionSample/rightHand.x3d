@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<X3D profile="Immersive" version="3.0">
+  <Scene>
+
+    <ProtoDeclare name='Joint' >
+      <ProtoInterface>
+        <field accessType='inputOutput' type='SFVec3f' name='center'  value='0.0 0.0 0.0' />
+        <field accessType='inputOutput' type='MFNode' name='children'/>
+        <field accessType='inputOutput' type='MFFloat' name='llimit'  />
+        <field accessType='inputOutput' type='SFRotation' name='limitOrientation' value='0.0 0.0 1.0 0.0' />
+        <field accessType='inputOutput' type='SFString' name='name'  value='' />
+        <field accessType='inputOutput' type='SFRotation' name='rotation' value='0.0 0.0 1.0 0.0' />
+        <field accessType='inputOutput' type='SFVec3f' name='scale'  value='1.0 1.0 1.0' />
+        <field accessType='inputOutput' type='SFRotation' name='scaleOrientation' value='0.0 0.0 1.0 0.0' />
+        <field accessType='inputOutput' type='MFFloat' name='stiffness'  value='0.0 ,0.0 ,0.0' />
+        <field accessType='inputOutput' type='SFVec3f' name='translation' value='0.0 0.0 0.0' />
+        <field accessType='inputOutput' type='MFFloat' name='ulimit'  />
+        <field accessType='inputOutput' type='MFFloat' name='dh'  value='0.0 ,0.0 ,0.0 ,0.0' />
+        <field accessType='inputOutput' type='SFString' name='jointType'  value='' />
+        <field accessType='inputOutput' type='SFFloat' name='jointId' value='-1.0' />
+        <field accessType='inputOutput' type='SFVec3f' name='jointAxis'  value='1.0 0.0 0.0' />
+      </ProtoInterface>
+
+      <ProtoBody>
+        <Transform>
+          <IS>
+            <connect nodeField='children' protoField='children' />
+            <connect nodeField='center' protoField='center' />
+            <connect nodeField='rotation' protoField='rotation' />
+            <connect nodeField='scale' protoField='scale' />
+            <connect nodeField='scaleOrientation' protoField='scaleOrientation' />
+            <connect nodeField='translation' protoField='translation' />
+          </IS>
+        </Transform>
+      </ProtoBody>
+    </ProtoDeclare>
+
+    <ProtoDeclare name='Segment' >
+      <ProtoInterface>
+        <field accessType='initializeOnly' type='SFVec3f' name='bboxCenter'  value='0.0 0.0 0.0' />
+        <field accessType='initializeOnly' type='SFVec3f' name='bboxSize' value='-1.0 -1.0 -1.0' />
+        <field accessType='inputOutput' type='SFVec3f' name='centerOfMass' value='0.0 0.0 0.0' />
+        <field accessType='inputOutput' type='MFNode' name='children'/>
+        <field accessType='inputOutput' type='SFNode' name='coord' />
+        <field accessType='inputOutput' type='MFNode' name='displacers'  />
+        <field accessType='inputOutput' type='SFFloat' name='mass' value='0.0' />
+        <field accessType='inputOutput' type='MFFloat' name='momentsOfInertia' value='0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0' />
+        <field accessType='inputOutput' type='SFString' name='name'  value='' />
+        <field accessType='inputOnly' type='MFNode' name='addChildren' />
+        <field accessType='inputOnly' type='MFNode' name='removeChildren'/>
+      </ProtoInterface>
+
+      <ProtoBody>
+        <Group>
+          <IS>
+            <connect nodeField='children' protoField='children' />
+            <connect nodeField='addChildren' protoField='addChildren' />
+            <connect nodeField='removeChildren' protoField='removeChildren' />
+            <connect nodeField='bboxCenter' protoField='bboxCenter' />
+            <connect nodeField='bboxSize' protoField='bboxSize' />
+          </IS>
+        </Group>
+      </ProtoBody>
+    </ProtoDeclare>
+
+    <ProtoDeclare name='Humanoid' >
+      <ProtoInterface>
+        <field accessType='initializeOnly' type='SFVec3f' name='bboxCenter'  value='0.0 0.0 0.0' />
+        <field accessType='initializeOnly' type='SFVec3f' name='bboxSize' value='-1.0 -1.0 -1.0' />
+        <field accessType='inputOutput' type='SFVec3f' name='center'  value='0.0 0.0 0.0' />
+        <field accessType='inputOutput' type='MFNode' name='humanoidBody'/>
+        <field accessType='inputOutput' type='MFString' name='info'  />
+        <field accessType='inputOutput' type='MFNode' name='joints'  />
+        <field accessType='inputOutput' type='SFString' name='name'  value='' />
+        <field accessType='inputOutput' type='SFRotation' name='rotation' value='0.0 0.0 1.0 0.0' />
+        <field accessType='inputOutput' type='SFVec3f' name='scale'  value='1.0 1.0 1.0' />
+        <field accessType='inputOutput' type='SFRotation' name='scaleOrientation' value='0.0 0.0 1.0 0.0' />
+        <field accessType='inputOutput' type='MFNode' name='segments'/>
+        <field accessType='inputOutput' type='MFNode' name='sites' />
+        <field accessType='inputOutput' type='SFVec3f' name='translation' value='0.0 0.0 0.0' />
+        <field accessType='inputOutput' type='SFString' name='version' value='1.0' />
+        <field accessType='inputOutput' type='MFNode' name='viewpoints'  />
+      </ProtoInterface>
+
+      <ProtoBody>
+        <Transform>
+          <IS>
+            <connect nodeField='bboxCenter' protoField='bboxCenter' />
+            <connect nodeField='bboxSize' protoField='bboxSize' />
+            <connect nodeField='center' protoField='center' />
+            <connect nodeField='rotation' protoField='rotation' />
+            <connect nodeField='scale' protoField='scale' />
+            <connect nodeField='scaleOrientation' protoField='scaleOrientation' />
+            <connect nodeField='translation' protoField='translation' />
+          </IS>
+
+          <Group>
+            <IS>
+              <connect nodeField='children' protoField='viewpoints' />
+            </IS>
+          </Group>
+
+          <Group>
+            <IS>
+              <connect nodeField='children' protoField='humanoidBody' />
+            </IS>
+          </Group>
+        </Transform>
+      </ProtoBody>
+    </ProtoDeclare>
+
+    <!-- RIGHT HAND DEFINITION -->
+    <ProtoInstance name='Humanoid' DEF="HRP1"     containerField='children'>
+      <fieldValue name='info' value='"Test Joint"' />
+      <fieldValue name='name' value='sample' />
+      <fieldValue name='version' value='1.1' />
+
+    <ProtoInstance name='Joint' DEF="JOINT0"  containerField='humanoidBody'>
+      <fieldValue name='name' value='JOINT0' />
+      <fieldValue name='jointType' value='free' />
+      <fieldValue name='jointId' value='1.0' />
+
+        <ProtoInstance name='Joint' DEF="PALM"  containerField='children'>
+          <fieldValue name='name' value='PALM' />
+          <fieldValue name='jointId' value='2.0' />
+          <fieldValue name='jointType' value='fixed' />
+
+          <ProtoInstance name='Segment' DEF="PALM1"     containerField='children'>
+            <fieldValue name='name' value='PALM1' />
+            <!-- PALM SHAPE -->
+            <Transform>
+              <Shape>
+                <Box size="9.5 11 2"/>
+                <Appearance>
+                  <Material  diffuseColor='0.6 0.6 0.1' />
+                </Appearance>
+              </Shape>
+            </Transform>
+          </ProtoInstance>
+        </ProtoInstance>
+
+        <!-- INDEX FINGER BASE JOINTS (2 DOF) -->
+        <ProtoInstance name='Joint' DEF="INDEX_JOINT0"  containerField='children'>
+          <fieldValue name='name' value='INDEX_JOINT0' />
+          <fieldValue name='jointId' value='3.0' />
+          <fieldValue name='translation' value='-3.75 5.5 0' />
+          <fieldValue name='jointType' value='rotate' />
+          <fieldValue name='jointAxis' value='1.0 1.0 1.0' />
+
+          <ProtoInstance name='Segment' DEF="INDEX_KNUCKLE0" containerField='children'>
+            <fieldValue name='name' value='INDEX_KNUCKLE0' />
+            <!-- FIRST KNUCKLE OF INDEX FINGER SHAPE -->
+            <Transform>
+              <fieldValue name='translation' value='0 1.25 0' />
+              <Shape>
+                <Cylinder size="2" height="2.5"/>
+                <Appearance>
+                  <Material  diffuseColor='0.0 1.0 0.0' />
+                </Appearance>
+              </Shape>
+            </Transform>
+          </ProtoInstance>
+
+          <ProtoInstance name='Joint' DEF="INDEX_JOINT1"  containerField='children'>
+            <fieldValue name='name' value='INDEX_JOINT1' />
+            <fieldValue name='jointId' value='20.0' />
+            <fieldValue name='translation' value='0 2.5 0' />
+            <fieldValue name='jointType' value='rotate' />
+            <fieldValue name='jointAxis' value='1.0 1.0 1.0' />
+
+            <ProtoInstance name='Segment' DEF="INDEX_KNUCKLE1" containerField='children'>
+              <fieldValue name='name' value='INDEX_KNUCKLE1' />
+              <!-- SECOND KNUCKLE OF INDEX FINGER SHAPE -->
+              <Transform>
+                <fieldValue name='translation' value='0 1.5 0' />
+                <Shape>
+                  <Cylinder size="2" height="3"/>
+                  <Appearance>
+                    <Material  diffuseColor='0.0 1.0 0.0' />
+                  </Appearance>
+                </Shape>
+              </Transform>
+            </ProtoInstance>
+
+            <ProtoInstance name='Joint' DEF="INDEX_JOINT2"  containerField='children'>
+              <fieldValue name='name' value='INDEX_JOINT2' />
+              <fieldValue name='jointId' value='21.0' />
+              <fieldValue name='translation' value='0 3 0' />
+              <fieldValue name='jointType' value='rotate' />
+              <fieldValue name='jointAxis' value='1.0 1.0 1.0' />
+
+              <ProtoInstance name='Segment' DEF="INDEX_KNUCKLE2" containerField='children'>
+                <fieldValue name='name' value='INDEX_KNUCKLE2' />
+                <!-- LAST KNUCKLE OF INDEX FINGER SHAPE -->
+                <Transform>
+                  <fieldValue name='translation' value='0 1.25 0' />
+                  <Shape>
+                    <Cylinder size="2" height="2.5"/>
+                    <Appearance>
+                      <Material  diffuseColor='0.0 1.0 0.0' />
+                    </Appearance>
+                  </Shape>
+                </Transform>
+              </ProtoInstance>
+
+              <ProtoInstance name='Joint' DEF="INDEX_TIP_JOINT"  containerField='children'>
+                <fieldValue name='name' value='INDEX_TIP_JOINT' />
+                <fieldValue name='jointId' value='201.0' />
+                <fieldValue name='jointType' value='fixed' />
+                <fieldValue name='translation' value='0 2.5 0' />
+
+                <ProtoInstance name='Segment' DEF="INDEX_TIP" containerField='children'>
+                  <fieldValue name='name' value='INDEX_TIP' />
+                  <Transform>
+                    <Shape>
+                      <Sphere size="2"/>
+                      <Appearance>
+                        <Material  diffuseColor='0.0 0 1.0' />
+                      </Appearance>
+                    </Shape>
+                  </Transform>
+                </ProtoInstance>
+
+              </ProtoInstance>
+
+            </ProtoInstance>
+            <!-- END OF INDEX JOINT 1 -->
+          </ProtoInstance>
+          <!-- END OF INDEX JOINT 0 -->
+        </ProtoInstance>
+        <!-- END OF INDEX -->
+
+        <!-- MIDDLE FINGER BASE JOINTS (2 DOF) -->
+        <ProtoInstance name='Joint' DEF="MIDDLE_JOINT0"  containerField='children'>
+          <fieldValue name='name' value='MIDDLE_JOINT0' />
+          <fieldValue name='jointId' value='5.0' />
+          <fieldValue name='translation' value='-1.25 5.5 0' />
+          <fieldValue name='jointType' value='rotate' />
+          <fieldValue name='jointAxis' value='1.0 1.0 1.0' />
+
+          <ProtoInstance name='Segment' DEF="MIDDLE_KNUCKLE0" containerField='children'>
+            <fieldValue name='name' value='MIDDLE_KNUCKLE0' />
+            <!-- FIRST KNUCKLE OF MIDDLE FINGER SHAPE -->
+            <Transform>
+              <fieldValue name='translation' value='0 1.4 0' />
+              <Shape>
+                <Cylinder size="2" height="2.8"/>
+                <Appearance>
+                  <Material  diffuseColor='0.0 1.0 0.0' />
+                </Appearance>
+              </Shape>
+            </Transform>
+          </ProtoInstance>
+
+          <ProtoInstance name='Joint' DEF="MIDDLE_JOINT1"  containerField='children'>
+            <fieldValue name='name' value='MIDDLE_JOINT1' />
+            <fieldValue name='jointId' value='22.0' />
+            <fieldValue name='translation' value='0 2.8 0' />
+            <fieldValue name='jointType' value='rotate' />
+            <fieldValue name='jointAxis' value='1.0 1.0 1.0' />
+
+            <ProtoInstance name='Segment' DEF="MIDDLE_KNUCKLE1" containerField='children'>
+              <fieldValue name='name' value='MIDDLE_KNUCKLE1' />
+              <!-- SECOND KNUCKLE OF MIDDLE FINGER SHAPE -->
+              <Transform>
+                <fieldValue name='translation' value='0 1.8 0' />
+                <Shape>
+                  <Cylinder size="2" height="3.6"/>
+                  <Appearance>
+                    <Material  diffuseColor='0.0 1.0 0.0' />
+                  </Appearance>
+                </Shape>
+              </Transform>
+            </ProtoInstance>
+
+            <ProtoInstance name='Joint' DEF="MIDDLE_JOINT2"  containerField='children'>
+              <fieldValue name='name' value='MIDDLE_JOINT2' />
+              <fieldValue name='jointId' value='23.0' />
+              <fieldValue name='translation' value='0 3.6 0' />
+              <fieldValue name='jointType' value='rotate' />
+              <fieldValue name='jointAxis' value='1.0 1.0 1.0' />
+
+              <ProtoInstance name='Segment' DEF="MIDDLE_KNUCKLE2" containerField='children'>
+                <fieldValue name='name' value='MIDDLE_KNUCKLE2' />
+                <!-- LAST KNUCKLE OF MIDDLE FINGER SHAPE -->
+                <Transform>
+                  <fieldValue name='translation' value='0 1.4 0' />
+                  <Shape>
+                    <Cylinder size="2" height="2.8"/>
+                    <Appearance>
+                      <Material  diffuseColor='0.0 1.0 0.0' />
+                    </Appearance>
+                  </Shape>
+                </Transform>
+              </ProtoInstance>
+
+              <ProtoInstance name='Joint' DEF="MIDDLE_TIP_JOINT"  containerField='children'>
+                <fieldValue name='name' value='MIDDLE_TIP_JOINT' />
+                <fieldValue name='jointId' value='202.0' />
+                <fieldValue name='jointType' value='fixed' />
+                <fieldValue name='translation' value='0 2.8 0' />
+
+                <ProtoInstance name='Segment' DEF="MIDDLE_TIP" containerField='children'>
+                  <fieldValue name='name' value='MIDDLE_TIP' />
+                  <Transform>
+                    <Shape>
+                      <Sphere size="2"/>
+                      <Appearance>
+                        <Material  diffuseColor='0.0 0 1.0' />
+                      </Appearance>
+                    </Shape>
+                  </Transform>
+                </ProtoInstance>
+            </ProtoInstance>
+
+            </ProtoInstance>
+            <!-- END OF MIDDLE JOINT 1 -->
+          </ProtoInstance>
+          <!-- END OF MIDDLE JOINT 0 -->
+        </ProtoInstance>
+        <!-- END OF MIDDLE FINGER -->
+
+        <!-- RING FINGER BASE JOINTS (2 DOF) -->
+        <ProtoInstance name='Joint' DEF="RING_JOINT0"  containerField='children'>
+          <fieldValue name='name' value='RING_JOINT0' />
+          <fieldValue name='jointId' value='7.0' />
+          <fieldValue name='translation' value='1.25 5.5 0' />
+          <fieldValue name='jointType' value='rotate' />
+          <fieldValue name='jointAxis' value='1.0 1.0 1.0' />
+
+          <ProtoInstance name='Segment' DEF="RING_KNUCKLE0" containerField='children'>
+            <fieldValue name='name' value='RING_KNUCKLE0' />
+            <!-- FIRST KNUCKLE OF RING FINGER SHAPE -->
+            <Transform>
+              <fieldValue name='translation' value='0 1.325 0' />
+              <Shape>
+                <Cylinder size="2" height="2.65"/>
+                <Appearance>
+                  <Material  diffuseColor='0.0 1.0 0.0' />
+                </Appearance>
+              </Shape>
+            </Transform>
+          </ProtoInstance>
+
+          <ProtoInstance name='Joint' DEF="RING_JOINT1"  containerField='children'>
+            <fieldValue name='name' value='RING_JOINT1' />
+            <fieldValue name='jointId' value='24.0' />
+            <fieldValue name='translation' value='0 2.65 0' />
+            <fieldValue name='jointType' value='rotate' />
+            <fieldValue name='jointAxis' value='1.0 1.0 1.0' />
+
+            <ProtoInstance name='Segment' DEF="RING_KNUCKLE1" containerField='children'>
+              <fieldValue name='name' value='RING_KNUCKLE1' />
+              <!-- SECOND KNUCKLE OF RING FINGER SHAPE -->
+              <Transform>
+                <fieldValue name='translation' value='0 1.7 0' />
+                <Shape>
+                  <Cylinder size="2" height="3.4"/>
+                  <Appearance>
+                    <Material  diffuseColor='0.0 1.0 0.0' />
+                  </Appearance>
+                </Shape>
+              </Transform>
+            </ProtoInstance>
+
+            <ProtoInstance name='Joint' DEF="RING_JOINT2"  containerField='children'>
+              <fieldValue name='name' value='RING_JOINT2' />
+              <fieldValue name='jointId' value='25.0' />
+              <fieldValue name='translation' value='0 3.4 0' />
+              <fieldValue name='jointType' value='rotate' />
+              <fieldValue name='jointAxis' value='1.0 1.0 1.0' />
+
+              <ProtoInstance name='Segment' DEF="RING_KNUCKLE2" containerField='children'>
+                <fieldValue name='name' value='RING_KNUCKLE2' />
+                <!-- LAST KNUCKLE OF RING FINGER SHAPE -->
+                <Transform>
+                  <fieldValue name='translation' value='0 1.325 0' />
+                  <Shape>
+                    <Cylinder size="2" height="2.65"/>
+                    <Appearance>
+                      <Material  diffuseColor='0.0 1.0 0.0' />
+                    </Appearance>
+                  </Shape>
+                </Transform>
+              </ProtoInstance>
+
+              <ProtoInstance name='Joint' DEF="RING_TIP_JOINT"  containerField='children'>
+                <fieldValue name='name' value='RING_TIP_JOINT' />
+                <fieldValue name='jointId' value='203.0' />
+                <fieldValue name='jointType' value='fixed' />
+                <fieldValue name='translation' value='0 2.65 0' />
+
+                <ProtoInstance name='Segment' DEF="RING_TIP" containerField='children'>
+                  <fieldValue name='name' value='RING_TIP' />
+                  <Transform>
+                    <Shape>
+                      <Sphere size="2"/>
+                      <Appearance>
+                        <Material  diffuseColor='0.0 0 1.0' />
+                      </Appearance>
+                    </Shape>
+                  </Transform>
+                </ProtoInstance>
+              </ProtoInstance>
+
+            </ProtoInstance>
+            <!-- END OF RING JOINT 1 -->
+          </ProtoInstance>
+          <!-- END OF RING JOINT 0 -->
+        </ProtoInstance>
+        <!-- END OF RING FINGER -->
+
+        <!-- LITTLE FINGER BASE JOINTS (2 DOF) -->
+        <ProtoInstance name='Joint' DEF="LITTLE_JOINT0"  containerField='children'>
+          <fieldValue name='name' value='LITTLE_JOINT0' />
+          <fieldValue name='jointId' value='9.0' />
+          <fieldValue name='translation' value='3.75 5.5 0' />
+          <fieldValue name='jointType' value='rotate' />
+          <fieldValue name='jointAxis' value='1.0 1.0 1.0' />
+
+          <ProtoInstance name='Segment' DEF="LITTLE_KNUCKLE0" containerField='children'>
+            <fieldValue name='name' value='LITTLE_KNUCKLE0' />
+            <!-- FIRST KNUCKLE OF LITTLE FINGER SHAPE -->
+            <Transform>
+              <fieldValue name='translation' value='0 0.95 0' />
+              <Shape>
+                <Cylinder size="2" height="1.9"/>
+                <Appearance>
+                  <Material  diffuseColor='0.0 1.0 0.0' />
+                </Appearance>
+              </Shape>
+            </Transform>
+          </ProtoInstance>
+
+          <ProtoInstance name='Joint' DEF="LITTLE_JOINT1"  containerField='children'>
+            <fieldValue name='name' value='LITTLE_JOINT1' />
+            <fieldValue name='jointId' value='26.0' />
+            <fieldValue name='translation' value='0 1.9 0' />
+            <fieldValue name='jointType' value='rotate' />
+            <fieldValue name='jointAxis' value='1.0 1.0 1.0' />
+
+            <ProtoInstance name='Segment' DEF="LITTLE_KNUCKLE1" containerField='children'>
+              <fieldValue name='name' value='LITTLE_KNUCKLE1' />
+              <!-- SECOND KNUCKLE OF LITTLE FINGER SHAPE -->
+              <Transform>
+                <fieldValue name='translation' value='0 1.2 0' />
+                <Shape>
+                  <Cylinder size="2" height="2.4"/>
+                  <Appearance>
+                    <Material  diffuseColor='0.0 1.0 0.0' />
+                  </Appearance>
+                </Shape>
+              </Transform>
+            </ProtoInstance>
+
+            <ProtoInstance name='Joint' DEF="LITTLE_JOINT2"  containerField='children'>
+              <fieldValue name='name' value='LITTLE_JOINT2' />
+              <fieldValue name='jointId' value='27.0' />
+              <fieldValue name='translation' value='0 2.4 0' />
+              <fieldValue name='jointType' value='rotate' />
+              <fieldValue name='jointAxis' value='1.0 1.0 1.0' />
+
+              <ProtoInstance name='Segment' DEF="LITTLE_KNUCKLE2" containerField='children'>
+                <fieldValue name='name' value='LITTLE_KNUCKLE2' />
+                <!-- LAST KNUCKLE OF LITTLE FINGER SHAPE -->
+                <Transform>
+                  <fieldValue name='translation' value='0 0.95 0' />
+                  <Shape>
+                    <Cylinder size="2" height="1.9"/>
+                    <Appearance>
+                      <Material  diffuseColor='0.0 1.0 0.0' />
+                    </Appearance>
+                  </Shape>
+                </Transform>
+              </ProtoInstance>
+
+              <ProtoInstance name='Joint' DEF="LITTLE_TIP_JOINT"  containerField='children'>
+                <fieldValue name='name' value='LITTLE_TIP_JOINT' />
+                <fieldValue name='jointId' value='204.0' />
+                <fieldValue name='jointType' value='fixed' />
+                <fieldValue name='translation' value='0 1.9 0' />
+                <ProtoInstance name='Segment' DEF="LITTLE_TIP" containerField='children'>
+                  <fieldValue name='name' value='LITTLE_TIP' />
+                  <Transform>
+                    <Shape>
+                      <Sphere size="2"/>
+                      <Appearance>
+                        <Material  diffuseColor='0.0 0 1.0' />
+                      </Appearance>
+                    </Shape>
+                  </Transform>
+                </ProtoInstance>
+              </ProtoInstance>
+
+            </ProtoInstance>
+            <!-- END OF LITTLE JOINT 1 -->
+          </ProtoInstance>
+          <!-- END OF LITTLE JOINT 0 -->
+        </ProtoInstance>
+        <!-- END OF LITTLE FINGER -->
+
+        <!-- THUMB BASE JOINTS (2 DOF) -->
+        <ProtoInstance name='Joint' DEF="THUMB_JOINT0"  containerField='children'>
+          <fieldValue name='name' value='THUMB_JOINT0' />
+          <fieldValue name='jointId' value='11.0' />
+          <fieldValue name='translation' value='-4.75 -4.5 0' />
+          <fieldValue name='jointType' value='rotate' />
+          <fieldValue name='jointAxis' value='1.0 1.0 1.0' />
+
+          <ProtoInstance name='Segment' DEF="THUMB_KNUCKLE0" containerField='children'>
+            <fieldValue name='name' value='THUMB_KNUCKLE0' />
+            <!-- FIRST KNUCKLE OF THUMB SHAPE -->
+            <Transform>
+              <fieldValue name='translation' value='0 2 0' />
+              <Shape>
+                <Cylinder size="2" height="4"/>
+                <Appearance>
+                  <Material  diffuseColor='0.0 1.0 0.0' />
+                </Appearance>
+              </Shape>
+            </Transform>
+          </ProtoInstance>
+
+          <ProtoInstance name='Joint' DEF="THUMB_JOINT1"  containerField='children'>
+            <fieldValue name='name' value='THUMB_JOINT1' />
+            <fieldValue name='jointId' value='28.0' />
+            <fieldValue name='translation' value='0 4 0' />
+            <fieldValue name='jointType' value='rotate' />
+            <fieldValue name='jointAxis' value='1.0 1.0 1.0' />
+
+            <ProtoInstance name='Segment' DEF="THUMB_KNUCKLE1" containerField='children'>
+              <fieldValue name='name' value='THUMB_KNUCKLE1' />
+              <!-- LAST KNUCKLE OF THUMB SHAPE -->
+              <Transform>
+                <fieldValue name='translation' value='0 1.305 0' />
+                <Shape>
+                  <Cylinder size="2" height="2.61"/>
+                  <Appearance>
+                    <Material  diffuseColor='0.0 1.0 0.0' />
+                  </Appearance>
+                </Shape>
+              </Transform>
+            </ProtoInstance>
+
+            <ProtoInstance name='Joint' DEF="THUMB_TIP_JOINT"  containerField='children'>
+              <fieldValue name='name' value='THUMB_TIP_JOINT' />
+              <fieldValue name='jointId' value='205.0' />
+              <fieldValue name='jointType' value='fixed' />
+              <fieldValue name='translation' value='0 2.61 0' />
+
+              <ProtoInstance name='Segment' DEF="THUMB_TIP" containerField='children'>
+                <fieldValue name='name' value='THUMB_TIP' />
+                <Transform>
+                  <Shape>
+                    <Sphere size="2"/>
+                    <Appearance>
+                      <Material  diffuseColor='0.0 0 1.0' />
+                    </Appearance>
+                  </Shape>
+                </Transform>
+              </ProtoInstance>
+            </ProtoInstance>
+
+          </ProtoInstance>
+
+        </ProtoInstance>
+        <!-- END OF THUMB -->
+
+      </ProtoInstance>
+    </ProtoInstance>
+  </Scene>
+</X3D>

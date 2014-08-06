@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf8"?>
+<world name="myworld11">
+
+  <gravity x="0.0" y="-980.7" z="0.0"/>
+
+  <instanciate class="rightHand.xml">
+    <set-attr-value name="name" value="rightHand"/>
+
+    <set-attr-value name="dynamics" value="false"/>
+
+    <set-attr-value name="x" value="0.0"/>
+    <set-attr-value name="y" value="10.0"/>
+    <set-attr-value name="z" value="0.0"/>
+
+    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="implementation" value="./ControllerSample.so"/>
+    <set-attr-value name="collision" value="true"/>
+  </instanciate>
+
+  <instanciate class="leftHand.xml">
+    <set-attr-value name="name" value="leftHand"/>
+
+    <set-attr-value name="dynamics" value="false"/>
+
+    <set-attr-value name="x" value="-20.0"/>
+    <set-attr-value name="y" value="10.0"/>
+    <set-attr-value name="z" value="0.0"/>
+
+    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="implementation" value="./ControllerSample.so"/>
+    <set-attr-value name="collision" value="true"/>
+  </instanciate>
+</world>

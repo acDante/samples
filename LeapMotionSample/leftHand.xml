@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf8"?>
+<define-class name="leftHand" inherit="Agent.xml">
+
+    <x3d>
+        <!--Reading the model you just created-->
+        <filename>leftHand.x3d</filename>
+    </x3d>
+
+</define-class>
