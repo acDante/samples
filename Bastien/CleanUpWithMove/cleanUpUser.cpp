@@ -202,27 +202,28 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
     sendMsg("robot_000","init");
   }
 
- else {
+ else { // Here are retrieved messages incoming from the PSMove Service
 
-    std::vector<MoveData> moves = buildMoveData(all_msg);
+    std::vector<MoveData> moves = buildMoveData(all_msg); // build the MoveData structure for each connected PSMove
     // std::cout << "moves.size() : " << moves.size() << std::endl;
     std::vector<MoveData>::iterator move;
     int i = 0;
-    for (move = moves.begin(); move != moves.end(); ++move) {
+    for (move = moves.begin(); move != moves.end(); ++move) { // for each connected PSMove ...
 
-      if (move->releasedButtons & Btn_MOVE) {
-	if (!arm_calibration[move->id].shoulderCalibrated) {
+      if (move->releasedButtons & Btn_MOVE) {   // if button "MOVE" released :
+	if (!arm_calibration[move->id].shoulderCalibrated) { // calibrate shoulders 3D position
 	  arm_calibration[move->id].shoulder = move->tracker;
 	  arm_calibration[move->id].shoulderCalibrated = true;
 	  std::cout << "Shoulder calibrated for move " << move->id << std::endl;
 	}
-	else if (!arm_calibration[move->id].handExtensionCalibrated) {
+	else if (!arm_calibration[move->id].handExtensionCalibrated) { // calibrate extended arm 3D position
 	  arm_calibration[move->id].handExtension = move->tracker;
 	  arm_calibration[move->id].handExtensionCalibrated = true;
 	  arm_calibration[move->id].armLength = fabs(arm_calibration[move->id].shoulder.z - arm_calibration[move->id].handExtension.z);
 	  std::cout << "Arm fully calibrated for move " << move->id << std::endl;
 	}
-	else {
+	else { // Supposed to reset orientation, but not working -> the messages are not received by the PSMove Service
+	// the problem of recalibation of the quaternions is handled in the PSMove Service code (pressing CROSS button to recalibrate)
 	  // std::cout << "DEBUG-1-cleanUpUser.cpp" << std::endl;
 	  std::stringstream ss;
 	  ss << "PSMOVE:psmove_reset_orientation:" << move->id;
@@ -230,21 +231,24 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 	  std::cout << ss.str() << std::endl;
 	}
       }
-      if (arm_calibration[move->id].shoulderCalibrated and arm_calibration[move->id].handExtensionCalibrated){
+      // As soon as the arm is correctly calibrated, we can spy the data from the PSMove
+      if (arm_calibration[move->id].shoulderCalibrated and arm_calibration[move->id].handExtensionCalibrated){ 
 
 	// set position of the object
-	double xPosition = 10*move->tracker.x;
-	double yPosition = 10*move->tracker.y+90;
-	double zPosition = 10*(move->tracker.z - arm_calibration[move->id].shoulder.z);
+	double xPosition = 10*move->tracker.x; // add multiplier (10) to fit with human's arm size
+	double yPosition = 10*move->tracker.y+90; // multiplier (10) + height offset (+90) to match human's height
+	double zPosition = 10*(move->tracker.z - arm_calibration[move->id].shoulder.z); // change PSMove zPosition to the human avatar referential
 
 	Vector3d pos;
 	std::stringstream ss;
+	// get the toy corresponding to the ID of the PSMove (right hand or left hand)
 	ss << "toy_" << move->id;
 	SimObj* hand = this->getObj(ss.str().c_str());
-	hand->setPosition(xPosition, yPosition, -zPosition);
+	hand->setPosition(xPosition, yPosition, -zPosition); // set the position of the toy according to previous positions
 
 	// set orientation of the object using quaternions
 	hand->setRotation(Rotation(-move->q.z, move->q.y, -move->q.x, move->q.w));
+	// quaternions need to be transformed in order to match the orientation of the avatar in the virtual world (not always corresponding to the orientation of the human in the real world)
 
 	// std::cout << "DEBUG-2-cleanUpUser.cpp" << "  move->q.x:" << move->q.x << std::endl;
 	// std::cout << "DEBUG-3-cleanUpUser.cpp" << "  move->q.y:" << move->q.y << std::endl;
