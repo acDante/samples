@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<define-class inherit="Agent.xml" name="sample_1">
+
+  <!--derived class from Entity.xml ALWAYS NEEDS body tag-->
+
+  <!--(otherwise sigserver.sh crashes)-->
+
+  <body filename="dummy-body.xml"/>
+
+  <x3d>
+<!--  <filename>tray.wrl</filename> -->
+  <!--  <filename>mobile_base.x3d</filename> -->
+  <!--  <filename>body_try.x3d</filename> -->
+  <!-- <filename>body_try2.x3d</filename> -->
+  <!--  <filename>A1_kitchen.x3d</filename> -->
+  <!--  <filename>normal_0_00.x3d</filename> -->
+  <!-- <filename>normal_0_03.x3d</filename> -->
+  <!--  <filename>sample.wrl</filename> -->
+<!--  <filename>/home/itoh/src/SIGVerse/RobotImport/world01/untitled.x3d</filename> -->
+<!-- <filename>untitled.x3d</filename> -->
+  <!-- <filename>sample_pot.wrl</filename> -->
+    <!--<filename>trashbox_c01.wrl</filename> -->
+<!--  <filename>Moderator2.x3d</filename> -->
+<filename>iCub.x3d</filename>
+<!-- <filename>ATurtle.x3d</filename> -->
+  </x3d>
+
+</define-class>
+

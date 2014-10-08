@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<world name="myworld1">
+  <gravity x="0.0" y="-980.7" z="0.0"/>
+
+  <instanciate class="iCub.xml" type="Robot">
+    <set-attr-value name="name" value="Robot_000"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="0.0"/>
+    <set-attr-value name="y" value="50.0"/>
+    <set-attr-value name="z" value="0.0"/>
+    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="implementation"
+                    value="./Robot.so"/>
+    <set-attr-value name="collision" value="true"/>
+    <set-attr-value name="graspable" value="false"/>
+  </instanciate>
+
+</world>
