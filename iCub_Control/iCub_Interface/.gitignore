@@ -7,8 +7,8 @@
 *.sln.docstates
 
 # Directories
-/RobocupReferee/Debug/
-/RobocupReferee/Release/
+/iCubInterface/Debug/
+/iCubInterface/Release/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/

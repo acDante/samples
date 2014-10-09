@@ -28,34 +28,22 @@ namespace iCubInterface {
 		Form1(void)
 		{
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
+
 			m_srv = nullptr;
 			m_connected = false;
 			cli::array<System::String^>^ args = System::Environment::GetCommandLineArgs();
            
-			// 接続を試みる
 			m_srv = gcnew iCub_Interface("Configure_Robot");
 			
 
-			//if(m_srv->connect("socio4.iir.nii.ac.jp", 9333)){
-		/*	if(m_srv->connect(args[1], System::Convert::ToInt32(args[2]))){
-				m_connected = true;
-				this->connect->Enabled = false;
-					 
-				m_srv->connectToViewer();
-				m_srv->setAutoExitProc(true);
-			}*/
+
 		}
 		void setText(System::String^ text)
 		{
 			this->label1->Text = text;
 		}
 	protected:
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
+
 		~Form1()
 		{
 			m_srv = nullptr;
@@ -70,9 +58,6 @@ namespace iCubInterface {
 	protected: 
 
 	private:
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
 
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Button^  connect;
@@ -86,9 +71,7 @@ namespace iCubInterface {
 
 
 	private: System::Windows::Forms::ListBox^  listBox5;	
-	//private: System::Windows::Forms::ListBox^  listBox5;
-			 
-			 //sigverse::SIGService ^srv = gcnew sigverse::SIGService("RobocupReferee");
+
 			 iCub_Interface ^m_srv;
 	private: System::Windows::Forms::Panel^  panel1;
 	private: System::Windows::Forms::Label^  label2;
@@ -99,34 +82,6 @@ namespace iCubInterface {
 	private: System::Windows::Forms::TrackBar^  trackBar3;
 	private: System::Windows::Forms::TrackBar^  trackBar2;
 	private: System::Windows::Forms::TrackBar^  trackBar1;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -3049,23 +3004,9 @@ private: System::Windows::Forms::Button^  button5;
 				 if(m_srv == nullptr){
 
 					   std::string Service_name ="";
-//                       IPv4 ip;
                        std::string str = "";
-                   //    str = getMyIP(&ip);
-
-							/*	if( str == "" )
-									{
-									  std::cout <<"Theres been an error !" << std::endl;
-      
-									}
-                        */
-
-					   
-								   Service_name = "Configure_Robot";
-								//   Service_name += str;
-                                 
-
-                             String^ ipping = gcnew String(Service_name.c_str());
+					   Service_name = "Configure_Robot";
+                       String^ ipping = gcnew String(Service_name.c_str());
 
 					 m_srv = gcnew iCub_Interface(ipping);
 					 cli::array<System::String^>^ args = System::Environment::GetCommandLineArgs();
@@ -3073,7 +3014,6 @@ private: System::Windows::Forms::Button^  button5;
 						 m_connected = true;
 						 m_srv->connectToViewer();
 						 m_srv->setAutoExitProc(true);
-					//	 m_srv->sendMsg("Robot_000",ipping);
 
 					 }
 				 }
@@ -3081,23 +3021,7 @@ private: System::Windows::Forms::Button^  button5;
 private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e) {
 			 if(m_srv != nullptr){
 				 m_srv->checkRecvData(100);
-				 int ssize = m_srv->getScoreSize();
-				  System::String^ msg = m_srv->getMessage();
-//				  this->textBox1->Text = msg;
-				 // メッセージが来た
-				 for(int i = 0; i < ssize; i++){
-					 int score = m_srv->getScore();
-					// System::String^ msg = m_srv->getMessage();
-				//	 System::String^ listitem_msg = msg;// + "                    " + score.ToString();
-				//	 System::String^ listitem_score = score.ToString();
-					// this->listBox1->Items->Add(listitem_msg);
-					// this->listBox2->Items->Add(listitem_score);
-				//	 int total = m_srv->getTotal();
-					// this->textBox1->Text = total.ToString();
 
-//					 this->textBox1->Text = msg;
-
-				 }
 			 }
 		 }
 private: System::Void button1_Click_2(System::Object^  sender, System::EventArgs^  e) {
@@ -3111,20 +3035,8 @@ private: System::Void listBox1_SelectedIndexChanged(System::Object^  sender, Sys
 private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
-  //			 m_srv->setTotal(0);
-  //			 this->textBox1->Text = L"0";
-  //			 this->listBox1->Items->Clear();
-			// this->listBox2->Items->Clear();
-		//	 System::Windows::Forms::ListBox^  listBox5;
-		//	 this->listBox5 = (gcnew System::Windows::Forms::ListBox());
-			// this->Controls->Add(this->listBox5);
-			 m_srv->sendMsg("Robot_000","Capture!Tester");
 
-        /*
-            for (size_t z = 0; z < container.size(); z++){
-                listBox5->Items->Add(container[z]);
-          }
-         */
+			 m_srv->sendMsg("Robot_000","Capture!Tester");
 
 
 		 }
@@ -3302,162 +3214,144 @@ private: System::Void trackBar45_Scroll(System::Object^  sender, System::EventAr
 		 }
 private: System::Void trackBar44_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 	this->textBox43->Text = this->trackBar44->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar43_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 	this->textBox41->Text = this->trackBar43->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar49_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			  this->textBox50->Text = this->trackBar49->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar52_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 			 this->textBox53->Text = this->trackBar52->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar42_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 			 this->textBox45->Text = this->trackBar42->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar48_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 			 this->textBox49->Text = this->trackBar48->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar47_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 			 this->textBox48->Text = this->trackBar47->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+
 		 }
 private: System::Void trackBar46_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 			 this->textBox47->Text = this->trackBar46->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+
 		 }
 private: System::Void trackBar50_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 			 this->textBox51->Text = this->trackBar50->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+
 		 }
 private: System::Void trackBar41_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 	 this->textBox46->Text = this->trackBar41->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
-
 		 }
 private: System::Void trackBar40_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 	this->textBox42->Text = this->trackBar40->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar39_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 this->textBox40->Text = this->trackBar39->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar51_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			  this->textBox52->Text = this->trackBar51->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar53_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			  this->textBox54->Text = this->trackBar53->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar58_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			  this->textBox59->Text = this->trackBar58->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar57_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			  this->textBox58->Text = this->trackBar57->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar56_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			  this->textBox57->Text = this->trackBar56->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+
 		 }
 private: System::Void trackBar55_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			  this->textBox56->Text = this->trackBar55->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar54_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			  this->textBox55->Text = this->trackBar54->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 
 private: System::Void trackBar77_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			  this->textBox76->Text = this->trackBar77->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar78_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			  this->textBox77->Text = this->trackBar78->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+
 		 }
 
 private: System::Void trackBar76_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			this->textBox74->Text = this->trackBar76->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
 		 }
 private: System::Void trackBar65_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 this->textBox66->Text = this->trackBar65->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+		
 		 }
 private: System::Void trackBar68_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			  this->textBox69->Text = this->trackBar68->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+		
 		 }
 private: System::Void trackBar75_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 this->textBox78->Text = this->trackBar75->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+		
 		 }
 private: System::Void trackBar71_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 this->textBox72->Text = this->trackBar71->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+		
 		 }
 private: System::Void trackBar70_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 	this->textBox71->Text = this->trackBar70->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+	
 		 }
 private: System::Void trackBar69_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 	this->textBox70->Text = this->trackBar69->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+
 		 }
 private: System::Void trackBar66_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 this->textBox67->Text = this->trackBar66->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+
 		 }
 private: System::Void trackBar74_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 this->textBox79->Text = this->trackBar74->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+
 		 }
 private: System::Void trackBar73_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			  this->textBox75->Text = this->trackBar73->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+			
 		 }
 private: System::Void trackBar72_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 	this->textBox73->Text = this->trackBar72->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+			
 		 }
 private: System::Void trackBar67_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 	this->textBox68->Text = this->trackBar67->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+			 
 		 }
 private: System::Void trackBar64_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			  this->textBox65->Text = this->trackBar64->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+		
 		 }
 private: System::Void trackBar63_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 this->textBox64->Text = this->trackBar63->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+
 		 }
 private: System::Void trackBar62_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 	this->textBox63->Text = this->trackBar62->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+
 		 }
 private: System::Void trackBar61_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 	this->textBox62->Text = this->trackBar61->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+
 		 }
 private: System::Void trackBar60_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			 this->textBox61->Text = this->trackBar60->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+
 		 }
 private: System::Void trackBar59_Scroll(System::Object^  sender, System::EventArgs^  e) {
 			  this->textBox60->Text = this->trackBar59->Value.ToString();
-			  //  m_srv->sendMsg("robot_000",ipping);
+
 		 }
 // Left Arm
 private: System::Void textBox4_TextChanged(System::Object^  sender, System::EventArgs^  e) {
