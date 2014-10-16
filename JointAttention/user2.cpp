@@ -20,40 +20,33 @@ public:
 	double onAction(ActionEvent &evt);
 
 private:
-
-	//移動速度
-	double vel;
-	ViewService *m_view;
 	BaseService *m_kinect;
 	BaseService *m_hmd;
 
-	//初期位置
+	//Position of avatar
 	double m_posx, m_posy, m_posz;
 	double m_yrot;
 	double m_range;
 
-	//データ数（関節数）最大値
+	//Max number of joints
 	int m_maxsize;
 
-	// 体全体の角度
+	//Quaternion of body
 	double m_qw, m_qy, m_qx, m_qz;
 
-	// 前回送信したyaw, pitch roll
+	//yaw, pitch and roll in the previous moment
 	double pyaw, ppitch, proll;
 };
 
 
 void UserController::onInit(InitEvent &evt)
 {
-	//m_kinect = connectToService("SIGKINECT");
-	//m_hmd = connectToService("SIGHMD");
 	m_kinect = NULL;
-	m_hmd = NULL;
+	m_hmd    = NULL;
 
-	vel      = 10.0;
 	srand(time(NULL));
 
-	//初期位置の設定
+	//Initinal setting for position and so on
 	SimObj *my = this->getObj(this->myname());
 	m_posx = my->x();
 	m_posy = my->y();
@@ -63,16 +56,16 @@ void UserController::onInit(InitEvent &evt)
 	double qw = my->qw();
 	double qy = my->qy();
 	m_yrot = acos(fabs(qw))*2;
-	if(qw*qy > 0)
+	if (qw*qy > 0)
 		m_yrot = -1*m_yrot;
 
-	// 体全体の向き
+	//Set orientation of body
 	m_qw = 1.0;
 	m_qx = 0.0;
 	m_qy = 0.0;
 	m_qz = 0.0;
 
-	// Add by inamura on 28th June
+	//Do not move the legs
 	my->setJointAngle ("RLEG_JOINT2", DEG2RAD(0));
 	my->setJointAngle ("LLEG_JOINT2", DEG2RAD(0));
 	my->setJointAngle ("RLEG_JOINT4", DEG2RAD(0));
@@ -81,30 +74,28 @@ void UserController::onInit(InitEvent &evt)
 	pyaw = ppitch = proll = 0.0;
 }
 
-//定期的に呼び出される関数
+
 double UserController::onAction(ActionEvent &evt)
 {
-	// サービスが使用可能か定期的にチェックする
+	// Check the availability of service providers
 	bool av_kinect = checkService("SIGKINECT");
-	bool av_hmd = checkService("SIGORS");
+	bool av_hmd    = checkService("SIGORS");
 
-	// 使用可能
-	if(av_kinect && m_kinect == NULL){
-		// サービスに接続
+	if (av_kinect && m_kinect == NULL) {
+		// Connect to the Kinect service
 		m_kinect = connectToService("SIGKINECT");
 
 	}
-	else if (!av_kinect && m_kinect != NULL){
+	else if (!av_kinect && m_kinect != NULL) {
 		m_kinect = NULL;
 	}
 
-	// 使用可能
-	if(av_hmd && m_hmd == NULL){
-		// サービスに接続
+	if (av_hmd && m_hmd == NULL) {
+		// Connect to the Oculus Rift service
 		m_hmd = connectToService("SIGORS");
 
 	}
-	else if (!av_hmd && m_hmd != NULL){
+	else if (!av_hmd && m_hmd != NULL) {
 		m_hmd = NULL;
 	}
 
@@ -116,11 +107,12 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 {
 	std::string sender = evt.getSender();
 	SimObj *my = getObj(myname());
-	//メッセージ取得
+
+	//Receive message
 	char *all_msg = (char*)evt.getMsg();
 
 	std::string ss = all_msg;
-	//ヘッダーの取り出し
+	//Extract header information
 	int strPos1 = 0;
 	int strPos2;
 	std::string headss;
@@ -131,15 +123,15 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 
 	//std::cout<<ss<<std::endl;
 
-	if(headss == "ORS_DATA"){
-		//HMDデータによる頭部の動き反映
+	if (headss == "ORS_DATA") {
+		//Control the head based on the data from HMD
 		moveHeadByHMD(ss);
 	}
-	else if(headss == "KINECT_DATA"){
-		//KINECTデータによる頭部以外の体の動き反映
+	else if (headss == "KINECT_DATA") {
+		//Control the body based on the data from KINECT
 		moveBodyByKINECT(all_msg);
 
-		// Add by inamura on 2014-03-02
+		//Do not move the legs
 		my->setJointAngle ("RLEG_JOINT2", DEG2RAD(0));
 		my->setJointAngle ("LLEG_JOINT2", DEG2RAD(0));
 		my->setJointAngle ("RLEG_JOINT4", DEG2RAD(0));
@@ -152,10 +144,9 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 
 void UserController::moveHeadByHMD(const std::string ss)
 {
-	//自分自身の取得
 	SimObj *my = this->getObj(this->myname());
 
-	//ヘッダーの取り出し
+	//Extract header information
 	int strPos1 = 0;
 	int strPos2;
 	std::string headss;
@@ -163,7 +154,7 @@ void UserController::moveHeadByHMD(const std::string ss)
 	strPos2 = ss.find(" ", strPos1);
 	headss.assign(ss, strPos1, strPos2-strPos1);
 
-	if(headss == "ORS_DATA") {
+	if (headss == "ORS_DATA") {
 		//    LOG_MSG((all_msg));
 		//  }
 		//  if(headss == "HMD_DATA"){
@@ -186,7 +177,7 @@ void UserController::moveHeadByHMD(const std::string ss)
 		tmpss.assign(ss, strPos1, strPos2-strPos1);
 		roll = atof(tmpss.c_str());
 
-		if(yaw == pyaw && pitch == ppitch && roll == proll)  return;
+		if (yaw == pyaw && pitch == ppitch && roll == proll)  return;
 		else {
 			pyaw = yaw;
 			ppitch = pitch;
@@ -233,30 +224,29 @@ void UserController::moveHeadByHMD(const std::string ss)
 
 void UserController::moveBodyByKINECT(char* all_msg)
 {
-	//自分自身の取得
 	SimObj *my = this->getObj(this->myname());
 	char* msg = strtok(all_msg," ");
-	if(strcmp(msg,"KINECT_DATA") == 0){
+	if (strcmp(msg,"KINECT_DATA") == 0) {
 		int i = 0;
-		while(true){
+		while (true) {
 			i++;
-			if(i == m_maxsize+1) break;
+			if (i == m_maxsize+1) break;
 			char *type = strtok(NULL,":");
-			if(strcmp(type,"POSITION") == 0){
-				//体の位置
+			if (strcmp(type,"POSITION") == 0) {
+				//Position of body
 				double x = atof(strtok(NULL,","));
 				double y = atof(strtok(NULL,","));
 				double z = atof(strtok(NULL," "));
-				//エージェント座標からグローバル座標への変換
+				//Transfer from agent coordinate to global coordinate
 				double gx = cos(m_yrot)*x - sin(m_yrot)*z;
 				double gz = sin(m_yrot)*x + cos(m_yrot)*z;
-				// yz 方向には動かさない
+				// Do not move in yz-plane (??? Really?)
 				// my->setPosition(m_posx+gx,m_posy+y,m_posz+gz); // No limitation
-				my->setPosition(m_posx, m_posy, m_posz+gz);    	  // z 方向にしか動かさない
+				my->setPosition(m_posx, m_posy, m_posz+gz);    	  // Move only for z-axis
 				continue;
 			}
 			else if (strcmp(type,"WAIST") == 0) {
-				//体全体の回転
+				//Orientation of body
 				double w = atof(strtok(NULL,","));
 				double x = atof(strtok(NULL,","));
 				double y = atof(strtok(NULL,","));
@@ -273,7 +263,7 @@ void UserController::moveBodyByKINECT(char* all_msg)
 					break;
 			}
 			else {
-				//関節の回転
+				//Rotation of joints
 				double w = atof(strtok(NULL,","));
 				double x = atof(strtok(NULL,","));
 				double y = atof(strtok(NULL,","));
@@ -284,9 +274,9 @@ void UserController::moveBodyByKINECT(char* all_msg)
 				double vy = y/tmp;
 				double vz = z/tmp;
 				double len = sqrt(vx*vx+vy*vy+vz*vz);
-				if(len < (1 - m_range) || (1 + m_range) < len) continue;
-				// HEAD_JOINT1はHMDにより回転
-				if(strcmp(type,"HEAD_JOINT1") != 0 ){
+				if (len < (1 - m_range) || (1 + m_range) < len) continue;
+				// HEAD_JOINT1 is controlled by HMD
+				if (strcmp(type,"HEAD_JOINT1") != 0 ) {
 					my->setJointQuaternion(type,w,x,y,z);
 				}
 				continue;
