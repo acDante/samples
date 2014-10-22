@@ -15,8 +15,7 @@ public:
 	void onInit(InitEvent &evt);
 	double onAction(ActionEvent &evt);
 private:
-	BaseService *m_kinect;
-	BaseService *m_hmd;
+	BaseService *m_oculus;
 	double m_posx, m_posy, m_posz;
 	double m_yrot;
 	double m_range;
@@ -24,7 +23,6 @@ private:
 	int m_maxsize;
 
 	double m_qw, m_qy, m_qx, m_qz;
-
 	double pyaw, ppitch, proll;
 
 	bool chk_srv;
@@ -43,7 +41,7 @@ void RobotController::onInit(InitEvent &evt)
 	double qw = my->qw();
 	double qy = my->qy();
 	m_yrot = acos(fabs(qw))*2;
-	if(qw*qy > 0)
+	if (qw*qy > 0)
 		m_yrot = -1*m_yrot;
 
 	m_qw = 1.0;
@@ -56,11 +54,11 @@ void RobotController::onInit(InitEvent &evt)
 
 double RobotController::onAction(ActionEvent &evt)
 {
-	if(chk_srv==NULL) {
-		bool ch_kinect = checkService("SIGORS");
+	if (chk_srv==NULL) {
+		bool ch_oculus = checkService("SIGORS");
 
-		if(ch_kinect) {
-			m_kinect = connectToService("SIGORS");
+		if (ch_oculus) {
+			m_oculus = connectToService("SIGORS");
 		}
 	}
 
@@ -81,7 +79,7 @@ void RobotController::onRecvMsg(RecvMsgEvent &evt)
 	strPos2 = ss.find(" ", strPos1);
 	headss.assign(ss, strPos1, strPos2-strPos1);
 
-	if(headss == "ORS_DATA") {
+	if (headss == "ORS_DATA") {
 		//    LOG_MSG((all_msg));
 		//  }
 		//  if(headss == "HMD_DATA"){
@@ -104,7 +102,7 @@ void RobotController::onRecvMsg(RecvMsgEvent &evt)
 		tmpss.assign(ss, strPos1, strPos2-strPos1);
 		roll = atof(tmpss.c_str());
 
-		if(yaw == pyaw && pitch == ppitch && roll == proll)  return;
+		if (yaw == pyaw && pitch == ppitch && roll == proll)  return;
 		else {
 			pyaw = yaw;
 			ppitch = pitch;
