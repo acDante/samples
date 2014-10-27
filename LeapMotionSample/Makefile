@@ -1,6 +1,8 @@
 #sigverse header
 SIG_SRC = $(SIGVERSE_PATH)/include/sigverse
 
+OBJS = ControllerSample.so
+
 all: $(OBJS)
 
 #compile

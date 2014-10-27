@@ -1,7 +1,6 @@
 #sigverse header
 SIG_SRC  = $(SIGVERSE_PATH)/include/sigverse
 
-#オブジェクトファイルの指定
 OBJS     = cleanUpRobot.so cleanUpUser.so cleanUpUser2.so TrashBox.so Camera.so Wagon.so
 
 all: $(OBJS)

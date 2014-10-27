@@ -1,7 +1,6 @@
 #sigverse header
 SIG_SRC  = $(SIGVERSE_PATH)/include/sigverse
 
-#オブジェクトファイルの指定
 OBJS     = user.so partner.so point_record.so user2.so partner2.so user3.so
 
 all: $(OBJS)
