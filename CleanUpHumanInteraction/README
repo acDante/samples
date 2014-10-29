@@ -1,3 +1,11 @@
 This is sample code for CleanUp task at RoboCup@Home.
 The agent avatar can be controlled by real human subject through OculusRift and Kinect sensor.
 
+
+cleanUpUser.cpp:  normal controller for the avatar
+cleanUpUser2.cpp: another controller for the avatar, which uses spherical linear interpolation on quaternion
+cleanUpRobot.cpp  controller for the robot
+
+
+
+
