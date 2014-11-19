@@ -2,12 +2,9 @@
 // Includes
 //---------------------------------------------------------------------------
 #include "KinectApp.h"
-// Visual Studio Professional以上を使う場合はCComPtrの利用を検討してください。 consider to use  "CComPtr" if you use Visual Studio Professional.
+//consider to use  "CComPtr" if you use Visual Studio Professional.
 
-
-
-
-// クラスSIGKINECT_Linkageのインスタンスを作成します   create instance of "SIGKINECT_Linkage"
+//create instance of "SIGKINECT_Linkage"
 SIGKINECT_Linkage* srv;
 
 
@@ -18,7 +15,6 @@ std::string agent_name;
  */
 void mainLoop(std::string saddr, KinectApp kinectapp, SIGKINECT_Linkage* srv)
 {
-	//printf("mainloop\n");
 	bool m_start;
 	m_start = true;
 	static clock_t start;
@@ -71,9 +67,7 @@ int main(int argc, char **argv)
 
 	//1.connect to SIGVerse server.
 
-//#define TEST
 
-#ifndef TEST
 	if (argc == 1) {
 		std::cout << "Cannot find Server host name and port number.\n";
 		std::cout << "Enter SIGVerse server host name (or IP address)\n>>";
@@ -84,22 +78,13 @@ int main(int argc, char **argv)
 
 	if (argc > 1) {
 		sprintf_s(saddr, 128, "%s", argv[1]);
-
 		portnumber = atoi(argv[2]);
 		std::cout << "Connect to server [" << saddr << "]\n";
 		std::cout << "Portnumber [" << portnumber << "]\n\n";
 		std::cout << "[ESC]: Quit service.\n";
 	}
-#else
-	strcpy_s(saddr, "192.168.244.129");
-	portnumber = 9000;
-#endif
 
-
-	//  unsigned short port = (unsigned short)(atoi(argv[2]));  
-	//  srv.connect(argv[1], port);  
-
-	// サーバに接続します   connect to server
+	//connect to server
 	if (srv.connect(saddr, portnumber)){
 		printf("success to connect to SIGServer.\n");
 	}else
@@ -107,10 +92,10 @@ int main(int argc, char **argv)
 		printf("fail to connect to SIGServer.\n");
 	}
 
-	// ビューワーに接続します   connect to viewer
+	// connect to viewer
 	if (srv.connectToViewer()){
 		printf("success to connect to SIGViewer.\n");
-		// ビューワーがサーバからdisconnectしたらloopを自動で抜けます   automatically exit loop when the viewer disconnect
+		//automatically exit loop when the viewer disconnect
 		srv.setAutoExitLoop(true);
 	}
 	else{

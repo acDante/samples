@@ -23,7 +23,7 @@ class KinectApp
 		}
 
 	/*!
-	* @brief 左右の手の順序を定義します、これは主体となる手を簡単に入れ替えるためです。　define order of left and right hand to invert main hand easily later.
+	* @brief define order of left and right hand to invert main hand easily later.
 	*/
 	enum TARGET_HANDS {
 		LEFT,
@@ -61,16 +61,15 @@ private:
 	std::string strMsg = "";
 	XnSkeletonJointPosition sfoot, sknee;
 
-
 	/*!
-	* @brief 物を掴んだ際の左肩と左肘の位置を保持します。
+	* @brief handle the left shoulder and left elbow in grasping
 	*/
 	XnSkeletonJointPosition ssld, selb, shand;
 public:
-	void initialize();// 初期化 initalize
+	void initialize();//initalize
 	void run();
-	void update();// データの更新処理 update Data
-	void updateBodyFrame();// ボディフレームの更新 update BodyFrame
+	void update();//update Data
+	void updateBodyFrame();//update BodyFrame
 	void draw();
 	void drawBodyIndexFrame();
 	//void sendMessage(std::string& agent_name);
@@ -88,9 +87,7 @@ public:
 	bool DiffVec(XnPoint3D &rvec, XnSkeletonJointPosition jvec, XnSkeletonJointPosition kvec);
 	void showVector4(std::string str, Vector4 vector4);
 	void showQuaternion(std::string str, Quaternion quaternion);
-	Quaternion Kakezan(Quaternion left, Quaternion right);
 	Quaternion MakeRotationalQuaternion(double   radian, double AxisX, double AxisY, double AxisZ);
-	Quaternion makeNewQuaternion(Quaternion old_quaternion, Quaternion rotation_quaternion);
 	void GetSkeletonJointPosition2(XnSkeletonJoint eJoint, XnSkeletonJointPosition& Joint);
 	void showXnPoint3D(std::string name, XnPoint3D vector);
 	void showXnSkeletonJointPosition(std::string str, XnSkeletonJointPosition point);
