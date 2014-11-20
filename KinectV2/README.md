@@ -15,12 +15,6 @@ Overview
 ## VS. 
 
 ## Requirement
-include  
-../include: SIGVerse header files and OpenNI header files needed  
-library  
-../lib: SIGVerse library file and OpenNI library file needed  
-rutime  
-../Release: OpenCV dynamic link library files needed  
 
 you can download from below:  
 <**********>  
