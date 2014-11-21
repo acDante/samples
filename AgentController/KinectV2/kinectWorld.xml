@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf8"?>
  <world name="myworld2">
 
- <!--重力の設定-->
+ <!--Gravity-->
    <gravity x="0.0" y="-980.7" z="0.0"/>
 
- <!--エージェントMan-niiの設定-->
+ <!--Agent "Man-nii"-->
    <instanciate class="Man-nii.xml">
 
- <!--エージェント名-->
+ <!--Agent name-->
          <set-attr-value name="name" value="kinect_man"/>
 
- <!--C++言語の指定-->
+ <!--C++-->
          <set-attr-value name="language" value="c++"/>
 
- <!--オブジェクトファイルkinectController.soの指定-->
+ <!--Object file "kinectController.so"-->
          <set-attr-value name="implementation" value="./kinectController.so"/>
 
- <!--動力学演算をfalseに設定-->
+ <!--Kineticsset as false-->
          <set-attr-value name="dynamics" value="false"/>
 
- <!--エージェントの位置(x,y,z)-->
+ <!--Agent position(x,y,z)-->
         <set-attr-value name="x" value="0.0"/>
         <set-attr-value name="y" value="60.0"/>
         <set-attr-value name="z" value="0.0"/>
