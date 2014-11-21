@@ -6,10 +6,7 @@ KinectV2
  Client side service provider of the Sample project to move SIGVerse avator with KinectV2, as Visual Studio 2013 C++ project.  
 
 ## Description
- Client side service provider of the Sample project to move avator with KinectV2, as Visual Studio 2013 C++ project.  
- This is a sample project to move avator in SIGVerse with KinectV2.  
- When you move in front of KinectV2 sensor, an avator in the SIGVerse  
- moves along with your movement. 
+ Client side service provider of the Sample project to move avator with KinectV2, as Visual Studio 2013 C++ project. This is a sample project to move avator in SIGVerse with KinectV2. When you move in front of KinectV2 sensor, an avator in the SIGVerse moves along with your movement.  
 
 ## Demo  
 
