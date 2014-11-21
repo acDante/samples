@@ -25,7 +25,7 @@ KinectV2
  library  
  ../lib: SIGVerse library file and OpenNI library file needed  
  rutime  
- ../Release: OpenCV dynamic link library files needed  
+ ../Release: OpenCV dynamic link library files and a config file needed  
 
 you can download from below:  
 <**********>  
