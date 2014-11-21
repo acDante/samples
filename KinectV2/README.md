@@ -3,7 +3,7 @@ Name
 KinectV2  
 
 ## Overview  
- Client side service provider of the Sample project to move avator with KinectV2, as Visual Studio 2013 C++ project.  
+ Client side service provider of the Sample project to move SIGVerse avator with KinectV2, as Visual Studio 2013 C++ project.  
 
 ## Description
  Client side service provider of the Sample project to move avator with KinectV2, as Visual Studio 2013 C++ project.  
