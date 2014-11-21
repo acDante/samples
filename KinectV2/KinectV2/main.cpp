@@ -31,7 +31,7 @@ void mainLoop(std::string saddr, KinectApp kinectapp, SIGKINECT_Linkage* srv)
 		if (key == 'q'){
 			break;
 		}
-		kinectapp.sendMessage2(srv,agent_name);
+		kinectapp.sendMessage4(srv,agent_name);
 		Sleep(100); /* wait 0.1 seconds */
 		if (m_onLoop){
 			if (ltime > 0){
@@ -55,7 +55,7 @@ void mainLoop(std::string saddr, KinectApp kinectapp, SIGKINECT_Linkage* srv)
 
 int main(int argc, char **argv)
 {
-	agent_name = "kinect_man";
+	agent_name = "man_000";
 	std::string sname = "SIGKINECT";
 	TCHAR spd[64] = "";
 	GetPrivateProfileString(_T("SETTING"), _T("SERVICE_NAME"), '\0', spd, 256, _T("./SIGNiUserTracker.ini"));

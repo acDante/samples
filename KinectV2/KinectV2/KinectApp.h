@@ -29,6 +29,9 @@ class KinectApp
 		LEFT,
 		RIGHT
 	};
+
+
+
 	/*!
 	* @brief map of joint names and their quaternions
 	*/
@@ -117,6 +120,9 @@ public:
 	void RotVec_Yaxis_Reverse(XnPoint3D &v, Quaternion q, bool axis1);
 	void RotVec_YZaxis_Reverse(XnPoint3D &v, Quaternion q, bool axis1);
 	bool DiffVec_Xaxis(XnPoint3D &rvec, XnSkeletonJointPosition jvec, XnSkeletonJointPosition kvec);
+	void sendMessage3(sigverse::SIGService *srv, std::string& agent_name);
+	void sendMessage4(sigverse::SIGService *srv, std::string& agent_name);
+
 };
 
 #endif

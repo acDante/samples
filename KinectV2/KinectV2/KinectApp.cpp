@@ -43,7 +43,8 @@ XnBool g_bPrintState = TRUE;
 */
 XnSkeletonJointPosition ssld, selb, shand;
 
-enum SigVec {
+enum SigVec
+{
 	HIP = 0,
 	HTOTOR,
 	WAIST,
@@ -51,7 +52,8 @@ enum SigVec {
 	LSHOULDER,
 	RELBOW,
 	LELBOW,
-	LEG
+	LEG,
+	FOOT
 };
 
 
@@ -97,6 +99,14 @@ XnPoint3D KinectApp::GetSigVec(int sigvec)
 		p.X = 0;
 		p.Y = -1;
 		p.Z = 0;
+	}
+	else if (sigvec == FOOT)
+	{
+		p.X = 0;
+		//p.Y = -0.7071f;
+		//p.Z = +0.7071f;
+		p.Y = -0.5;        // 1/2
+		p.Z = +0.8660254f; // sqrt(3)/2
 	}
 	return p;
 }
@@ -413,736 +423,8 @@ void KinectApp::drawBodyIndexFrame()
 	cv::imshow("Body Image", bodyImage);
 }
 
-void KinectApp::sendMessage(sigverse::SIGService *srv, std::string& agent_name)
-{
-	static bool bInitialized = false;
-	//static GLuint depthTexID;
-	static unsigned char* pDepthTexBuf;
-	//static int texWidth, texHeight;
 
-	//added for sigverse
-	static char saddr[128];
-	static int port;
-	static int speed;
-	static double move_speed;
-	static int cnt;
-	static bool start;
-	static XnPoint3D startpos;
-
-
-
-	//float topLeftX;
-	//float topLeftY;
-	//float bottomRightY;
-	//float bottomRightX;
-	//float texXpos;
-	//float texYpos;
-
-	if (!bInitialized)
-	{
-		start = false;
-
-		TCHAR spd[8];
-		// ƒf[ƒ^‘—MƒŒ[ƒg
-		//printf("start of datafile\n");
-		GetPrivateProfileString(_T("SETTING"), _T("SEND_SPEED"), '\0', spd, 256, _T("./SIGNiUserTracker.ini"));
-		if (spd[0] == '\0') {
-			speed = 1;
-		}
-		else {
-			speed = atoi((char*)spd);
-		}
-
-		// ƒG[ƒWƒFƒ“ƒgˆÚ“®‘¬“x
-		GetPrivateProfileString(_T("SETTING"), _T("MOVE_SPEED"), '\0', spd, 256, _T("./SIGNiUserTracker.ini"));
-		if (spd[0] == '\0') {
-			move_speed = 0.1;
-		}
-		else {
-			move_speed = atof((char*)spd);
-		}
-		//printf("end of datafile\n");
-		//texWidth = getClosestPowerOfTwo(dmd.XRes());
-		//texHeight = getClosestPowerOfTwo(dmd.YRes());
-
-		//printf("Initializing depth texture: width = %d, height = %d\n", texWidth, texHeight);
-		//depthTexID = initTexture((void**)&pDepthTexBuf, texWidth, texHeight);
-
-		//printf("Initialized depth texture: width = %d, height = %d\n", texWidth, texHeight);
-		bInitialized = true;
-
-		//topLeftX = dmd.XRes();
-		//topLeftY = 0;
-		//bottomRightY = dmd.YRes();
-		//bottomRightX = 0;
-		//texXpos = (float)dmd.XRes() / texWidth;
-		//texYpos = (float)dmd.YRes() / texHeight;
-
-		//memset(texcoords, 0, 8 * sizeof(float));
-		//texcoords[0] = texXpos, texcoords[1] = texYpos, texcoords[2] = texXpos, texcoords[7] = texYpos;
-	}
-
-	unsigned int nValue = 0;
-	unsigned int nHistValue = 0;
-	unsigned int nIndex = 0;
-	unsigned int nX = 0;
-	unsigned int nY = 0;
-	unsigned int nNumberOfPoints = 0;
-	//XnUInt16 g_nXRes = dmd.XRes();
-	//XnUInt16 g_nYRes = dmd.YRes();
-
-	unsigned char* pDestImage = pDepthTexBuf;
-
-	//const XnDepthPixel* pDepth = dmd.Data();
-	//const XnLabel* pLabels = smd.Data();
-
-	// Calculate the accumulative histogram
-	//memset(g_pDepthHist, 0, MAX_DEPTH*sizeof(float));
-	//for (nY = 0; nY<g_nYRes; nY++)
-	//{
-	//	for (nX = 0; nX<g_nXRes; nX++)
-	//	{
-	//		nValue = *pDepth;
-
-	//		if (nValue != 0)
-	//		{
-	//			g_pDepthHist[nValue]++;
-	//			nNumberOfPoints++;
-	//		}
-
-	//		pDepth++;
-	//	}
-	//}
-
-	//for (nIndex = 1; nIndex<MAX_DEPTH; nIndex++)
-	//{
-	//	g_pDepthHist[nIndex] += g_pDepthHist[nIndex - 1];
-	//}
-	//if (nNumberOfPoints)
-	//{
-	//	for (nIndex = 1; nIndex<MAX_DEPTH; nIndex++)
-	//	{
-	//		g_pDepthHist[nIndex] = (unsigned int)(256 * (1.0f - (g_pDepthHist[nIndex] / nNumberOfPoints)));
-	//	}
-	//}
-
-	//pDepth = dmd.Data();
-	//if (g_bDrawPixels)
-	//{
-	//	XnUInt32 nIndex = 0;
-	//	// Prepare the texture map
-	//	for (nY = 0; nY<g_nYRes; nY++)
-	//	{
-	//		for (nX = 0; nX < g_nXRes; nX++, nIndex++)
-	//		{
-
-	//			pDestImage[0] = 0;
-	//			pDestImage[1] = 0;
-	//			pDestImage[2] = 0;
-	//			if (g_bDrawBackground || *pLabels != 0)
-	//			{
-	//				nValue = *pDepth;
-	//				XnLabel label = *pLabels;
-	//				XnUInt32 nColorID = label % nColors;
-	//				if (label == 0)
-	//				{
-	//					nColorID = nColors;
-	//				}
-
-	//				if (nValue != 0)
-	//				{
-	//					nHistValue = g_pDepthHist[nValue];
-
-	//					pDestImage[0] = nHistValue * Colors[nColorID][0];
-	//					pDestImage[1] = nHistValue * Colors[nColorID][1];
-	//					pDestImage[2] = nHistValue * Colors[nColorID][2];
-	//				}
-	//			}
-
-	//			pDepth++;
-	//			pLabels++;
-	//			pDestImage += 3;
-	//		}
-
-	//		pDestImage += (texWidth - g_nXRes) * 3;
-	//	}
-	//}
-	//else
-	//{
-	//	xnOSMemSet(pDepthTexBuf, 0, 3 * 2 * g_nXRes*g_nYRes);
-	//}
-
-	//glBindTexture(GL_TEXTURE_2D, depthTexID);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, pDepthTexBuf);
-
-	//// Display the OpenGL texture map
-	//glColor4f(0.75, 0.75, 0.75, 1);
-
-	//glEnable(GL_TEXTURE_2D);
-	//DrawTexture(dmd.XRes(), dmd.YRes(), 0, 0);
-	//glDisable(GL_TEXTURE_2D);
-
-	//char strLabel[50] = "";
-	//XnUserID aUsers[15];
-	//XnUInt16 nUsers = 15;
-	//g_UserGenerator.GetUsers(aUsers, nUsers);
-
-#ifdef _KINECT_PLAY
-	nUsers = 1;
-#endif
-
-	// ƒT[ƒo‚©‚ç‚ÌŽóM‚ðŠm”F‚µ‚Ü‚·
-	srv->checkRecvData(10);
-	int nUsers = 1;
-	for (int i = 0; i < nUsers; ++i){
-#ifndef _KINECT_PLAY
-//#ifndef USE_GLES
-//		if (g_bPrintID)
-//		{
-//
-//			XnPoint3D com;
-//			g_UserGenerator.GetCoM(aUsers[i], com);
-//			g_DepthGenerator.ConvertRealWorldToProjective(1, &com, &com);
-//
-//			xnOSMemSet(strLabel, 0, sizeof(strLabel));
-//			if (!g_bPrintState)
-//			{
-//				// Tracking
-//				sprintf(strLabel, "%d", aUsers[i]);
-//			}
-//			else if (g_UserGenerator.GetSkeletonCap().IsTracking(aUsers[i]))
-//			{
-//				// Tracking
-//				sprintf(strLabel, "%d - Tracking", aUsers[i]);
-//			}
-//			else if (g_UserGenerator.GetSkeletonCap().IsCalibrating(aUsers[i]))
-//			{
-//				// Calibrating
-//				sprintf(strLabel, "%d - Calibrating [%s]", aUsers[i], GetCalibrationErrorString(m_Errors[aUsers[i]].first));
-//			}
-//			else
-//			{
-//				// Nothing
-//				sprintf(strLabel, "%d - Looking for pose [%s]", aUsers[i], GetPoseErrorString(m_Errors[aUsers[i]].second));
-//			}
-//
-//			glColor4f(1 - Colors[i%nColors][0], 1 - Colors[i%nColors][1], 1 - Colors[i%nColors][2], 1);
-//
-//			glRasterPos2i(com.X, com.Y);
-//			glPrintString(GLUT_BITMAP_HELVETICA_18, strLabel);
-//		}
-//#endif
-#endif
-
-#ifndef _KINECT_PLAY
-		//if (g_bDrawSkeleton && g_UserGenerator.GetSkeletonCap().IsTracking(aUsers[i])){
-		if (true){
-#endif
-
-//#ifndef _KINECT_PLAY
-//#ifndef USE_GLES
-//			glBegin(GL_LINES);
-//#endif
-//
-//			glColor4f(1 - Colors[aUsers[i] % nColors][0], 1 - Colors[aUsers[i] % nColors][1], 1 - Colors[aUsers[i] % nColors][2], 1);
-//			DrawLimb(aUsers[i], XN_SKEL_HEAD, XN_SKEL_NECK);
-//
-//			DrawLimb(aUsers[i], XN_SKEL_NECK, XN_SKEL_LEFT_SHOULDER);
-//			DrawLimb(aUsers[i], XN_SKEL_LEFT_SHOULDER, XN_SKEL_LEFT_ELBOW);
-//			DrawLimb(aUsers[i], XN_SKEL_LEFT_ELBOW, XN_SKEL_LEFT_HAND);
-//
-//			DrawLimb(aUsers[i], XN_SKEL_NECK, XN_SKEL_RIGHT_SHOULDER);
-//			DrawLimb(aUsers[i], XN_SKEL_RIGHT_SHOULDER, XN_SKEL_RIGHT_ELBOW);
-//			DrawLimb(aUsers[i], XN_SKEL_RIGHT_ELBOW, XN_SKEL_RIGHT_HAND);
-//
-//			DrawLimb(aUsers[i], XN_SKEL_LEFT_SHOULDER, XN_SKEL_TORSO);
-//			DrawLimb(aUsers[i], XN_SKEL_RIGHT_SHOULDER, XN_SKEL_TORSO);
-//
-//			DrawLimb(aUsers[i], XN_SKEL_TORSO, XN_SKEL_LEFT_HIP);
-//			DrawLimb(aUsers[i], XN_SKEL_LEFT_HIP, XN_SKEL_LEFT_KNEE);
-//			DrawLimb(aUsers[i], XN_SKEL_LEFT_KNEE, XN_SKEL_LEFT_FOOT);
-//
-//			DrawLimb(aUsers[i], XN_SKEL_TORSO, XN_SKEL_RIGHT_HIP);
-//			DrawLimb(aUsers[i], XN_SKEL_RIGHT_HIP, XN_SKEL_RIGHT_KNEE);
-//			DrawLimb(aUsers[i], XN_SKEL_RIGHT_KNEE, XN_SKEL_RIGHT_FOOT);
-//
-//			DrawLimb(aUsers[i], XN_SKEL_LEFT_HIP, XN_SKEL_RIGHT_HIP);
-//#endif
-
-			if (i == 0) {
-				if (cnt < 0) {
-					cnt = speed;
-				}
-				if (cnt == 0){
-					//XnSkeletonJointPosition torso, lhip, rhip, neck, lshoul, lelb, lhand;
-					//XnSkeletonJointPosition rshoul, relb, lknee, rknee, rhand, lfoot, rfoot, head;
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_TORSO, torso);
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_LEFT_HIP, lhip);
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_RIGHT_HIP, rhip);
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_NECK, neck);
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_HEAD, head);
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_LEFT_SHOULDER, lshoul);
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_RIGHT_SHOULDER, rshoul);
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_LEFT_ELBOW, lelb);
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_RIGHT_ELBOW, relb);
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_LEFT_HAND, lhand);
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_RIGHT_HAND, rhand);
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_LEFT_KNEE, lknee);
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_RIGHT_KNEE, rknee);
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_LEFT_FOOT, lfoot);
-					//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_RIGHT_FOOT, rfoot);
-
-					XnSkeletonJointPosition SpineBase, torso, lhip, rhip, neck, lshoul,
-						rshoul, lelb, relb, lknee, rknee, lhand, rhand, lfingertip, rfingertip, lankle, rankle, lfoot, rfoot, head;
-					GetSkeletonJointPosition2(XN_SKEL_SPINEBASE, SpineBase);
-					GetSkeletonJointPosition2(XN_SKEL_TORSO, torso);
-					GetSkeletonJointPosition2(XN_SKEL_LEFT_HIP, lhip);
-					GetSkeletonJointPosition2(XN_SKEL_RIGHT_HIP, rhip);
-					GetSkeletonJointPosition2(XN_SKEL_NECK, neck);
-					GetSkeletonJointPosition2(XN_SKEL_HEAD, head);
-					GetSkeletonJointPosition2(XN_SKEL_LEFT_SHOULDER, lshoul);
-					GetSkeletonJointPosition2(XN_SKEL_RIGHT_SHOULDER, rshoul);
-					GetSkeletonJointPosition2(XN_SKEL_LEFT_ELBOW, lelb);
-					GetSkeletonJointPosition2(XN_SKEL_RIGHT_ELBOW, relb);
-					GetSkeletonJointPosition2(XN_SKEL_LEFT_HAND, lhand);
-					GetSkeletonJointPosition2(XN_SKEL_RIGHT_HAND, rhand);
-					GetSkeletonJointPosition2(XN_SKEL_LEFT_KNEE, lknee);
-					GetSkeletonJointPosition2(XN_SKEL_RIGHT_KNEE, rknee);
-					GetSkeletonJointPosition2(XN_SKEL_LEFT_FOOT, lfoot);
-					GetSkeletonJointPosition2(XN_SKEL_RIGHT_FOOT, rfoot);
-
-					GetSkeletonJointPosition2(XN_SKEL_LEFT_FINGERTIP, lfingertip);
-					GetSkeletonJointPosition2(XN_SKEL_RIGHT_FINGERTIP, rfingertip);
-
-					GetSkeletonJointPosition2(XN_SKEL_LEFT_KNEE, lknee);
-					GetSkeletonJointPosition2(XN_SKEL_RIGHT_KNEE, rknee);
-					GetSkeletonJointPosition2(XN_SKEL_LEFT_ANKLE, lankle);
-					GetSkeletonJointPosition2(XN_SKEL_RIGHT_ANKLE, rankle);
-					GetSkeletonJointPosition2(XN_SKEL_LEFT_FOOT, lfoot);
-					GetSkeletonJointPosition2(XN_SKEL_RIGHT_FOOT, rfoot);
-
-
-#ifdef _REVERSE_HAND
-					XnSkeletonJointPosition tshoul, telb, thand;
-
-					copy_joint_position(lshoul, tshoul);
-					copy_joint_position(lelb, telb);
-					copy_joint_position(lhand, thand);
-
-					copy_joint_position(rshoul, lshoul);
-					copy_joint_position(relb, lelb);
-					copy_joint_position(rhand, lhand);
-
-					copy_joint_position(tshoul, rshoul);
-					copy_joint_position(telb, relb);
-					copy_joint_position(thand, rhand);
-
-					XnSkeletonJointPosition tfoot, tknee;
-
-					copy_joint_position(lfoot, tfoot);
-					copy_joint_position(lknee, tknee);
-
-					copy_joint_position(rfoot, lfoot);
-					copy_joint_position(rknee, lknee);
-
-					copy_joint_position(tfoot, rfoot);
-					copy_joint_position(tknee, rknee);
-
-#endif
-					if (start == false) {
-						startpos.X = torso.position.X;
-						startpos.Y = torso.position.Y;
-						startpos.Z = torso.position.Z;
-						start = true;
-					}
-
-					XnPoint3D pos;
-					pos.X = -(torso.position.X - startpos.X);
-					pos.Y = torso.position.Y - startpos.Y;
-					pos.Z = -(torso.position.Z - startpos.Z);
-
-					QMap mq;
-
-					SIGKINECT_Linkage *linkage = (SIGKINECT_Linkage*)srv;
-
-					if (linkage->grasp() == true && linkage->first() == true) {
-						linkage->next();
-
-						copy_joint_position(lshoul, ssld);
-						copy_joint_position(lelb, selb);
-						copy_joint_position(lhand, shand);
-
-						copy_joint_position(lfoot, sfoot);
-						copy_joint_position(lknee, sknee);
-
-
-					}
-					else if (linkage->grasp() == true) {
-						copy_joint_position(ssld, lshoul);
-
-						lelb.fConfidence = selb.fConfidence;
-						lelb.position.X = selb.position.X;
-						lelb.position.Z = selb.position.Z;
-
-						// Žè‚Ìî•ñ‚ð•ÛŽ‚µ‚Ü‚·
-						lhand.fConfidence = shand.fConfidence;
-						lhand.position.X = shand.position.X;
-						lhand.position.Z = shand.position.Z;
-
-					}
-
-					XnPoint3D khip_vec;
-					if (DiffVec(khip_vec, rhip, lhip)) {
-#ifdef _REAL_VERSION
-						mq.insert(QMap::value_type("WAIST", CalcQuaternion(GetSigVec(HIP), khip_vec)));
-#endif
-						Quaternion rrootq = CalcQuaternion(khip_vec, GetSigVec(HIP));
-						Quaternion rrootn = CalcQuaternion(khip_vec, GetSigVec(HIP));
-#ifndef REAL_VERSION
-						rrootq.qw = 1.0;
-						rrootq.qx = 0.0;
-						rrootq.qy = 0.0;
-						rrootq.qz = 0.0;
-#endif
-#ifdef _VERBOSE
-						printf("[%s][%d]WAIST(%f,%f,%f,%f)\n", __FUNCTION__, __LINE__, rrootq.qw, rrootq.qx, rrootq.qy, rrootq.qz);
-#endif
-						// ˜
-						XnPoint3D kneck_vec;
-						if (DiffVec(kneck_vec, torso, neck)) {
-							RotVec(kneck_vec, rrootq, linkage->grasp());
-							XnPoint3D sneck_vec = GetSigVec(WAIST);
-#ifdef _REAL_VERSION
-							mq.insert(QMap::value_type("WAIST_JOINT1", CalcQuaternion(sneck_vec, kneck_vec)));
-#endif
-							Quaternion rwaist = CalcQuaternion(kneck_vec, sneck_vec);
-							Quaternion nwaist = CalcQuaternion(kneck_vec, sneck_vec);
-#ifndef _REAL_VERSION
-							rwaist.qw = 1.0;
-							rwaist.qx = 0.0;
-							rwaist.qy = 0.0;
-							rwaist.qz = 0.0;
-#endif
-
-#ifdef _VERBOSE
-							printf("[%s][%d]WAIST_JOINT1(%f,%f,%f,%f)\n", __FUNCTION__, __LINE__, rwaist.qw, rwaist.qx, rwaist.qy, rwaist.qz);
-#endif
-
-#ifdef _NOLINKAGE
-							XnPoint3D khead_vec;
-							if (DiffVec(khead_vec, neck, head)) {
-								RotVec(khead_vec, rrootq);
-								RotVec(khead_vec, nwaist);
-
-								Quaternion qhead = CalcQuaternion(sneck_vec, khead_vec);
-#ifdef _VERBOSE
-								printf("[%s][%d]HEAD_JOINT1(%f,%f,%f,%f)\n", __FUNCTION__, __LINE__, qhead.qw, qhead.qx, qhead.qy, qhead.qz);
-#endif
-								mq.insert(QMap::value_type("HEAD_JOINT1", qhead));
-							}
-#endif
-
-#ifdef _NOLINKAGE
-							XnPoint3D krsh_vec;
-							if (DiffVec(krsh_vec, rshoul, relb)) {
-								XnPoint3D srsh_vec = GetSigVec(RSHOULDER);
-
-								RotVec(krsh_vec, rrootq);
-								RotVec(krsh_vec, rwaist);
-
-								mq.insert(QMap::value_type("RARM_JOINT2", CalcQuaternion(srsh_vec, krsh_vec)));
-								Quaternion rrsh = CalcQuaternion(krsh_vec, srsh_vec); //‹t‰ñ“]
-
-								XnPoint3D krel_vec;
-								if (DiffVec(krel_vec, relb, rhand)) {
-									RotVec(krel_vec, rrootq);
-									RotVec(krel_vec, rwaist);
-									RotVec(krel_vec, rrsh);
-
-									mq.insert(QMap::value_type("RARM_JOINT3", CalcQuaternion(srsh_vec, krel_vec)));
-								}
-							}
-
-							XnPoint3D klsh_vec;
-							if (DiffVec(klsh_vec, lshoul, lelb)) {
-								XnPoint3D slsh_vec = GetSigVec(LSHOULDER);
-
-								RotVec(klsh_vec, rrootq);
-								RotVec(klsh_vec, rwaist);
-
-								mq.insert(QMap::value_type("LARM_JOINT2", CalcQuaternion(slsh_vec, klsh_vec)));
-								Quaternion rlsh = CalcQuaternion(klsh_vec, slsh_vec); 
-								//////////////////////////////////////////////
-
-
-								XnPoint3D klel_vec;
-								if (DiffVec(klel_vec, lelb, lhand)) {
-
-									RotVec(klel_vec, rrootq);
-									RotVec(klel_vec, rwaist);
-									RotVec(klel_vec, rlsh);
-
-									mq.insert(QMap::value_type("LARM_JOINT3", CalcQuaternion(slsh_vec, klel_vec)));
-								}
-							}
-						}
-#endif
-
-#ifdef _LINKAGE
-
-						XnPoint3D klsh_vec;   
-						XnPoint3D krsh_vec_1;
-						XnPoint3D krsh_vec_2;
-
-						if (DiffVec(klsh_vec, lshoul, lelb) &&
-							DiffVec(krsh_vec_1, lshoul, lelb) && 
-							DiffVec(krsh_vec_2, lshoul, lelb))
-						{
-#ifndef _REVERSE_HAND
-							XnPoint3D slsh_vec = GetSigVec(LSHOULDER); 
-							XnPoint3D srsh_vec_1 = GetSigVec(LSHOULDER); 
-							XnPoint3D srsh_vec_2 = GetSigVec(LSHOULDER);
-#else
-							XnPoint3D slsh_vec = GetSigVec(RSHOULDER); 
-							XnPoint3D srsh_vec_1 = GetSigVec(RSHOULDER); 
-							XnPoint3D srsh_vec_2 = GetSigVec(RSHOULDER); 
-#endif
-							RotVec(klsh_vec, rrootq, linkage->grasp());
-							RotVec(klsh_vec, rwaist, linkage->grasp()); 
-							RotVec(krsh_vec_1, rrootq, linkage->grasp());
-							RotVec(krsh_vec_1, rwaist, linkage->grasp()); 
-							RotVec(krsh_vec_2, rrootq, linkage->grasp());
-							RotVec(krsh_vec_2, rwaist, linkage->grasp()); 
-#ifdef _VERBOSE
-							printf("krsh_vec_2(x:%f,y:%f,z:%f)\n", krsh_vec_2.X, krsh_vec_2.Y, krsh_vec_2.Z);
-#endif
-							Quaternion rlsht = CalcQuaternion(slsh_vec, klsh_vec);
-							mq.insert(QMap::value_type((std::string(GRASP_ARM[LEFT]) + std::string("_JOINT2")).c_str(), rlsht));
-							Quaternion rlsh = CalcQuaternion(klsh_vec, slsh_vec);
-
-							Quaternion rrsht_1 = CalcQuaternion(krsh_vec_1, srsh_vec_1); 
-							mq.insert(QMap::value_type((std::string(GRASP_ARM[RIGHT]) + std::string("_JOINT2-1")).c_str(), rrsht_1));
-							Quaternion rrsh_1 = CalcQuaternion(srsh_vec_1, krsh_vec_1); 
-
-#ifdef _OLD_VERSION
-							Quaternion rrsht_2 = CalcQuaternion(srsh_vec_2, krsh_vec_2);
-							mq.insert(QMap::value_type("RARM_JOINT2-2", rrsht_2));
-							Quaternion rrsh_2 = CalcQuaternion(krsh_vec_2, srsh_vec_2);
-#else
-							Quaternion rrsht_2 = CalcQuaternion(krsh_vec_2, srsh_vec_2);
-							mq.insert(QMap::value_type((std::string(GRASP_ARM[RIGHT]) + std::string("_JOINT2-2")).c_str(), rrsht_2));
-							Quaternion rrsh_2 = CalcQuaternion(srsh_vec_2, krsh_vec_2);
-#endif
-
-#ifdef _VERBOSE
-							for (int i = 0; i < 70; i++) printf("-%s", (i == 69 ? "\n" : ""));
-							printf("[%s][%d]LARM_JOINT2  (%f,%f,%f,%f)\n", __FUNCTION__, __LINE__, rlsh.qw, rlsh.qx, rlsh.qy, rlsh.qz);
-							printf("[%s][%d]RARM_JOINT2-1(%f,%f,%f,%f)\n", __FUNCTION__, __LINE__, rrsh_1.qw, rrsh_1.qx, rrsh_1.qy, rrsh_1.qz);
-							printf("[%s][%d]RARM_JOINT2-2(%f,%f,%f,%f)\n", __FUNCTION__, __LINE__, rrsh_2.qw, rrsh_2.qx, rrsh_2.qy, rrsh_2.qz);
-#endif
-							XnPoint3D klel_vec; 
-							XnPoint3D krel_vec_1;
-							XnPoint3D krel_vec_2;
-
-							if (DiffVec(klel_vec, lelb, lhand) &&
-								DiffVec(krel_vec_1, lelb, lhand) && 
-								DiffVec(krel_vec_2, lelb, lhand)) 
-							{
-								RotVec(klel_vec, rrootq, linkage->grasp()); 
-								RotVec(klel_vec, rwaist, linkage->grasp());
-								RotVec(klel_vec, rlsh, linkage->grasp());
-
-								RotVec(krel_vec_1, rrootq); 
-								RotVec(krel_vec_1, rwaist);
-								RotVec_Xaxis_Reverse(krel_vec_1, rrsh_1, linkage->grasp()); 
-#ifdef _OLD_VERSION
-								RotVec(krel_vec_2, rrootq, linkage->grasp());
-								RotVec(krel_vec_2, rwaist, linkage->grasp()); 
-								RotVec(krel_vec_2, rrsh_2, linkage->grasp()); 
-#else
-								RotVec(krel_vec_2, rrootq, linkage->grasp()); 
-								RotVec(krel_vec_2, rwaist, linkage->grasp()); 
-								RotVec_Xaxis_Reverse(krel_vec_2, rrsh_2, linkage->grasp()); 
-#endif
-#ifdef _VERBOSE
-								printf("krel_vec_2(x:%f,y:%f,z:%f)\n", krel_vec_2.X, krel_vec_2.Y, krel_vec_2.Z);
-#endif
-								Quaternion qlelb = CalcQuaternion(slsh_vec, klel_vec);
-								mq.insert(QMap::value_type((std::string(GRASP_ARM[LEFT]) + std::string("_JOINT3")).c_str(), qlelb));
-
-								Quaternion qrelb_1 = CalcQuaternion(srsh_vec_1, krel_vec_1);
-								mq.insert(QMap::value_type((std::string(GRASP_ARM[RIGHT]) + std::string("_JOINT3-1")).c_str(), qrelb_1));
-
-								Quaternion qrelb_2 = CalcQuaternion(srsh_vec_2, krel_vec_2);
-								mq.insert(QMap::value_type((std::string(GRASP_ARM[RIGHT]) + std::string("_JOINT3-2")).c_str(), qrelb_2));
-
-#ifdef _VERBOSE
-								printf("[%s][%d]LARM_JOINT3  (%f,%f,%f,%f)\n", __FUNCTION__, __LINE__, qlelb.qw, qlelb.qx, qlelb.qy, qlelb.qz);
-								printf("[%s][%d]RARM_JOINT3-1(%f,%f,%f,%f)\n", __FUNCTION__, __LINE__, qrelb_1.qw, qrelb_1.qx, qrelb_1.qy, qrelb_1.qz);
-								printf("[%s][%d]RARM_JOINT3-2(%f,%f,%f,%f)\n", __FUNCTION__, __LINE__, qrelb_2.qw, qrelb_2.qx, qrelb_2.qy, qrelb_2.qz);
-#endif
-							}
-						}
-#endif
-
-					} // end of waist
-
-#ifdef _USE_FOOT
-					XnPoint3D sleg_vec = GetSigVec(LEG);
-#endif
-
-#ifdef _WHOLE_BODY
-					XnPoint3D krhip_vec;
-					if (DiffVec(krhip_vec, rhip, rknee))
-					{
-
-						RotVec(krhip_vec, rrootq);
-
-						mq.insert(QMap::value_type("RLEG_JOINT2", CalcQuaternion(sleg_vec, krhip_vec)));
-						Quaternion rrhp = CalcQuaternion(krhip_vec, sleg_vec);
-#ifdef _VERBOSE
-						printf("[%s][%d]RLEG_JOINT2(%f,%f,%f,%f)\n", __FUNCTION__, __LINE__, rrhp.qw, rrhp.qx, rrhp.qy, rrhp.qz);
-#endif
-
-						XnPoint3D krknee_vec;
-						if (DiffVec(krknee_vec, rknee, rfoot))
-						{
-
-							RotVec(krknee_vec, rrootq);
-							RotVec(krknee_vec, rrhp);
-
-							Quaternion qrleg = CalcQuaternion(sleg_vec, krknee_vec);
-							mq.insert(QMap::value_type("RLEG_JOINT4", qrleg));
-#ifdef _VERBOSE
-							printf("[%s][%d]RLEG_JOINT4(%f,%f,%f,%f)\n", __FUNCTION__, __LINE__, qrleg.qw, qrleg.qx, qrleg.qy, qrleg.qz);
-#endif
-
-						}
-					}
-#endif
-
-#ifdef _USE_FOOT
-					XnPoint3D klhip_vec;  
-					XnPoint3D krhip_vec_1; 
-					XnPoint3D krhip_vec_2;
-
-					if (DiffVec(klhip_vec, lhip, lknee) && 
-						DiffVec(krhip_vec_1, lhip, lknee) && 
-						DiffVec(krhip_vec_2, lhip, lknee))   
-					{
-						RotVec(klhip_vec, rrootq/*, linkage->grasp()*/); 
-						RotVec_Zaxis(krhip_vec_1, rrootq, linkage->grasp()); 
-						RotVec_Zaxis(krhip_vec_2, rrootq, linkage->grasp()); 
-
-						Quaternion rlleg = CalcQuaternion(sleg_vec, klhip_vec);
-						mq.insert(QMap::value_type((std::string(GRASP_LEG[LEFT]) + std::string("_JOINT2")).c_str(), rlleg));
-						Quaternion rlhp = CalcQuaternion(klhip_vec, sleg_vec);
-
-						Quaternion rrleg_1 = CalcQuaternion(krhip_vec_1, sleg_vec);
-						mq.insert(QMap::value_type((std::string(GRASP_LEG[RIGHT]) + std::string("_JOINT2-1")).c_str(), rrleg_1));
-						Quaternion rrhp_1 = CalcQuaternion(sleg_vec, krhip_vec_1); 
-
-						Quaternion rrleg_2 = CalcQuaternion(krhip_vec_2, sleg_vec);
-						mq.insert(QMap::value_type((std::string(GRASP_LEG[RIGHT]) + std::string("_JOINT2-2")).c_str(), rrleg_2));
-						Quaternion rrhp_2 = CalcQuaternion(sleg_vec, krhip_vec_2); 
-
-#ifdef _VERBOSE
-						printf("[%s][%d]%s(%f,%f,%f,%f)\n", __FUNCTION__, __LINE__, (std::string(GRASP_LEG[LEFT]) + std::string("_JOINT2")).c_str(), rlhp.qw, rlhp.qx, rlhp.qy, rlhp.qz);
-#endif
-
-						XnPoint3D klknee_vec;
-						XnPoint3D krknee_vec_1;
-						XnPoint3D krknee_vec_2;
-
-						if (DiffVec(klknee_vec, lknee, lfoot) &&
-							DiffVec_Xaxis(krknee_vec_1, lknee, lfoot) &&
-							DiffVec_Xaxis(krknee_vec_2, lknee, lfoot)) {
-
-							RotVec(klknee_vec, rrootq/*, linkage->grasp()*/);
-							RotVec(klknee_vec, rlhp/*,   linkage->grasp()*/);
-							RotVec(krknee_vec_1, rrootq);
-							RotVec(krknee_vec_1, rrhp_1);
-							RotVec(krknee_vec_2, rrootq/*, linkage->grasp()*/);
-							RotVec(krknee_vec_2, rrhp_2/*, linkage->grasp()*/);
-
-							Quaternion qlleg = CalcQuaternion(sleg_vec, klknee_vec);
-							mq.insert(QMap::value_type((std::string(GRASP_LEG[LEFT]) + std::string("_JOINT4")).c_str(), qlleg));
-							Quaternion qrleg_1 = CalcQuaternion(sleg_vec, krknee_vec_1);
-							mq.insert(QMap::value_type((std::string(GRASP_LEG[RIGHT]) + std::string("_JOINT4-1")).c_str(), qrleg_1));
-							Quaternion qrleg_2 = CalcQuaternion(sleg_vec, krknee_vec_2);
-							mq.insert(QMap::value_type((std::string(GRASP_LEG[RIGHT]) + std::string("_JOINT4-2")).c_str(), qrleg_2));
-
-#ifdef _VERBOSE
-							printf("[%s][%d]%s(%f,%f,%f,%f)\n", __FUNCTION__, __LINE__, (std::string(GRASP_LEG[LEFT]) + std::string("_JOINT4")).c_str(), qlleg.qw, qlleg.qx, qlleg.qy, qlleg.qz);
-#endif
-
-						}
-					}
-#endif
-
-
-#ifdef _OLD_VERSION
-					int connectedNum = srv->getConnectedControllerNum();
-					printf("[%s][%d]connected controllers number:%d\n", __FUNCTION__, __LINE__, connectedNum);
-
-					if (connectedNum > 0){
-#endif
-
-						float tx = (float)(pos.X * move_speed);
-						float ty = (float)(pos.Y * move_speed);
-						float tz = (float)(pos.Z * move_speed);
-
-						tz = 0;
-
-						std::string posx = FloatToString(tx);
-						std::string posy = FloatToString(ty);
-						std::string posz = FloatToString(tz);
-						std::string pos_ = "POSITION";
-						pos_ += " " + posx + "," + posy + "," + posz;
-
-						std::string st = "KINECT ";
-#ifdef _REAL_VERSION
-						st += pos_;
-#endif
-						QMap::iterator it = mq.begin();
-
-						while (it != mq.end())
-						{
-							st += " ";
-							st += (GetStringFromQuaternion((*it).first.c_str(), (*it).second));
-							it++;
-						}
-						st += " END";
-						printf("st=\n%s\n",st.c_str());
-#ifdef _VERBOSE
-						for (int i = 0; i < 70; i++) printf("-%s", (i == 69 ? "\n" : ""));
-						printf("[%s][%d]message to %s:%s\n", __FUNCTION__, __LINE__, agent_name.c_str(), st.c_str());
-#endif
-						srv->sendMsg(agent_name, st);
-#ifdef _OLD_VERSION
-						std::vector<std::string> names = srv->getAllConnectedEntitiesName();
-						for (int i = 0; i < connectedNum; i++){
-							srv->sendMsgToCtr(names[i].c_str(), st);
-							printf("[%s][%d]entity:%s,info:%s\n", __FUNCTION__, __LINE__, names[i].c_str(), st.c_str());
-						}
-					}
-#endif
-
-				}
-				cnt = speed;
-			}
-			cnt--;
-		}
-//#ifndef USE_GLES
-//		glEnd();
-//#endif
-#ifndef _KINECT_PLAY
-	}
-#endif
-}
-
-
-void KinectApp::sendMessage2(sigverse::SIGService *srv, std::string& agent_name)
+void KinectApp::sendMessage4(sigverse::SIGService *srv, std::string& agent_name)
 {
 	static bool bInitialized = false;
 	//static GLuint depthTexID;
@@ -1180,7 +462,7 @@ void KinectApp::sendMessage2(sigverse::SIGService *srv, std::string& agent_name)
 
 		GetPrivateProfileString(_T("SETTING"), _T("MOVE_SPEED"), '\0', spd, 256, _T("./SIGNiUserTracker.ini"));
 		if (spd[0] == '\0') {
-			move_speed = 0.1;
+			move_speed = 1.0;
 		}
 		else {
 			move_speed = atof((char*)spd);
@@ -1192,13 +474,13 @@ void KinectApp::sendMessage2(sigverse::SIGService *srv, std::string& agent_name)
 
 
 
-	//i means humanbody index actually. 
+	//i : humanbody index 
 	int i = 0;
 	if (i == 0){
 		if (cnt < 0) cnt = speed;
 		if (cnt == 0){
 			XnSkeletonJointPosition SpineBase, torso, lhip, rhip, neck, lshoul,
-				rshoul, lelb, relb, lknee, rknee, lhand, rhand, lfoot, rfoot, head;
+				rshoul, lelb, relb, lknee, rknee, lhand, rhand, lfingertip, rfingertip, lankle, rankle, lfoot, rfoot, head;
 			//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_TORSO, torso);
 			//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_LEFT_HIP, lhip);
 			//g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[0], XN_SKEL_RIGHT_HIP, rhip);
@@ -1232,14 +514,21 @@ void KinectApp::sendMessage2(sigverse::SIGService *srv, std::string& agent_name)
 			GetSkeletonJointPosition2(XN_SKEL_LEFT_FOOT, lfoot);
 			GetSkeletonJointPosition2(XN_SKEL_RIGHT_FOOT, rfoot);
 
-			//float dist;
-			//float dist2;
+			GetSkeletonJointPosition2(XN_SKEL_LEFT_FINGERTIP, lfingertip);
+			GetSkeletonJointPosition2(XN_SKEL_RIGHT_FINGERTIP, rfingertip);
+
+			GetSkeletonJointPosition2(XN_SKEL_LEFT_KNEE, lknee);
+			GetSkeletonJointPosition2(XN_SKEL_RIGHT_KNEE, rknee);
+			GetSkeletonJointPosition2(XN_SKEL_LEFT_ANKLE, lankle);
+			GetSkeletonJointPosition2(XN_SKEL_RIGHT_ANKLE, rankle);
+			GetSkeletonJointPosition2(XN_SKEL_LEFT_FOOT, lfoot);
+			GetSkeletonJointPosition2(XN_SKEL_RIGHT_FOOT, rfoot);
+
 			if (start == false && SpineBase.position.Z != 0)
 			{
 				startpos.X = SpineBase.position.X;
 				startpos.Y = SpineBase.position.Y;
 				startpos.Z = SpineBase.position.Z;
-				printf("Start position X : %f ------ Y : %f   ---- Z : %f   ---- end ", startpos.X, startpos.Y, startpos.Z);
 				start = true;
 			}
 
@@ -1248,30 +537,21 @@ void KinectApp::sendMessage2(sigverse::SIGService *srv, std::string& agent_name)
 			pos.Y = SpineBase.position.Y - startpos.Y;
 			pos.Z = -(SpineBase.position.Z - startpos.Z);
 
-			QMap mq; 
+			QMap mq; //Map of joint names and its quaternions 
 
 			//calculate the rotation of entire body from left hip position and right hip position.
-			//showXnSkeletonJointPosition("torso",torso);
-			//showXnSkeletonJointPosition("rhip", rhip);
-			//showXnSkeletonJointPosition("lhip", lhip);
-			//showXnSkeletonJointPosition("neck", neck);
 
 			XnPoint3D shoulder_vec;
 			XnPoint3D khip_vec;
 			if (DiffVec(khip_vec, rhip, lhip))
 			{
+				//					r sh val l sh val
 				DiffVec(shoulder_vec, rshoul, lshoul);
+				//                                                  p.X = 1;
+				//                                                  p.Y = 0;
+				//                                                  p.Z = 0; 
+				//rshoulder means the quaternion calculated from (1,0,0) and rshouder vector.
 				Quaternion rshoulder = CalcQuaternion(shoulder_vec, GetSigVec(HIP));
-				showJointOrientations("ShoulderLeft", jointorientations[4]);
-				showJointOrientations("ShoulderRight", jointorientations[8]);
-				Quaternion q1 = KinectApp::convertVector42Quaternion(jointorientations[4].Orientation);
-				Quaternion q0;
-				q0.qw = 0.707f;
-				q0.qw = 0.0f;
-				q0.qw = 0.0f;
-				q0.qw = 0.707f;
-				Quaternion q2 = KinectApp::MultiQuaternion(q0, q1);
-				//showQuaternion("q2",q2);
 
 
 				//	RotVec(khip_vec, rshoulder);
@@ -1279,43 +559,56 @@ void KinectApp::sendMessage2(sigverse::SIGService *srv, std::string& agent_name)
 				//                                                  p.X = 1;
 				//                                                  p.Y = 0;
 				//                                                  p.Z = 0;         
+				//waist quaternion is calculated from (1,0,0) and hip vector
 				mq.insert(QMap::value_type("WAIST", CalcQuaternion(GetSigVec(HIP), khip_vec)));
-				//showQuaternion("WAIST_QUATERNION", CalcQuaternion(GetSigVec(HIP), khip_vec));
-				//showXnPoint3D("GetSigVec(HIP)", GetSigVec(HIP));//vector
-				//showXnPoint3D("khip_vec", khip_vec);//vector
 
 				//                                               p.X = 1;
 				//                                               p.Y = 0;
 				//                                               p.Z = 0;  
+				//rrootq quaternion is calculated from hip vector and  (1,0,0)
 				Quaternion rrootq = CalcQuaternion(khip_vec, GetSigVec(HIP));
 
 
-				XnPoint3D kneck_vec;
 
+
+
+
+
+				//腰
+				XnPoint3D kneck_vec;
+				//kneck: vector from torso to  neck
 				if (DiffVec(kneck_vec, torso, neck))
 				{
-
-					//RotVec(kneck_vec, rrootq);
+					//whole body rotation
+					RotVec(kneck_vec, rrootq);
+					//RotVec(kneck_vec, rroot);
 					//tlanslation by whole body rotation 
 
 					//RotVec(kneck_vec, rshoulder);
+					//                       p.X = 0;
+					//                       p.Y = 1;
+					//                       p.Z = 0;
 					XnPoint3D sneck_vec = GetSigVec(WAIST);
 					//showXnPoint3D("shoulder_vec", shoulder_vec);
 
 					//                                                        p.X = 0;
 					//                                                        p.Y = 1;
-					//                                                        p.Z = 0;
+					//                                                        p.Z = 0;   kneck: vector from torso to  neck
 					mq.insert(QMap::value_type("WAIST_JOINT1", CalcQuaternion(sneck_vec, kneck_vec)));
-					//showXnPoint3D("sneck_vec", sneck_vec);//vector
-					//showXnPoint3D("kneck_vec", kneck_vec);//vector
 
 					//mq.insert(QMap::value_type("WAIST_JOINT1", CalcQuaternion(sneck_vec, kneck_vec)));
-					Quaternion rwaist = CalcQuaternion(kneck_vec, sneck_vec);
+					//                                              p.X = 0;
+					//                                              p.Y = 1;
+					//           kneck: vector from torso to  neck  p.Z = 0;   
+					Quaternion rwaist = CalcQuaternion(kneck_vec, sneck_vec); 
 					XnPoint3D shoulder_vec1;
 					if (DiffVec(shoulder_vec1, rshoul, lshoul))
 					{
 						//RotVec(shoulder_vec1, rrootq);
-						//RotVec(shoulder_vec1, rwaist);
+						//	RotVec(shoulder_vec1, rwaist);
+						//                                                          p.X = 1;
+						//                                                          p.Y = 0;
+						//                                                          p.Z = 0;       rsh to lsh
 						mq.insert(QMap::value_type("WAIST_JOINT0", CalcQuaternion(GetSigVec(HIP), shoulder_vec1)));
 					}
 					XnPoint3D khead_vec;
@@ -1323,10 +616,14 @@ void KinectApp::sendMessage2(sigverse::SIGService *srv, std::string& agent_name)
 					{
 						//	RotVec(khead_vec, rrootq);
 						//	RotVec(khead_vec, rshoulder);
-						RotVec(khead_vec, rwaist);
+						//RotVec(khead_vec, rwaist); //coment out by ikeda 11/11
+						RotVec(kneck_vec, rrootq);
+						RotVec(kneck_vec, rwaist);
 
+						//ƒNƒI[ƒ^ƒjƒIƒ“ŒvŽZ
 						mq.insert(QMap::value_type("HEAD_JOINT1", CalcQuaternion(sneck_vec, khead_vec)));
 					}
+
 
 					XnPoint3D krsh_vec;
 					if (DiffVec(krsh_vec, rshoul, relb))
@@ -1334,7 +631,9 @@ void KinectApp::sendMessage2(sigverse::SIGService *srv, std::string& agent_name)
 						XnPoint3D srsh_vec = GetSigVec(RSHOULDER);
 
 						//RotVec(krsh_vec, rrootq);
-						RotVec(krsh_vec, rshoulder);
+						//RotVec(krsh_vec, rshoulder); //coment out by ikeda 11/11
+						//RotVec(krsh_vec, rwaist);  //coment out by ikeda 11/11
+						RotVec(krsh_vec, rrootq);
 						RotVec(krsh_vec, rwaist);
 
 						mq.insert(QMap::value_type("RARM_JOINT2", CalcQuaternion(srsh_vec, krsh_vec)));
@@ -1342,24 +641,35 @@ void KinectApp::sendMessage2(sigverse::SIGService *srv, std::string& agent_name)
 						//showXnPoint3D("krsh_vec", krsh_vec);//vector
 
 
-						Quaternion rrsh = CalcQuaternion(krsh_vec, srsh_vec); //‹t‰ñ“]
-						showQuaternion("rrsh", rrsh);
-						Quaternion q0;
-						q0.qw = 0.707f;
-						q0.qw = 0.0f;
-						q0.qw = 0.0f;
-						q0.qw = 0.707f;
-						Quaternion q1 = KinectApp::MultiQuaternion(q0, rrsh);
-						//showQuaternion("q1", q1);
+						//Quaternion rrsh = CalcQuaternion(krsh_vec, srsh_vec); 
+						Quaternion rrsh = CalcQuaternion(krsh_vec, srsh_vec);
+
+
 						XnPoint3D krel_vec;
 						if (DiffVec(krel_vec, relb, rhand))
 						{
-							//RotVec(krel_vec, rrootq);
-							RotVec(krel_vec, rshoulder);
+							//Coordinate system tlanslation by entire body and waist.
+							RotVec(krel_vec, rrootq);
 							RotVec(krel_vec, rwaist);
 							RotVec(krel_vec, rrsh);
 
+							//Calculate quaternion
 							mq.insert(QMap::value_type("RARM_JOINT3", CalcQuaternion(srsh_vec, krel_vec)));
+							Quaternion rrel = CalcQuaternion(krel_vec, srsh_vec); 
+
+							//right wrist
+							XnPoint3D krwrist_vec;
+							if (DiffVec(krwrist_vec, rhand, rfingertip))
+							{
+								//Coordinate system tlanslation by entire body and waist.
+								RotVec(krwrist_vec, rrootq);
+								RotVec(krwrist_vec, rwaist);
+								RotVec(krwrist_vec, rrsh);
+								RotVec(krwrist_vec, rrel);
+
+								//Calculate quaternion
+								mq.insert(QMap::value_type("RARM_JOINT5", CalcQuaternion(srsh_vec, krwrist_vec)));
+							}
 						}
 					}
 
@@ -1368,87 +678,142 @@ void KinectApp::sendMessage2(sigverse::SIGService *srv, std::string& agent_name)
 					{
 						XnPoint3D slsh_vec = GetSigVec(LSHOULDER);
 
-						//	RotVec(klsh_vec, rrootq);
-						RotVec(klsh_vec, rshoulder);
+						//Coordinate system tlanslation by entire body and waist.
+						RotVec(klsh_vec, rrootq);
 						RotVec(klsh_vec, rwaist);
+						//RotVec(klsh_vec, rrootq);
+						//RotVec(klsh_vec, rshoulder);//coment out by ikeda 11/11
+						//RotVec(klsh_vec, rwaist);//coment out by ikeda 11/11
 
 						mq.insert(QMap::value_type("LARM_JOINT2", CalcQuaternion(slsh_vec, klsh_vec)));
 						Quaternion rlsh = CalcQuaternion(klsh_vec, slsh_vec); //‹t‰ñ“]
-						showQuaternion("rlsh", rlsh);
-						//showXnPoint3D("slsh_vec", slsh_vec);//vector
-						//showXnPoint3D("klsh_vec", klsh_vec);//vector
-						//////////////////////////////////////////////
 
 						XnPoint3D klel_vec;
 						if (DiffVec(klel_vec, lelb, lhand))
 						{
 
-							//	RotVec(klel_vec, rrootq);
-							RotVec(klel_vec, rshoulder);
+							//RotVec(klel_vec, rrootq);
+							//RotVec(klel_vec, rshoulder);//coment out by ikeda 11/11
+							//RotVec(klel_vec, rwaist);//coment out by ikeda 11/11
+							//RotVec(klel_vec, rlsh);//coment out by ikeda 11/11
+							//Coordinate system tlanslation by entire body and waist.
+							RotVec(klel_vec, rrootq);
 							RotVec(klel_vec, rwaist);
 							RotVec(klel_vec, rlsh);
 
 							mq.insert(QMap::value_type("LARM_JOINT3", CalcQuaternion(slsh_vec, klel_vec)));
+							Quaternion rlel = CalcQuaternion(klel_vec, slsh_vec); //逆回転
+
+							//left wrist
+							XnPoint3D klwrist_vec;
+							if (DiffVec(klwrist_vec, lhand, lfingertip))
+							{
+								//Coordinate system tlanslation by entire body and waist.
+								RotVec(klwrist_vec, rrootq);
+								RotVec(klwrist_vec, rwaist);
+								RotVec(klwrist_vec, rlsh);
+								RotVec(klwrist_vec, rlel);
+
+								//calculate quaternion
+								mq.insert(QMap::value_type("LARM_JOINT5", CalcQuaternion(slsh_vec, klwrist_vec)));
+							}
 						}
 					}
 				}
 
 				XnPoint3D sleg_vec = GetSigVec(LEG);
+				XnPoint3D sfoot_vec = GetSigVec(FOOT);
+
+				//root of right leg
 				XnPoint3D krhip_vec;
 				if (DiffVec(krhip_vec, rhip, rknee))
 				{
+					//Coordinate system tlanslation of vector in Kinect accoding to parent joint 
+					RotVec(krhip_vec, rrootq);
 
-					//	RotVec(krhip_vec, rrootq);
-					//	RotVec(krhip_vec, rshoulder);
+					//calculate quaternion
 					mq.insert(QMap::value_type("RLEG_JOINT2", CalcQuaternion(sleg_vec, krhip_vec)));
 					Quaternion rrhp = CalcQuaternion(krhip_vec, sleg_vec);
 
+					//right knee
 					XnPoint3D krknee_vec;
-					if (DiffVec(krknee_vec, rknee, rfoot))
+					if (DiffVec(krknee_vec, rknee, rankle))
 					{
-						//	RotVec(krknee_vec, rrootq);
-						//	RotVec(krknee_vec, rshoulder);
+						//Coordinate system tlanslation of vector in Kinect accoding to parent joint 
+						RotVec(krknee_vec, rrootq);
 						RotVec(krknee_vec, rrhp);
 
+						//calculate quaternion
 						mq.insert(QMap::value_type("RLEG_JOINT4", CalcQuaternion(sleg_vec, krknee_vec)));
+						Quaternion rrknee = CalcQuaternion(krknee_vec, sleg_vec); 
+
+						//right ankle
+						XnPoint3D krankle_vec;
+						if (DiffVec(krankle_vec, rankle, rfoot))
+						{
+							//Coordinate system tlanslation by entire body and waist.
+							RotVec(krankle_vec, rrootq);
+							RotVec(krankle_vec, rrhp);
+							RotVec(krankle_vec, rrknee);
+
+							//calculate quaternion
+							mq.insert(QMap::value_type("RLEG_JOINT6", CalcQuaternion(sfoot_vec, krankle_vec)));
+						}
 					}
 				}
 
+				//root of left leg
 				XnPoint3D klhip_vec;
-				if (DiffVec(klhip_vec, lhip, lknee)){
+				if (DiffVec(klhip_vec, lhip, lknee))
+				{
+					//Coordinate system tlanslation by entire body and waist.
+					RotVec(klhip_vec, rrootq);
 
-					//	RotVec(klhip_vec, rrootq);
-					//	RotVec(klhip_vec, rshoulder);
-					//ƒNƒI[ƒ^ƒjƒIƒ“ŒvŽZ
+					//Calculate quaternoin
 					mq.insert(QMap::value_type("LLEG_JOINT2", CalcQuaternion(sleg_vec, klhip_vec)));
-					Quaternion rlhp = CalcQuaternion(klhip_vec, sleg_vec); //‹t‰ñ“]
+					Quaternion rlhp = CalcQuaternion(klhip_vec, sleg_vec); 
 
+					//left knee
 					XnPoint3D klknee_vec;
-					if (DiffVec(klknee_vec, lknee, lfoot))
+					if (DiffVec(klknee_vec, lknee, lankle))
 					{
-
-						//	RotVec(klknee_vec, rrootq);
-						//	RotVec(klknee_vec, rshoulder);
+						RotVec(klknee_vec, rrootq);
 						RotVec(klknee_vec, rlhp);
 
+						//calculate quaternion
 						mq.insert(QMap::value_type("LLEG_JOINT4", CalcQuaternion(sleg_vec, klknee_vec)));
+						Quaternion rlknee = CalcQuaternion(klknee_vec, sleg_vec); 
+
+						//left ankle
+						XnPoint3D klankle_vec;
+						if (DiffVec(klankle_vec, lankle, lfoot))
+						{
+							//Coordinate system tlanslation by entire body and waist.
+							RotVec(klankle_vec, rrootq);
+							RotVec(klankle_vec, rlhp);
+							RotVec(klankle_vec, rlknee);
+
+							//calculate quaternion
+							mq.insert(QMap::value_type("LLEG_JOINT6", CalcQuaternion(sfoot_vec, klankle_vec)));
+						}
 					}
 				}
 				int connectedNum = srv->getConnectedControllerNum();
 
 				if (connectedNum > 0){
 
-					//printf("pos.X=%f, pos.Y=%f, pos.Z=%f, move_speed=%f\n",pos.X,pos.Y,pos.Z,move_speed);
+					printf("pos.X=%f, pos.Y=%f, pos.Z=%f, move_speed=%f\n",pos.X,pos.Y,pos.Z,move_speed);
 					std::string posx = FloatToString((100 * pos.X*(float)move_speed));
 					std::string posy = FloatToString((100 * pos.Y*(float)move_speed));
 					std::string posz = FloatToString((100 * pos.Z*(float)move_speed));
 					std::string pos_ = "POSITION";
-					pos_ += " " + posx + "," + posy + "," + posz;
+					pos_ += ":" + posx + "," + posy + "," + posz;
 
 
 					std::string st = "KINECT_DATA ";
 					st += pos_;
 					QMap::iterator it = mq.begin();
+
 					while (it != mq.end())
 					{
 						st += " ";
@@ -1456,6 +821,7 @@ void KinectApp::sendMessage2(sigverse::SIGService *srv, std::string& agent_name)
 						it++;
 					}
 					st += " END:";
+					//LOG(st);
 					printf("st=\n%s\n",st.c_str());
 					std::vector<std::string> names = srv->getAllConnectedEntitiesName();
 					for (int i = 0; i < connectedNum; i++){
@@ -1539,7 +905,7 @@ std::string KinectApp::GetStringFromQuaternion(std::string jname, Quaternion q)
 	std::string qx = FloatToString(q.qx);
 	std::string qy = FloatToString(q.qy);
 	std::string qz = FloatToString(q.qz);
-	std::string s = jname + " " + qw + "," + qx + "," + qy + "," + qz;
+	std::string s = jname + ":" + qw + "," + qx + "," + qy + "," + qz;
 
 	return s;
 }
