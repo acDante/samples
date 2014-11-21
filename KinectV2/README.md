@@ -1,8 +1,8 @@
 Name  
 ====  
- KinectV2  
+KinectV2  
 
-## Overview
+## Overview  
  Client side service provider of the Sample project to move avator with KinectV2, as Visual Studio 2013 C++ project.  
 
 ## Description
