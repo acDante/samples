@@ -1,8 +1,8 @@
 Name  
 ====  
-KinectV2  
+ KinectV2  
 
-## Overview  
+## Overview
  Client side service provider of the Sample project to move avator with KinectV2, as Visual Studio 2013 C++ project.  
 
 ## Description
@@ -34,7 +34,8 @@ Please merge to the project directory.
 ## Usage  
  1. boot up Ubuntu12.04 on VMware.  
  2. start SIGServer on Ubuntu. SIGVerse must be SIGVerse-2.2.0.  
-   sigserver.sh -w ./kinectWorld.xml(filename) -p 9000(port number)  
+   $ cd ***  
+   $ sigserver.sh -w ./kinectWorld.xml(filename) -p 9000(port number)  
  3. start SIGViewer on Windows8.  
  4. push start button on SIGViewer to start simulation.  
  5. edit KinectV2_2013_.bat, set your IPadress and port number of Ubuntu.  
