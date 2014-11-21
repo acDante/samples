@@ -30,7 +30,7 @@ Overview
  7. move your body infront fo Kinect sensor.
 
 ## Install
- set any where.
+ set any place.
 
 ## Contribution
 
