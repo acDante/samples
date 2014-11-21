@@ -20,6 +20,7 @@ KinectV2
  <http://www.sigverse.com/wiki/en/index.php?Tutorial>  
  Please install Visual Studio 2013  
    
+ Project settings below:  
  include  
  ../include: SIGVerse header files and OpenNI header files needed  
  library  
