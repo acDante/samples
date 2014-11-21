@@ -80,7 +80,7 @@ void AgentController::onRecvMsg(RecvMsgEvent &evt)
    
   //Get message
   char *all_msg = (char*)evt.getMsg();
-   printf("all_msg=\n%s\n",all_msg);
+   //rintf("all_msg=\n%s\n",all_msg);
 
   char *msg = strtok(all_msg," ");
   if (strcmp(msg,"KINECT_DATA") == 0) 
@@ -91,19 +91,23 @@ void AgentController::onRecvMsg(RecvMsgEvent &evt)
       i++;
       if (i == m_maxsize+1)
       break;
-      char *type = strtok(NULL," ");
-      printf("type=%s\n",type);
+      char *type = strtok(NULL,":");
+      //rintf("type=%s\n",type);
       //Body position
       if (strcmp(type,"POSITION") == 0) 
       {
-        double x = atof(strtok(NULL,","))*10;
-        double y = atof(strtok(NULL,","))*10;
-        double z = atof(strtok(NULL," "))*10;
+        double x = atof(strtok(NULL,","));
+        double y = atof(strtok(NULL,","));
+        double z = atof(strtok(NULL," "));
         //Tlanslate Kinece coordinate system to SIGVerse coordinate system.
         double gx = cos(m_yrot)*x - sin(m_yrot)*z;
         double gz = sin(m_yrot)*x + cos(m_yrot)*z;
-        printf("gx=%f, gz=%f\n",gx,gz);
+        //rintf("x=%f, y=%f, z=%f\n",x,y,z);
+        //printf("m_yrot=%f, cos(m_yrot)=%f, sin(m_yrot)=%f\n",m_yrot,cos(m_yrot),sin(m_yrot));
+        //printf("gx=%f, gz=%f\n",gx,gz);
+        //printf("m_posx+gx=%f, m_posy+y=%f, m_posz+gz=%f\n",m_posx+gx,m_posy+y,m_posz+gz);
         my->setPosition(m_posx+gx,m_posy+y,m_posz+gz);
+        //my->setPosition(m_posx+x,m_posy+y,m_posz+z);
         continue;
       }
       //Entire body rotation.
@@ -116,7 +120,7 @@ void AgentController::onRecvMsg(RecvMsgEvent &evt)
         my->setJointQuaternion("ROOT_JOINT0",w,x,y,z);
         continue;
       }
-      else if (strcmp(type,"END:") == 0)
+      else if (strcmp(type,"END") == 0)
       {
         printf("end of recvmsg\n");
         break;
