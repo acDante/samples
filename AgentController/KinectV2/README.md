@@ -34,7 +34,7 @@ Overview
    $ sigserver.sh -w ./kinectWorld.xml(filename) -p 9000(port number)  
  3. start SIGViewer on Windows8.
  4. push start button on SIGViewer to start simulation.
- 5. edit KinectV2_2013_.bat, set your IPadress and port number of Ubuntu.
+ 5. edit KinectV2_2013.bat, set your IPadress and port number of Ubuntu.
  6. execute KinectV2_2013.bat.
  7. move your body infront fo Kinect sensor.
 
