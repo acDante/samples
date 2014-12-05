@@ -12,6 +12,7 @@ include/
 *.user
 *.sln.docstates
 *.tlog
+*.dll
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
