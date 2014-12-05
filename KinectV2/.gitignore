@@ -4,7 +4,6 @@
 # Exception for unchangeable libs.
 
 # User-specific files
-Release/
 Debug/
 packages/
 lib/
@@ -12,6 +11,7 @@ include/
 *.suo
 *.user
 *.sln.docstates
+*.tlog
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
