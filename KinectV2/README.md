@@ -19,20 +19,26 @@ KinectV2
    
  Project settings below:  
  include  
- ../include: SIGVerse header files and OpenNI header files needed  
+ ../include: SIGVerse and OpenNI header files (.h) needed  
  library  
- ../lib: SIGVerse library file and OpenNI library file needed  
+ ../lib: SIGVerse and OpenNI library file (.lib) needed  
  rutime  
- ../Release: OpenCV dynamic link library files and a config file needed  
+ ../Release: OpenCV and OpenNI dynamic link library file(.dll) , SIGVerse config file(.ini) needed  
 
-you can download from below:  
-<**********>  
-Please merge to the project directory.  
+ You can download from below:  
+ SIGViewer-2.2.0 of SIGVerse-2.2.0   
+ <http://sigverse.org/sigverse/main/download/>  
+ Please install it as below:  
+ <http://www.sigverse.com/wiki/en/index.php?Tutorial>   
+ OpenCV2.4.9  
+ <http://opencv.org/downloads.html>  
+ OpenNI  
+ <**********>  
   
 ## Usage  
  1. boot up Ubuntu12.04 on VMware.  
  2. start SIGServer on Ubuntu. SIGVerse must be SIGVerse-2.2.0.  
-   $ cd ***  
+   $ cd KinectV2  
    $ sigserver.sh -w ./kinectWorld.xml(filename) -p 9000(port number)  
  3. start SIGViewer on Windows8.  
  4. push start button on SIGViewer to start simulation.  
