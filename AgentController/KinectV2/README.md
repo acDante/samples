@@ -30,7 +30,7 @@ Overview
 ## Usage
  1. boot up Ubuntu12.04 on VMware.
  2. start SIGServer on Ubuntu. SIGVerse must be SIGVerse-2.2.0.  
-   $ cd /KinectV2
+   $ cd /KinectV2  
    $ sigserver.sh -w ./kinectWorld.xml(filename) -p 9000(port number)  
  3. start SIGViewer on Windows8.
  4. push start button on SIGViewer to start simulation.
