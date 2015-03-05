@@ -63,6 +63,8 @@ void OculusRiftDK2Service::onInit(){
 		ovrTrackingCap_MagYawCorrection |
 		ovrTrackingCap_Position, 0);
 
+	ovrHmd_RecenterPose(HMD);
+
 	std::cout << "-------------- Function --------------\n" << std::endl;
 	std::cout << "Press \"r\" key : Reset center position." << std::endl;
 	std::cout << "\n--------------------------------------\n" << std::endl;
