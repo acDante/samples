@@ -1,36 +1,43 @@
 /*
- * AvatarController.h
- *
- * This is basic(abstract) class.
- * Any avatar class should inherit this class.
- *
- * 12nd, Feb., 2015.
- * wrote by Nozaki.
  */
 
+#ifndef AVATARCONTROLLER_H_
+#define AVATARCONTROLLER_H_
+
 #include <sigverse/Controller.h>
-#include <sigverse/ControllerEvent.h>
-#include <sigverse/SimObj.h>
+#include "AvatarPosture.h"
 
-//#include "Common.h"
+// Define delimiters to split string.
+#define KEY_DELIMITER ":"
+#define RECORD_DELIMITER ";"
+#define VALUE_DELIMITER ","
+static const std::string keyDelimDefault = KEY_DELIMITER;
+static const std::string recordDelimDefault = RECORD_DELIMITER;
+static const std::string valueDelimDefault = VALUE_DELIMITER;
 
-///@brief General avatar controller class (abstract class).
-class AvatarController: public Controller
+// Define message header keys.
+#define DEV_TYPE_KEY "DEV_TYPE"
+#define DEV_ID_KEY "DEV_ID"
+static const std::string devTypeKey = DEV_TYPE_KEY;
+static const std::string devIDKey = DEV_ID_KEY;
+
+class AvatarController : public Controller
 {
 private:
+	//AvatarPosture *avatarPosture;
 
 public:
-	///@brief Constructor.
-	AvatarController(){};
-	
-	///@brief Virtual destructor.
-	virtual ~AvatarController(){};
-	
-	///@brief 受け取ったメッセージを姿勢情報に反映する
-	///@brief Convert the received message to avatar's posture information.
-	//virtual void convertMessage2Posture(const RecvMsgEvent &evt) = 0;
+	AvatarPosture *avatarPosture;
 
-	///@brief 姿勢情報をSIGViewer上のアバターに適用する
-	///@brief Set the joint quaternions of sim-object from avatar's posture.
-	//virtual void setJointQuaternionsFromPosture(SimObj *simObj) = 0;
+	virtual void convertMessage2AvatarPosture(const std::string &message) = 0;
+
+	static void splitString(const std::string &inputString, const std::string &delimiter, std::vector<std::string> &output);
+
+	std::string getMessageHeader(const std::string &message, const std::string &recordDelim = recordDelimDefault, const std::string &keyDelim = keyDelimDefault);
+
+	static bool checkMessageHeader(const std::string &messageHeader, const std::string &recordDelim = recordDelimDefault, const std::string &keyDelim = keyDelimDefault);
+
+	static std::string getDeviceType(const std::string &messageHeader, const std::string &recordDelim = recordDelimDefault, const std::string &keyDelim = keyDelimDefault);
 };
+
+#endif /* AVATARCONTROLLER_H_ */
