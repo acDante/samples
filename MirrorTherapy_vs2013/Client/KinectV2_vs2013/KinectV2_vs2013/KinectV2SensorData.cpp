@@ -2,19 +2,19 @@
 
 ///@brief Orientation (w, x, y, z) to string.
 struct orientation2Message : public std::string {
-	orientation2Message(const Vector4 &orientation) {
+	orientation2Message(const Vector4 &orientation, const std::string &valueDelim) {
 		std::stringstream ssOrientation;
 		ssOrientation << std::setprecision(KinectV2SensorData::orientationPrecision);
-		ssOrientation << "(" << orientation.w << "," << orientation.x << "," << orientation.y << "," << orientation.z << ")";
+		ssOrientation << "(" << orientation.w << valueDelim << orientation.x << valueDelim << orientation.y << valueDelim << orientation.z << ")";
 		assign(ssOrientation.str());
 	}
 };
 
 ///@brief JointOrientation (jointname, w, x, y, z) to string.
 struct jointOrientation2Message : public std::string {
-	jointOrientation2Message(const KinectV2JointOrientation &jo) {
+	jointOrientation2Message(const KinectV2JointOrientation &jo, const std::string &keyDelim, const std::string &valueDelim) {
 		std::stringstream ss;
-		ss << jointType2Message(jo.jointType) << ":" << orientation2Message(jo.orientation);
+		ss << jointType2Message(jo.jointType) << keyDelim << orientation2Message(jo.orientation, valueDelim);
 		assign(ss.str());
 	}
 };
@@ -29,34 +29,34 @@ struct position2Message : public std::string {
 	}
 };
 ///@brief Generate message by posture.
-std::string KinectV2SensorData::convertSensorData2Message()
+std::string KinectV2SensorData::convertSensorData2Message(const std::string &keyDelim, const std::string &recordDelim, const std::string &valueDelim)
 {
 	std::stringstream ss;
-	ss << position2Message(this->rootPosition) << ";"
-		<< jointOrientation2Message(this->jointOrientations[SpineBase]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[SpineMid]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[Neck]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[Head]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[ShoulderLeft]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[ElbowLeft]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[WristLeft]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[HandLeft]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[ShoulderRight]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[ElbowRight]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[WristRight]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[HandRight]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[HipLeft]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[KneeLeft]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[AnkleLeft]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[FootLeft]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[HipRight]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[KneeRight]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[AnkleRight]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[FootRight]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[SpineShoulder]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[HandTipLeft]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[ThumbLeft]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[HandTipRight]) << ";"
-		<< jointOrientation2Message(this->jointOrientations[ThumbRight]);
+	ss << position2Message(this->rootPosition) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[SpineBase], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[SpineMid], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[Neck], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[Head], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[ShoulderLeft], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[ElbowLeft], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[WristLeft], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[HandLeft], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[ShoulderRight], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[ElbowRight], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[WristRight], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[HandRight], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[HipLeft], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[KneeLeft], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[AnkleLeft], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[FootLeft], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[HipRight], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[KneeRight], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[AnkleRight], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[FootRight], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[SpineShoulder], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[HandTipLeft], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[ThumbLeft], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[HandTipRight], keyDelim, valueDelim) << recordDelim
+		<< jointOrientation2Message(this->jointOrientations[ThumbRight], keyDelim, valueDelim);
 	return(ss.str());
 }

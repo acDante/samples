@@ -43,7 +43,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\SIGVerse\src\boost_1_55_0;C:\SIGVerse\GitHub\Client\SIGService\Windows\SIGService;C:\SIGVerse\src\OculusSDK\LibOVR\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\SIGVerse\src\EmbodiedBrain\MirrorTherapy_vs2013\Client;C:\SIGVerse\src\boost_1_55_0;C:\SIGVerse\GitHub\Client\SIGService\Windows\SIGService;C:\SIGVerse\src\OculusSDK\LibOVR\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -69,17 +69,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Device.cpp" />
+    <ClCompile Include="..\..\Device.cpp" />
+    <ClCompile Include="..\..\SensorData.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="OculusDK1Device.cpp" />
     <ClCompile Include="OculusDK1SensorData.cpp" />
-    <ClCompile Include="SensorData.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Device.h" />
+    <ClInclude Include="..\..\Device.h" />
+    <ClInclude Include="..\..\SensorData.h" />
     <ClInclude Include="OculusDK1Device.h" />
     <ClInclude Include="OculusDK1SensorData.h" />
-    <ClInclude Include="SensorData.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
