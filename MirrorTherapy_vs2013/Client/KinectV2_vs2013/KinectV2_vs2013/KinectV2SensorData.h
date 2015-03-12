@@ -99,7 +99,7 @@ public:
 	static const int rootPositionPrecision = POSITION_PRECISION;
 
 	///@brief Generate message by posture.
-	std::string convertSensorData2Message();
+	std::string convertSensorData2Message(const std::string &keyDelim, const std::string &recordDelim, const std::string &valueDelim);
 
 	///@brief Set root position.
 	void setRootPosition(const Vector3 &position) {
