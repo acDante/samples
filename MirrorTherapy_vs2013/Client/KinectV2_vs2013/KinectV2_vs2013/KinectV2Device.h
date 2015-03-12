@@ -2,7 +2,6 @@
 #include "SIGService.h"
 #include "Device.h"
 #include "KinectV2SensorData.h"
-#include "KinectV2Connector.h"
 #include <opencv2/opencv.hpp>
 
 // Parameter file name. Must be defined.
