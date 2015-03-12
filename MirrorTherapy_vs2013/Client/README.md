@@ -23,18 +23,20 @@ MirrorTherapy_vs2013
  つまり，KinectV2でもOculusでも使う「SIGService.lib」は，KinectV2のプロジェクトではVS2013用のものをリンクし，OculusのプロジェクトではVS2010用のものをリンクする必要があります．  
  VS2010用のSIGService.libがビルドできる前提(*)で，VS2013用のSIGService.libをビルドする方法から説明します．  
 
-	(1) C:\SIGVerse\GitHub\Client\SIGService\Windows\ の SIGService_2010.sln を同フォルダ内にコピーして「SIGService_2013.sln」などに名前を変更する．
+	(1) C:\SIGVerse\GitHub\Client\SIGService\Windows\ の SIGService_2010.sln を同フォルダ内にコピーして
+		「SIGService_2013.sln」などに名前を変更する．
 	(2) SIGService_2013.sln を VS2013 で開く．
 	(3) ソリューション構成を「Release」にする．
 	(4) 「SIGService」のプロジェクト（test_libではない）のプロパティで，出力先のフォルダを設定し直す．
-		例えば，「$(SolutionDir)$(Configuration)_2010\」を「$(SolutionDir)$(Configuration)_2013\」にする（その下の中間ファイル？の出力先も同様に変えておく）．
+		例えば，「$(SolutionDir)$(Configuration)_2010\」を「$(SolutionDir)$(Configuration)_2013\」にする
+		（その下の中間ファイル？の出力先も同様に変えておく）．
 	(5) 「SIGService」のプロジェクト（test_libではない）のプロパティで，追加のライブラリディレクトリから，boostのライブラリ群のリンク先をVS2013用のフォルダに変更する． 
 		例えば，「C:\SIGVerse\src\boost_1_55_0\lib32-msvc-10.0」を「C:\SIGVerse\src\boost_1_55_0\lib32-msvc-12.0」に変更する．
 	(6) 以上の状態で，「SIGService」のプロジェクトをビルドする．
-	(7) KinectV2_vs2013.slnのビルド時に，(5)で生成したSIGService.libをリンクする．
+	(7) KinectV2_vs2013.slnのビルド時に，(6)で生成したSIGService.libをリンクする．
 
 
- (*)C:\SIGVerse\GitHub\ の直下にhttps://github.com/SIGVerse/Client.gitをクローンして，C:\SIGVerse\GitHub\Client\SIGService\Windows\ の SIGService_2010.sln がビルドできていて，VS2010用の SIGService.lib が Debug_2010\ か Release_2010\ のどちらかのフォルダに生成されていること，というのが前提です．
+ (*)C:\SIGVerse\GitHub\ の直下にhttps://github.com/SIGVerse/Client.git をクローンして，C:\SIGVerse\GitHub\Client\SIGService\Windows\ の SIGService_2010.sln がビルドできていて，VS2010用の SIGService.lib が Debug_2010\ か Release_2010\ のどちらかのフォルダに生成されていること，というのが前提です．
 
 ## Author  
  National Institute of Informatics  
