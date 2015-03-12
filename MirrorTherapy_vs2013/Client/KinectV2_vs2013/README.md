@@ -19,14 +19,10 @@ KinectV2_vs2013
  インクルードするヘッダファイルのうち，Clientフォルダ内にないものは次の通りです．  
 
  (1) Kinect.h  
-	私の環境では，KinectV2のSDKをインストール後に
-	「C:\Program Files\Microsoft SDKs\Kinect\v2.0-PublicPreview1409\inc」内に生
-	成されていました．
+	私の環境では，KinectV2のSDKをインストール後に「C:\Program Files\Microsoft SDKs\Kinect\v2.0-PublicPreview1409\inc」内に生成されていました．
 
  (2) SIGService.h  
-	共通の環境を構築していれば，
-	「C:\SIGVerse\GitHub\Client\SIGService\Windows\SIGService」内にあると思いま
-	す．
+	共通の環境を構築していれば，「C:\SIGVerse\GitHub\Client\SIGService\Windows\SIGService」内にあると思います．
 
 ## Author  
  National Institute of Informatics  
