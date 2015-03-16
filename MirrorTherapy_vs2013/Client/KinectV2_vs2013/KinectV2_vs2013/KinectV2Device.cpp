@@ -63,17 +63,19 @@ void KinectV2Device::setSigServiceName()
 ///@brief Initialize kinect v2 device.
 int KinectV2Device::run()
 {
+	// Refer to https://github.com/UnaNancyOwen/Kinect2Sample/blob/master/Sample/Body/Body.cpp
+
 	cv::setUseOptimized(true);
 
-	// Initialize sigservice.
 	try {
 
-		// Prepare to use SIGService.
+		//-- Prepare to use SIGService.
 		this->setSigServiceName();
 		sigverse::SIGService sigService(this->serviceName);
 		this->initializeSigService(sigService);
 
-		// Sensor
+		//-- Initialize kinect.
+
 		IKinectSensor* pSensor;
 		HRESULT hResult = S_OK;
 		hResult = GetDefaultKinectSensor(&pSensor);
@@ -156,7 +158,10 @@ int KinectV2Device::run()
 			return -1;
 		}
 
+		//-- Start measuring.
+
 		while (1){
+		
 			// Frame
 			IColorFrame* pColorFrame = nullptr;
 			hResult = pColorReader->AcquireLatestFrame(&pColorFrame);
@@ -204,10 +209,15 @@ int KinectV2Device::run()
 									int y = static_cast<int>(colorSpacePoint.Y);
 
 									if ((x >= 0) && (x < width) && (y >= 0) && (y < height)){
+										// 検出したJointの位置が画面内に収まるときに，Bodyを検出したとする
 										cv::circle(bufferMat, cv::Point(x, y), 5, static_cast<cv::Scalar>(color[count]), -1, CV_AA);
+										
+										// この時，このフレームのこのBodyで人体を検出したフラグをたてる
 										detectBodyFlag = true;
 									}
 								}
+
+								// この if のブロックが，主に野崎が編集したところです．
 								if (detectBodyFlag) {
 									// Get spine base position.
 									Vector3 spPos = { 0 };

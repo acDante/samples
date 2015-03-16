@@ -90,6 +90,9 @@ private:
 	///@brief Whole body joint orientations.
 	KinectV2JointOrientation jointOrientations[KinectV2JointType_Count];
 
+	// 現状ではルートのポジションと各関節のオリエンテーション（クォータニオン）しか保持していませんが，
+	// KinectV2JointPosition などの型を定義して，関節の位置を保持しても問題ないと思います．
+
 public:
 
 	///@brief Precision of quaternion when send message.
@@ -183,7 +186,7 @@ struct jointType2String : public std::string {
 	}
 };
 
-///@brief Get string enum of JointType.
+///@brief Get string enum of JointType to genrate message.
 struct jointType2Message : public std::string {
 	jointType2Message(KinectV2JointType e) {
 		switch (e) {

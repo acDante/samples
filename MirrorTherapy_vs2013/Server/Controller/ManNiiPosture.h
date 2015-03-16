@@ -1,15 +1,16 @@
 /*
- * ManNiiAvatarPosture.h
+ * ManNiiPosture.h
  *
- *  Created on: 2015/03/09
- *      Author: sigverse
+ *  Created on: 2015/03/12
+ *      Author: Nozaki
  */
 
 #ifndef MANNIIAVATARPOSTURE_H_
-#define MANNIIAVATARPOSTURE_H_
+#define MANNIIPOSTURE_H_
 
-#include "AvatarPosture.h"
+#include "Posture.h"
 #include <string>
+#include <sstream>
 
 #ifndef _ManNiiJointType_
 #define _ManNiiJointType_
@@ -17,79 +18,79 @@
 enum ManNiiJointType
 {
 	HEAD_JOINT0 = 0,
-	HEAD_JOINT1,
-	LARM_JOINT0,
-	LARM_JOINT1,
+//	HEAD_JOINT1,
+//	LARM_JOINT0,
+//	LARM_JOINT1,
 	LARM_JOINT2,
 	LARM_JOINT3,
-	LARM_JOINT4,
+//	LARM_JOINT4,
 	LARM_JOINT5,
-	LARM_JOINT6,
-	LARM_JOINT7,
-	RARM_JOINT0,
-	RARM_JOINT1,
+//	LARM_JOINT6,
+//	LARM_JOINT7,
+//	RARM_JOINT0,
+//	RARM_JOINT1,
 	RARM_JOINT2,
 	RARM_JOINT3,
-	RARM_JOINT4,
+//	RARM_JOINT4,
 	RARM_JOINT5,
-	RARM_JOINT6,
-	RARM_JOINT7,
-	WAIST_JOINT0,
+//	RARM_JOINT6,
+//	RARM_JOINT7,
+//	WAIST_JOINT0,
 	WAIST_JOINT1,
-	WAIST_JOINT2,
-	ROOT_JOINT0,
-	ROOT_JOINT1,
-	ROOT_JOINT2,
+//	WAIST_JOINT2,
+//	ROOT_JOINT0,
+//	ROOT_JOINT1,
+//	ROOT_JOINT2,
 	LLEG_JOINT2,
 	LLEG_JOINT4,
-	LLEG_JOINT6,
+//	LLEG_JOINT6,
 	RLEG_JOINT2,
 	RLEG_JOINT4,
-	RLEG_JOINT6,
-	LEYE_JOINT1,
-	LEYE_JOINT0,
-	REYE_JOINT1,
-	REYE_JOINT0,
-	ManNiiJointType_Count = (REYE_JOINT0 + 1)
+//	RLEG_JOINT6,
+//	LEYE_JOINT1,
+//	LEYE_JOINT0,
+//	REYE_JOINT1,
+//	REYE_JOINT0,
+	ManNiiJointType_Count = (RLEG_JOINT4 + 1)
 };
 
 struct manNiiJointTypeStr : public std::string {
 	manNiiJointTypeStr(ManNiiJointType e) {
 		switch(e) {
 		break; case HEAD_JOINT0 : { assign("HEAD_JOINT0" ); }
-		break; case HEAD_JOINT1 : { assign("HEAD_JOINT1" ); }
-		break; case LARM_JOINT0 : { assign("LARM_JOINT0" ); }
-		break; case LARM_JOINT1 : { assign("LARM_JOINT1" ); }
+//		break; case HEAD_JOINT1 : { assign("HEAD_JOINT1" ); }
+//		break; case LARM_JOINT0 : { assign("LARM_JOINT0" ); }
+//		break; case LARM_JOINT1 : { assign("LARM_JOINT1" ); }
 		break; case LARM_JOINT2 : { assign("LARM_JOINT2" ); }
 		break; case LARM_JOINT3 : { assign("LARM_JOINT3" ); }
-		break; case LARM_JOINT4 : { assign("LARM_JOINT4" ); }
+//		break; case LARM_JOINT4 : { assign("LARM_JOINT4" ); }
 		break; case LARM_JOINT5 : { assign("LARM_JOINT5" ); }
-		break; case LARM_JOINT6 : { assign("LARM_JOINT6" ); }
-		break; case LARM_JOINT7 : { assign("LARM_JOINT7" ); }
-		break; case RARM_JOINT0 : { assign("RARM_JOINT0" ); }
-		break; case RARM_JOINT1 : { assign("RARM_JOINT1" ); }
+//		break; case LARM_JOINT6 : { assign("LARM_JOINT6" ); }
+//		break; case LARM_JOINT7 : { assign("LARM_JOINT7" ); }
+//		break; case RARM_JOINT0 : { assign("RARM_JOINT0" ); }
+//		break; case RARM_JOINT1 : { assign("RARM_JOINT1" ); }
 		break; case RARM_JOINT2 : { assign("RARM_JOINT2" ); }
 		break; case RARM_JOINT3 : { assign("RARM_JOINT3" ); }
-		break; case RARM_JOINT4 : { assign("RARM_JOINT4" ); }
+//		break; case RARM_JOINT4 : { assign("RARM_JOINT4" ); }
 		break; case RARM_JOINT5 : { assign("RARM_JOINT5" ); }
-		break; case RARM_JOINT6 : { assign("RARM_JOINT6" ); }
-		break; case RARM_JOINT7 : { assign("RARM_JOINT7" ); }
-		break; case WAIST_JOINT0: { assign("WAIST_JOINT0"); }
+//		break; case RARM_JOINT6 : { assign("RARM_JOINT6" ); }
+//		break; case RARM_JOINT7 : { assign("RARM_JOINT7" ); }
+//		break; case WAIST_JOINT0: { assign("WAIST_JOINT0"); }
 		break; case WAIST_JOINT1: { assign("WAIST_JOINT1"); }
-		break; case WAIST_JOINT2: { assign("WAIST_JOINT2"); }
-		break; case ROOT_JOINT0 : { assign("ROOT_JOINT0" ); }
-		break; case ROOT_JOINT1 : { assign("ROOT_JOINT1" ); }
-		break; case ROOT_JOINT2 : { assign("ROOT_JOINT2" ); }
+//		break; case WAIST_JOINT2: { assign("WAIST_JOINT2"); }
+//		break; case ROOT_JOINT0 : { assign("ROOT_JOINT0" ); }
+//		break; case ROOT_JOINT1 : { assign("ROOT_JOINT1" ); }
+//		break; case ROOT_JOINT2 : { assign("ROOT_JOINT2" ); }
 		break; case LLEG_JOINT2 : { assign("LLEG_JOINT2" ); }
 		break; case LLEG_JOINT4 : { assign("LLEG_JOINT4" ); }
-		break; case LLEG_JOINT6 : { assign("LLEG_JOINT6" ); }
+//		break; case LLEG_JOINT6 : { assign("LLEG_JOINT6" ); }
 		break; case RLEG_JOINT2 : { assign("RLEG_JOINT2" ); }
 		break; case RLEG_JOINT4 : { assign("RLEG_JOINT4" ); }
-		break; case RLEG_JOINT6 : { assign("RLEG_JOINT6" ); }
-		break; case LEYE_JOINT1 : { assign("LEYE_JOINT1" ); }
-		break; case LEYE_JOINT0 : { assign("LEYE_JOINT0" ); }
-		break; case REYE_JOINT1 : { assign("REYE_JOINT1" ); }
-		break; case REYE_JOINT0 : { assign("REYE_JOINT0" ); }
+//		break; case RLEG_JOINT6 : { assign("RLEG_JOINT6" ); }
+//		break; case LEYE_JOINT1 : { assign("LEYE_JOINT1" ); }
+//		break; case LEYE_JOINT0 : { assign("LEYE_JOINT0" ); }
+//		break; case REYE_JOINT1 : { assign("REYE_JOINT1" ); }
+//		break; case REYE_JOINT0 : { assign("REYE_JOINT0" ); }
 		break; //default: { assign("illegal"); }
 		}
 	}
@@ -158,6 +159,22 @@ public:
 		return tmp;
 	};
 
+	void getQuaternions(double &w, double &x, double &y, double &z) {
+		w = this->w;
+		x = this->x;
+		y = this->y;
+		z = this->z;
+	}
+
+	void setQuaternions(const double w, const double x, const double y, const double z) {
+		this->w = w;
+		this->x = x;
+		this->y = y;
+		this->z = z;
+	}
+
+
+
 };
 
 #ifndef _EulerAngleType_
@@ -176,14 +193,22 @@ class ManNiiJointQuaternion
 public:
 	ManNiiJointType manJointType;
 	Quaternion quaternion;
+
+	std::string toString() {
+		double w, x, y, z;
+		this->quaternion.getQuaternions(w, x, y, z);
+		std::stringstream ss;
+		ss <<  manNiiJointTypeStr(this->manJointType) << ":" << w << "," << x << "," << y << "," << z;
+		return ss.str();
+	}
 };
 
 
-class ManNiiAvatarPosture : public AvatarPosture
+class ManNiiPosture : public Posture
 {
 public:
 	ManNiiJointQuaternion joints[ManNiiJointType_Count];
 
 };
 
-#endif /* MANNIIAVATARPOSTURE_H_ */
+#endif /* MANNIIPOSTURE_H_ */
