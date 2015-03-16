@@ -1,8 +1,8 @@
 /*
  * AvatarController.cpp
  *
- *  Created on: 2015/03/09
- *      Author: sigverse
+ *  Created on: 2015/03/12
+ *      Author: Nozaki
  */
 
 #include "AvatarController.h"
@@ -19,6 +19,29 @@ void AvatarController::splitString(const std::string &inputString, const std::st
 	{
 		output.push_back(inputString);
 	}
+}
+
+std::vector<double> AvatarController::splitValues(const std::string &valueString, const std::string &valueDelim)
+{
+	try {
+		std::vector<std::string> tmpStrings;
+		AvatarController::splitString(valueString, valueDelim, tmpStrings);
+		// ベクトルデータの時は、「(」が第一要素の前に入っている。
+		// この「(」をキャンセルする。
+		tmpStrings[0].replace(0, 1, ""); // 第一要素の先頭の文字を空の文字列に置換する
+		std::vector<double> values((int)tmpStrings.size());
+		for (int i = 0; i < (int)tmpStrings.size(); i++) {
+			values[i] = atof(tmpStrings[i].c_str());
+		}
+		return values;
+
+	}
+	catch (std::exception &ex) {
+		std::cout << "Can't split values: " << valueString << std::endl;
+	}
+	std::vector<double> values;
+	std::cout << "Can't split values: " << valueString << std::endl;
+	return values;
 }
 
 std::string AvatarController::getMessageHeader(const std::string &message, const std::string &recordDelim, const std::string &keyDelim)

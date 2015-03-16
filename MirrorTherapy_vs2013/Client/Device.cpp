@@ -6,32 +6,6 @@
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 
-/////@brief Constructor
-//Device::Device(int argc, char **argv)
-//{
-//	// It is running with SIGViewer.
-//	if (argc == 1) {
-//		// When it works without SIGViewer.
-//		fprintf(stdout, "Work stand alone.\n");
-//		this->sendMessageFlag = false;
-//		this->serverAddress = "";
-//		this->portNumber = -1;
-//	}
-//	else if (argc == 3) {
-//		// Work with SIGViewer.
-//		std::cout << "hghghgh " << std::endl;
-//		fprintf(stdout, "SIGServer IP address: %s\n", argv[1]);
-//		fprintf(stdout, "Port number: %s\n", argv[2]);
-//		this->sendMessageFlag = true;
-//		this->serverAddress = argv[1];
-//		this->portNumber = atoi(argv[2]);
-//		//this->readIniFile();
-//	}
-//
-//	//this->kinectConnector = KinectV2Connector();
-//	this->readIniFile();
-//
-//}
 ///@brief Initialize SIGService.
 void Device::initializeSigService(sigverse::SIGService &sigService)
 {

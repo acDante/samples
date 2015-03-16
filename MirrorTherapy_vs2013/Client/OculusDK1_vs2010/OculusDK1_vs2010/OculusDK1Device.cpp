@@ -11,7 +11,7 @@ OculusDK1Device::OculusDK1Device(int argc, char **argv)
 		this->serverAddress = argv[1];
 		this->portNumber = atoi(argv[2]);
 		this->setDeviceType(defaultDeviceType);
-		this->setDeviceUniquID(defaultDeviceUniqueID);
+		this->setDeviceUniqueID(defaultDeviceUniqueID);
 	} else {
 		std::cout << "Please execute with SIGServer address and port number." << std::endl;
 		exit(1);

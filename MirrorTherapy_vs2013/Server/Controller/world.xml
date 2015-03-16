@@ -18,7 +18,7 @@
          <set-attr-value name="language" value="c++"/>
 
  <!--Object file "kinectController.so"-->
-         <set-attr-value name="implementation" value="./ManNiiAvatarController.so"/>
+         <set-attr-value name="implementation" value="./MirrorTherapyController.so"/>
 
  <!--Kineticsset as false-->
          <set-attr-value name="dynamics" value="false"/>

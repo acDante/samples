@@ -1,14 +1,14 @@
 # 生成する.soファイル名
-TARGET = ./ManNiiAvatarController.so
+TARGET = ./MirrorTherapyController.so
 
 # コンパイルしたいソースコードのファイル名
 # ・ソースコードを変更したりする場合はここの記述を変更する
 # ・「\」をファイル名の末尾に加えて記述する
 SRCS =\
-	$(DIR)AvatarPosture.cpp \
+	$(DIR)Posture.cpp \
 	$(DIR)AvatarController.cpp \
-	$(DIR)ManNiiAvatarPosture.cpp \
-	$(DIR)ManNiiAvatarController.cpp \
+	$(DIR)ManNiiPosture.cpp \
+	$(DIR)MirrorTherapyController.cpp \
 
 # ソースコードのある場所
 DIR = ./
