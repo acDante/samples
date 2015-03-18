@@ -1,5 +1,7 @@
 MirrorTherapy_v2
-=============
+================
+
+Controller, Plugin, Commonの3つのディレクトリについて説明します．  
 
 Controller
 ----------

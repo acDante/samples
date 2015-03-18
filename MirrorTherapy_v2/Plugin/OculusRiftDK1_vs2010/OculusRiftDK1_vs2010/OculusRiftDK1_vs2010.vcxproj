@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CA6682FB-9115-45BE-BD0C-9ACBCE03F3A4}</ProjectGuid>
+    <ProjectGuid>{D7AE9B34-E80D-46A4-854C-603F876AD3E3}</ProjectGuid>
     <RootNamespace>OculusRiftDK1_vs2010</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
