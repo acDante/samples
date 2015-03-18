@@ -27,7 +27,8 @@ ControllerとPluginの両方に必要なソースコードのディレクトリです．
 SensorDataクラスについて
 ------------------------
 SensorDataクラスは，デバイスから得られる情報のうち，Controllerへ送信する情報のみを扱う役割を持ちます．  
-SensorDataクラスのサブクラスでは，次の2つのメソッドを実装する必要があります．
+SensorDataクラスのサブクラスでは，次の2つのメソッドを実装する必要があります．  
+
 1. デバイスから得られるセンサの情報（姿勢など）をメッセージ（文字列）へ変換・生成するメソッド： encodeSensorData2Message()
 2. メッセージ（文字列）をセンサの情報（姿勢など）へ変換するメソッド：decodeMessage2SensorData(std::string &message)
 
