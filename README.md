@@ -1,4 +1,27 @@
 EmbodiedBrain
 =============
 
-Applications for Embodied-Brain System project
+Applications for Embodied-Brain System project  
+
+MirrorTherapy_v1
+----------------
+
+池田さんが作成しました．次のような機能，あるいは特徴があります．　　
+
+* コントローラ側(Ubuntu側)のSIGVerseはsigverse-2.2.0でのみ動作します.
+* KinectV2で計測できる関節位置に基づいてSIGVerseのman-nii用のクォータニオンを算出し，コントローラへ送信します．
+* コントローラでは，動作の反転やお盆を持ち上げるなどの機能が実装されています（動作速度は要改善）．
+* 動作の反転のモードやお盆を持ち上げるなどのモードを変更したい場合は，コントローラプログラムのソースコードを書き換えてコンパイルし直す必要があります．
+
+
+MirrorTherapy_v2
+----------------
+
+MirrorTherapy_v1を引き継いで，野﨑が作成しているところです．次のような機能，あるいは特徴があります．
+
+* 実装に，SensorDataクラス，Deviceクラス，Postureクラスを使用しています．
+* KinectV2とOculusRiftDK1のサービスプロバイダを実装しています．
+* Pluginでは，KinectV2で計測できるクォータニオン（あるいはOculusで計測できる首のオイラー角）をコントローラへ送信します．
+* コントローラ側で，SIGVerseのman-nii用のクォータニオンへ変換します．
+* コントローラでは，動作の反転モードと動作の遅延時間を，SIGViewerからメッセージを送ることで実行中に変更できます．  
+ただし，物を持ち上げる機能は実装していません．
