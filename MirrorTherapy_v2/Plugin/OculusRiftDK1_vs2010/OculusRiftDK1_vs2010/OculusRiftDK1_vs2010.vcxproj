@@ -41,9 +41,12 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>C:\SIGVerse\src\EmbodiedBrain\MirrorTherapy_v2\Plugin\PluginCommon;C:\SIGVerse\src\EmbodiedBrain\MirrorTherapy_v2\Common;C:\SIGVerse\src\boost_1_55_0;C:\SIGVerse\GitHub\Client\SIGService\Windows\SIGService;C:\SIGVerse\src\OculusSDK\LibOVR\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\SIGVerse\GitHub\Client\SIGService\Windows\Debug_2010;C:\SIGVerse\src\boost_1_55_0\lib32-msvc-10.0;C:\SIGVerse\src\OculusSDK\LibOVR\Lib\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libovrd.lib;winmm.lib;SIGService.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -60,6 +63,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="OculuRiftDK1Device.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="OculuRiftDK1Device.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
