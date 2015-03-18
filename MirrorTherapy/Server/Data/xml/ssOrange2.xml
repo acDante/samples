@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-
-<simpleShapeDesc>
-	<parts name="body" type="sphere">
-		<position x="0" y="0" z="0"/>
-		<size r="2"/>
-	</parts>
-</simpleShapeDesc>

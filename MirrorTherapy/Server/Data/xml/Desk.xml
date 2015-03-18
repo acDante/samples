@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf8"?>
-
-<define-class name="Desk" inherit="Entity.xml">
-
-   <!-- 形状ファイルの指定 -->
-   <body filename="desk-body.xml"/>
-
-</define-class>

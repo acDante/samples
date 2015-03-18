@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf8"?>
-<define-class name="Arm" inherit="Agent.xml">
-
-   <body filename="arm-body.xml"/>
-
-</define-class>

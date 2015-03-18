@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf8"?>
-<define-class name="Box" inherit="Entity.xml">
-
-   <body filename="box-body.xml"/>
-
-</define-class>
