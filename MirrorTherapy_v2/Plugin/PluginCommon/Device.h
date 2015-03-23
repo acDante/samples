@@ -1,6 +1,6 @@
 #pragma once
-#include "SIGService.h"
-#include "SensorData.h"
+#include <SIGService.h>
+#include <Common/SensorData.h>
 
 // Define delimiters to split string.
 #define KEY_DELIMITER ":"

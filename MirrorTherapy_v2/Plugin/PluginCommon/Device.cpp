@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "Device.h"
-#include "SIGService.h"
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/exception/diagnostic_information.hpp>

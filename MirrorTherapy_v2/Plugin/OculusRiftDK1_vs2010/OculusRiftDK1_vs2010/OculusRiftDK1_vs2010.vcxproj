@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D7AE9B34-E80D-46A4-854C-603F876AD3E3}</ProjectGuid>
+    <ProjectGuid>{9931B4E2-F6EC-4A2D-BEC2-4022A2D281B5}</ProjectGuid>
     <RootNamespace>OculusRiftDK1_vs2010</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -36,16 +36,19 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetExt>.sig</TargetExt>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\SIGVerse\src\EmbodiedBrain\MirrorTherapy_v2\Plugin\PluginCommon;C:\SIGVerse\src\EmbodiedBrain\MirrorTherapy_v2\Common;C:\SIGVerse\src\boost_1_55_0;C:\SIGVerse\GitHub\Client\SIGService\Windows\SIGService;C:\SIGVerse\src\OculusSDK\LibOVR\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\SIGVerse\src\boost_1_55_0;C:\SIGVerse\src\OculusSDK\LibOVR\Include;C:\SIGVerse\GitHub\Client\SIGService\Windows\SIGService;C:\SIGVerse\src\EmbodiedBrain\MirrorTherapy_v2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\SIGVerse\GitHub\Client\SIGService\Windows\Debug_2010;C:\SIGVerse\src\boost_1_55_0\lib32-msvc-10.0;C:\SIGVerse\src\OculusSDK\LibOVR\Lib\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\SIGVerse\src\boost_1_55_0\lib32-msvc-10.0;C:\SIGVerse\src\OculusSDK\LibOVR\Lib\Win32;C:\SIGVerse\GitHub\Client\SIGService\Windows\Debug_2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libovrd.lib;winmm.lib;SIGService.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -63,10 +66,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="OculuRiftDK1Device.h" />
+    <ClCompile Include="..\..\..\Common\OculusRiftDK1SensorData.cpp" />
+    <ClCompile Include="..\..\..\Common\SensorData.cpp" />
+    <ClCompile Include="..\..\PluginCommon\Device.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="OculusRiftDK1Device.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="OculuRiftDK1Device.cpp" />
+    <ClInclude Include="..\..\..\Common\OculusRiftDK1SensorData.h" />
+    <ClInclude Include="..\..\..\Common\SensorData.h" />
+    <ClInclude Include="..\..\PluginCommon\Device.h" />
+    <ClInclude Include="OculusRiftDK1Device.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
