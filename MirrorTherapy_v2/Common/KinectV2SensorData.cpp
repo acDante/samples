@@ -64,37 +64,37 @@ std::string KinectV2SensorData::encodeSensorData2Message(const std::string &pair
 void KinectV2SensorData::decodeMessage2SensorData(const std::string &message, const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
 {
 	// Generate map<string, vector<string> from message. Just split message by ";" and ":".
-	std::map<std::string, std::vector<std::string>> messageMap = this->convertMessage2Map(message);
+	std::map<std::string, std::vector<std::string> > messageMap = this->convertMessage2Map(message);
 
 	// Generate map<string, vector<string>, which has only JointType.
-	std::map<std::string, std::vector<std::string>> jointMap;
+	std::map<std::string, std::vector<std::string> > jointMap;
 	std::vector<std::string> emptyStrings(4, "");
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("SpBs_P", emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("SpBs_Q", emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("SpMd_Q", emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("Neck_Q", emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("Head_Q", emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("ShL_Q" , emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("LbL_Q" , emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("WrL_Q" , emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("HndL_Q", emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("ShR_Q" , emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("LbR_Q" , emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("WrR_Q" , emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("HndR_Q", emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("HpL_Q" , emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("NeeL_Q", emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("AnkL_Q", emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("FtL_Q" , emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("HpR_Q" , emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("NeeR_Q", emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("AnkR_Q", emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("FtR_Q" , emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("SpSh_Q", emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("HTL_Q" , emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("ThmL_Q", emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("HTR_Q" , emptyStrings));
-	jointMap.insert(std::map<std::string, std::vector<std::string>>::value_type("ThmR_Q", emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("SpBs_P", emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("SpBs_Q", emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("SpMd_Q", emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("Neck_Q", emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("Head_Q", emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("ShL_Q" , emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("LbL_Q" , emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("WrL_Q" , emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("HndL_Q", emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("ShR_Q" , emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("LbR_Q" , emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("WrR_Q" , emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("HndR_Q", emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("HpL_Q" , emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("NeeL_Q", emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("AnkL_Q", emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("FtL_Q" , emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("HpR_Q" , emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("NeeR_Q", emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("AnkR_Q", emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("FtR_Q" , emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("SpSh_Q", emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("HTL_Q" , emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("ThmL_Q", emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("HTR_Q" , emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("ThmR_Q", emptyStrings));
 
 	for (auto i = messageMap.begin(); i != messageMap.end(); i++) {
 		const std::string key = (*i).first;
