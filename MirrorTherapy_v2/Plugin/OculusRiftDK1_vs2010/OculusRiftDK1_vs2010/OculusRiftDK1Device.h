@@ -1,6 +1,6 @@
 #pragma once
 #include <SIGService.h>
-#include <Plugin\PluginCommon\Device.h>
+#include <Plugin/PluginCommon/Device.h>
 #include <OVR.h>
 #include <conio.h>
 #include <iostream>

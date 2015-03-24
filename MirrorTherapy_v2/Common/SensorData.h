@@ -1,6 +1,6 @@
 #pragma once
-#include <boost\algorithm\string\split.hpp>
-#include <boost\algorithm\string.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string.hpp>
 #include <vector>
 #include <map>
 #include <iostream>

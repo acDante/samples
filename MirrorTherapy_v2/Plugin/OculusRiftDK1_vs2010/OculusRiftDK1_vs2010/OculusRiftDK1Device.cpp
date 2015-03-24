@@ -1,5 +1,5 @@
 #include "OculusRiftDK1Device.h"
-#include <Common\OculusRiftDK1SensorData.h>
+#include <Common/OculusRiftDK1SensorData.h>
 #include <Windows.h>
 
 OculusRiftDK1Device::OculusRiftDK1Device(int argc, char **argv)

@@ -1,4 +1,4 @@
-#include <Common\SensorData.h>
+#include <Common/SensorData.h>
 
 std::map<std::string, std::string> SensorData::convertMessage2Map(const std::string &message, const std::string &keyDelim, const std::string &recordDelim)
 {

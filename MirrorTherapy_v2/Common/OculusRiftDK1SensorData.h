@@ -1,5 +1,5 @@
 #pragma once
-#include <Common\SensorData.h>
+#include <Common/SensorData.h>
 
 #ifndef _EulerAngleType_
 #define _EulerAngleType_
