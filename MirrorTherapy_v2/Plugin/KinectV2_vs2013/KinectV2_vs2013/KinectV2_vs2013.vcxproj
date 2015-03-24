@@ -58,7 +58,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\SIGVerse\GitHub\Client\SIGService\Windows\SIGService;C:\SIGVerse\src\EmbodiedBrain\MirrorTherapy_v2\Plugin\PluginCommon;C:\SIGVerse\src\EmbodiedBrain\MirrorTherapy_v2\Common;C:\SIGVerse\src\boost_1_55_0;C:\Program Files\Microsoft SDKs\Kinect\v2.0-PublicPreview1409\inc;C:\opencv\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\SIGVerse\GitHub\Client\SIGService\Windows\SIGService;C:\SIGVerse\src\EmbodiedBrain\MirrorTherapy_v2\;C:\SIGVerse\src\boost_1_55_0;C:\Program Files\Microsoft SDKs\Kinect\v2.0-PublicPreview1409\inc;C:\opencv\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -69,10 +69,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Common\KinectV2SensorData.h" />
+    <ClInclude Include="..\..\..\Common\SensorData.h" />
+    <ClInclude Include="..\..\PluginCommon\Device.h" />
     <ClInclude Include="KinectV2Device.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Common\KinectV2SensorData.cpp" />
+    <ClCompile Include="..\..\..\Common\SensorData.cpp" />
+    <ClCompile Include="..\..\PluginCommon\Device.cpp" />
     <ClCompile Include="KinectV2Device.cpp" />
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

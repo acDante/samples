@@ -1,5 +1,5 @@
 #pragma once
-#include <Common/SensorData.h>
+#include "SensorData.h"
 
 #ifndef _EulerAngleType_
 #define _EulerAngleType_
@@ -25,9 +25,9 @@ private:
 public:
 
 	///@brief Convert posture information to string.
-	std::string encodeSensorData2Message(const std::string &keyDelim, const std::string &recordDelim, const std::string &valueDelim);
+	std::string encodeSensorData2Message(const std::string &pairsDelim = pairsDelimDefault, const std::string &keyValueDelim = keyValueDelimDefault, const std::string &vectorDelim = vectorDelimDefault);
 
-	void decodeMessage2SensorData(const std::string &message, const std::string &keyDelim, const std::string &recordDelim, const std::string &valueDelim);
+	void decodeMessage2SensorData(const std::string &message, const std::string &pairsDelim = pairsDelimDefault, const std::string &keyValueDelim = keyValueDelimDefault, const std::string &vectorDelim = vectorDelimDefault);
 
 	///@brief Set sensor data.
 	void setEulerAngle(const float &yaw, const float &pitch, const float &roll);

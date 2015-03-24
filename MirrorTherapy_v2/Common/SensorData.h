@@ -23,19 +23,31 @@ public:
 	///@param keyDelim Symbol to split KEY and VALUE.
 	///@param recordDelim Symbol to split records. Record is pair of KEY and VALUE.
 	///@param valueDelim Symbol to split each componet of VALUE. When VALUE is multidimensional data, you use this symbol.
-	virtual std::string encodeSensorData2Message(const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim) = 0;
+	virtual std::string encodeSensorData2Message(const std::string &pairsDelim = pairsDelimDefault, const std::string &keyValueDelim = keyValueDelimDefault, const std::string &vectorDelim = vectorDelimDefault) = 0;
 	
 	///@brief Convert message(string) to sensor data.
-	///@param keyDelim Symbol to split KEY and VALUE.
+	///@param pairsDelim Symbol to split KEY and VALUE.
 	///@param recordDelim Symbol to split records. Record is pair of KEY and VALUE.
 	///@param valueDelim Symbol to split each componet of VALUE. When VALUE is multidimensional data, you use this symbol.
-	virtual void decodeMessage2SensorData(const std::string &message, const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim) = 0;
+	virtual void decodeMessage2SensorData(const std::string &message, const std::string &pairsDelim = pairsDelimDefault, const std::string &keyValueDelim = keyValueDelimDefault, const std::string &vectorDelim = vectorDelimDefault) = 0;
 
 	///@brief Convert message to std::map. 
 	///@param keyDelim Symbol to split KEY and VALUE.
 	///@param recordDelim Symbol to split whole message.
-	static std::map<std::string, std::string> convertMessage2Map(const std::string &message, const std::string &keyDelim, const std::string &recordDelim);
+	//static std::map<std::string, std::string> convertMessage2Map(const std::string &message, const std::string &keyDelim, const std::string &recordDelim);
+	static std::map<std::string, std::vector<std::string> > convertMessage2Map(const std::string &messages, const std::string &pairsDelim = pairsDelimDefault, const std::string &keyValueDelim = keyValueDelimDefault, const std::string &vectorDelim = vectorDelimDefault);
 
-	///@brief Delete parentheses from string.
+	// TODO です．
+	// センサーデータを std::map<std::string, std::vector<std::string> > に変換したものを渡せば，それに基づくメッセージを作ってくれる．というもの．
+	// なぜマップにする必要があるのか？という説明は以下．(野崎)
+	// 現状では encodeSensorData2Message() でメッセージ作成のほぼすべてを賄っているが，メッセージ作成の規則（:や,の置き場所など）を実装する人が理解しておく必要がある．
+	// SensorDataの実体をマップに変換する実装さえあれば，メッセージ作成の規則に従ってメッセージを作成するという機能を持たせたい．
+	// つまり，SensorDataの実体を「[KEYの文字列]と[VALUEの文字列のベクタ]からなるマップ」に変換する実装をencodeSensorData2Message()内に書き，
+	// その直後（encodeSensorData2Message()内）にこのconvertMap2Message()を呼んで第一引数に与えれば，送るべきメッセージが生成される．
+	// という機能を実装したい．ということです．
+	// 推測されるインタフェースだけ書いてみました．
+	// static std::string convertMap2Message(std::map<std::string, std::vector<std::string> > &map, const std::string &keyDelim, const std::string &recordDelim, const std::string &vectorDelim);
+
+	///@brief Delete parentheses '(' and ')' from string.
 	static std::string deleteParenthesesFromString(const std::string &input, const std::string &pBegin = "(", const std::string &pEnd = ")");
 };

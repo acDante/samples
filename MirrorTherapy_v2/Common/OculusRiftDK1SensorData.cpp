@@ -1,33 +1,28 @@
 #include "OculusRiftDK1SensorData.h"
 #include <sstream>
-std::string OculusRiftDK1SensorData::encodeSensorData2Message(const std::string &keyDelim, const std::string &recordDelim, const std::string &valueDelim)
+std::string OculusRiftDK1SensorData::encodeSensorData2Message(const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
 {
 	std::stringstream ss;
-	ss << sensorKey << keyDelim << 
-		"(" << this->eulerAngle.yaw << valueDelim << this->eulerAngle.pitch << valueDelim << this->eulerAngle.roll << ")" << recordDelim;
+	ss << sensorKey << keyValueDelim << 
+		"(" << this->eulerAngle.yaw << vectorDelim << this->eulerAngle.pitch << vectorDelim << this->eulerAngle.roll << ")" << pairsDelim;
 	return ss.str();
 }
 
-void OculusRiftDK1SensorData::decodeMessage2SensorData(const std::string &message, const std::string &keyDelim, const std::string &recordDelim, const std::string &valueDelim)
+void OculusRiftDK1SensorData::decodeMessage2SensorData(const std::string &message, const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
 {
 	// Generate map<string, string> from message. Just split message by ";" and ":".
-	std::map<std::string, std::string> messageMap = this->convertMessage2Map(message, keyDelim, recordDelim);
+	std::map<std::string, std::vector<std::string> > messageMap = SensorData::convertMessage2Map(message, pairsDelim, keyValueDelim, vectorDelim);
 
 	// Get values (vector data) from euler value "(yaw, pitch, roll)".
-	const std::string valuesString = messageMap[sensorKey];
 
 	try {
-		// 「(」と「)」を削除する．
-		// Delete "(" and ")" from message.
-		const std::string valuesStringDeletedParentheses = this->deleteParenthesesFromString(valuesString);
 
 		// Split values by ",".
-		std::vector<std::string> tmpValuesStringVector;
-		boost::split(tmpValuesStringVector, valuesStringDeletedParentheses, boost::is_any_of(valueDelim));
+		std::vector<std::string> tmpValuesStringVector = messageMap[sensorKey];
 	
 		// 3次元の値でないときは，入力データを出力して終了
 		if((int)tmpValuesStringVector.size() != 3) {
-			std::cout << "Not euler value: " << valuesString << std::endl;
+			std::cout << "Not euler value: " << message << std::endl;
 			return;
 		}
 
@@ -36,6 +31,9 @@ void OculusRiftDK1SensorData::decodeMessage2SensorData(const std::string &messag
 		const float yaw		 = atof(tmpValuesStringVector[0].c_str());
 		const float pitch	 = atof(tmpValuesStringVector[1].c_str());
 		const float roll	 = atof(tmpValuesStringVector[2].c_str());
+
+		//std::cout << "yaw, pitch, roll = " << yaw << "," << pitch << "," << roll << std::endl;
+
 		// Set extracted angle to sensor data.
 		this->setEulerAngle(yaw, pitch, roll);
 	}

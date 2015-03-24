@@ -1,7 +1,6 @@
 #pragma once
 #include "SensorData.h"
 
-#include <Kinect.h>
 #include <string>
 #include <sstream>
 #include <iomanip>
@@ -9,7 +8,6 @@
 // Set precision of quaternion and position. Only for send information.
 #define ORIENTATION_PRECISION 5
 #define POSITION_PRECISION 5
-
 
 #ifndef _Vector3_
 #define _Vector3_
@@ -102,54 +100,19 @@ public:
 	static const int rootPositionPrecision = POSITION_PRECISION;
 
 	///@brief Generate message by posture.
-	std::string convertSensorData2Message(const std::string &keyDelim, const std::string &recordDelim, const std::string &valueDelim);
+	std::string encodeSensorData2Message(const std::string &pairsDelim = pairsDelimDefault, const std::string &keyValueDelim = keyValueDelimDefault, const std::string &vectorDelim = vectorDelimDefault);
+
+	///@brief Decode message to sensor data.
+	void decodeMessage2SensorData(const std::string &message, const std::string &pairsDelim = pairsDelimDefault, const std::string &keyValueDelim = keyValueDelimDefault, const std::string &vectorDelim = vectorDelimDefault);
 
 	///@brief Set root position.
 	void setRootPosition(const Vector3 &position) {
 		this->rootPosition = position;
 	}
 
-	///@brief Set whole body joint orientations.
-	void setJointOrientations(JointOrientation* orientations) {
-		for (int i = 0; i < KinectV2JointType_Count; i++) {
-			this->jointOrientations[i].jointType = setKinectV2JointType(orientations[i].JointType);
-			this->jointOrientations[i].orientation = orientations[i].Orientation;
-		}
-	}
+	void setKinectV2JointOrientation(KinectV2JointOrientation *kinectV2JointOrientation);
 
-	///@brief Convert JointType to KinectV2JointType.
-	KinectV2JointType setKinectV2JointType(const JointType jointType) {
-		switch (jointType) {
-			break; case JointType_SpineBase:	{ return SpineBase; }
-			break; case JointType_SpineMid:		{ return SpineMid; }
-			break; case JointType_Neck:			{ return Neck; }
-			break; case JointType_Head:			{ return Head; }
-			break; case JointType_ShoulderLeft:	{ return ShoulderLeft; }
-			break; case JointType_ElbowLeft:	{ return ElbowLeft; }	
-			break; case JointType_WristLeft:	{ return WristLeft; }	
-			break; case JointType_HandLeft:		{ return HandLeft; }
-			break; case JointType_ShoulderRight:{ return ShoulderRight; }	
-			break; case JointType_ElbowRight:	{ return ElbowRight; }	
-			break; case JointType_WristRight:	{ return WristRight; }	
-			break; case JointType_HandRight:	{ return HandRight; }	
-			break; case JointType_HipLeft:		{ return HipLeft; }
-			break; case JointType_KneeLeft:		{ return KneeLeft; }
-			break; case JointType_AnkleLeft:	{ return AnkleLeft; }	
-			break; case JointType_FootLeft:		{ return FootLeft; }
-			break; case JointType_HipRight:		{ return HipRight; }
-			break; case JointType_KneeRight:	{ return KneeRight; }	
-			break; case JointType_AnkleRight:	{ return AnkleRight; }	
-			break; case JointType_FootRight:	{ return FootRight; }	
-			break; case JointType_SpineShoulder:{ return SpineShoulder; }	
-			break; case JointType_HandTipLeft:	{ return HandTipLeft; }
-			break; case JointType_ThumbLeft:	{ return ThumbLeft; }	
-			break; case JointType_HandTipRight:	{ return HandTipRight; }
-			break; case JointType_ThumbRight:	{ return ThumbRight; }
-			break; default: {}
-		}
-	}
-
-	
+	KinectV2JointType shortJointName2KinectV2JointType(const std::string &shortJointName);
 };
 
 ///@brief Get string enum of JointType.
@@ -187,8 +150,8 @@ struct jointType2String : public std::string {
 };
 
 ///@brief Get string enum of JointType to genrate message.
-struct jointType2Message : public std::string {
-	jointType2Message(KinectV2JointType e) {
+struct jointType2ShortJointName : public std::string {
+	jointType2ShortJointName(KinectV2JointType e) {
 		switch (e) {
 			break; case SpineBase:		{ assign("SpBs_Q"); }
 			break; case SpineMid:		{ assign("SpMd_Q"); }

@@ -85,11 +85,14 @@ void OculusRiftDK1Device::run()
 		this->sensorData = &oculusRiftDK1SensorData;
 
 		if (this->sendMessageFlag) {
-			const std::string sensorDataMessage = this->sensorData->encodeSensorData2Message(keyDelimDefault, recordDelimDefault, valueDelimDefault);
+			const std::string sensorDataMessage = this->sensorData->encodeSensorData2Message();
 			const std::string messageHeader = this->generateMessageHeader();
 			const std::string message = messageHeader + sensorDataMessage;
 
 			this->sendMessage(sigService, message);
+
+			OculusRiftDK1SensorData tmp;
+			tmp.decodeMessage2SensorData(message);
 		}
 		Sleep(100);
 	}
