@@ -10,6 +10,7 @@
 
 #include "Posture.h"
 #include <string>
+#include <sstream>
 
 #ifndef _ManNiiJointType_
 #define _ManNiiJointType_
@@ -17,39 +18,39 @@
 enum ManNiiJointType
 {
 	HEAD_JOINT0 = 0,
-	HEAD_JOINT1,
-	LARM_JOINT0,
-	LARM_JOINT1,
-	LARM_JOINT2,
-	LARM_JOINT3,
-	LARM_JOINT4,
-	LARM_JOINT5,
-	LARM_JOINT6,
-	LARM_JOINT7,
-	RARM_JOINT0,
-	RARM_JOINT1,
-	RARM_JOINT2,
-	RARM_JOINT3,
-	RARM_JOINT4,
-	RARM_JOINT5,
-	RARM_JOINT6,
-	RARM_JOINT7,
-	WAIST_JOINT0,
-	WAIST_JOINT1,
-	WAIST_JOINT2,
-	ROOT_JOINT0,
-	ROOT_JOINT1,
-	ROOT_JOINT2,
-	LLEG_JOINT2,
-	LLEG_JOINT4,
-	LLEG_JOINT6,
-	RLEG_JOINT2,
-	RLEG_JOINT4,
-	RLEG_JOINT6,
-	LEYE_JOINT1,
-	LEYE_JOINT0,
-	REYE_JOINT1,
-	REYE_JOINT0,
+	HEAD_JOINT1 = 1,
+	LARM_JOINT0 = 2,
+	LARM_JOINT1 = 3,
+	LARM_JOINT2 = 4,
+	LARM_JOINT3 = 5,
+	LARM_JOINT4 = 6,
+	LARM_JOINT5 = 7,
+	LARM_JOINT6 = 8,
+	LARM_JOINT7 = 9,
+	RARM_JOINT0 = 10,
+	RARM_JOINT1 = 11,
+	RARM_JOINT2 = 12,
+	RARM_JOINT3 = 13,
+	RARM_JOINT4 = 14,
+	RARM_JOINT5 = 15,
+	RARM_JOINT6 = 16,
+	RARM_JOINT7 = 17,
+	WAIST_JOINT0 = 18,
+	WAIST_JOINT1 = 19,
+	WAIST_JOINT2 = 20,
+	ROOT_JOINT0 = 21,
+	ROOT_JOINT1 = 22,
+	ROOT_JOINT2 = 23,
+	LLEG_JOINT2 = 24,
+	LLEG_JOINT4 = 25,
+	LLEG_JOINT6 = 26,
+	RLEG_JOINT2 = 27,
+	RLEG_JOINT4 = 28,
+	RLEG_JOINT6 = 29,
+	LEYE_JOINT1 = 30,
+	LEYE_JOINT0 = 31,
+	REYE_JOINT1 = 32,
+	REYE_JOINT0 = 33,
 	ManNiiJointType_Count = (REYE_JOINT0 + 1)
 };
 
@@ -158,6 +159,13 @@ public:
 		return tmp;
 	};
 
+	std::string str()
+	{
+		std::stringstream ss;
+		ss << "(" << w << "," << x << "," << y << "," << z << ")";
+		return ss.str();
+	}
+
 };
 
 #ifndef _EulerAngleType_
@@ -174,7 +182,7 @@ typedef struct _EulerAngleType
 class ManNiiJointQuaternion
 {
 public:
-	ManNiiJointType manJointType;
+	ManNiiJointType manNiiJointType;
 	Quaternion quaternion;
 };
 
@@ -182,7 +190,47 @@ public:
 class ManNiiPosture : public Posture
 {
 public:
-	ManNiiJointQuaternion joints[ManNiiJointType_Count];
+	ManNiiJointQuaternion jointQuaternions[ManNiiJointType_Count];
+
+	ManNiiPosture() {
+		this->jointQuaternions[0].manNiiJointType = HEAD_JOINT0;
+		this->jointQuaternions[1].manNiiJointType = HEAD_JOINT1;
+		this->jointQuaternions[2].manNiiJointType = LARM_JOINT0,
+		this->jointQuaternions[3].manNiiJointType = LARM_JOINT1;
+		this->jointQuaternions[4].manNiiJointType = LARM_JOINT2;
+		this->jointQuaternions[5].manNiiJointType = LARM_JOINT3;
+		this->jointQuaternions[6].manNiiJointType = LARM_JOINT4;
+		this->jointQuaternions[7].manNiiJointType = LARM_JOINT5;
+		this->jointQuaternions[8].manNiiJointType = LARM_JOINT6;
+		this->jointQuaternions[9].manNiiJointType = LARM_JOINT7;
+		this->jointQuaternions[10].manNiiJointType = RARM_JOINT0;
+		this->jointQuaternions[11].manNiiJointType = RARM_JOINT1;
+		this->jointQuaternions[12].manNiiJointType = RARM_JOINT2;
+		this->jointQuaternions[13].manNiiJointType = RARM_JOINT3;
+		this->jointQuaternions[14].manNiiJointType = RARM_JOINT4;
+		this->jointQuaternions[15].manNiiJointType = RARM_JOINT5;
+		this->jointQuaternions[16].manNiiJointType = RARM_JOINT6;
+		this->jointQuaternions[17].manNiiJointType = RARM_JOINT7;
+		this->jointQuaternions[18].manNiiJointType = WAIST_JOINT0;
+		this->jointQuaternions[19].manNiiJointType = WAIST_JOINT1;
+		this->jointQuaternions[20].manNiiJointType = WAIST_JOINT2;
+		this->jointQuaternions[21].manNiiJointType = ROOT_JOINT0;
+		this->jointQuaternions[22].manNiiJointType = ROOT_JOINT1;
+		this->jointQuaternions[23].manNiiJointType = ROOT_JOINT2;
+		this->jointQuaternions[24].manNiiJointType = LLEG_JOINT2;
+		this->jointQuaternions[25].manNiiJointType = LLEG_JOINT4;
+		this->jointQuaternions[26].manNiiJointType = LLEG_JOINT6;
+		this->jointQuaternions[27].manNiiJointType = RLEG_JOINT2;
+		this->jointQuaternions[28].manNiiJointType = RLEG_JOINT4;
+		this->jointQuaternions[29].manNiiJointType = RLEG_JOINT6;
+		this->jointQuaternions[30].manNiiJointType = LEYE_JOINT1;
+		this->jointQuaternions[31].manNiiJointType = LEYE_JOINT0;
+		this->jointQuaternions[32].manNiiJointType = REYE_JOINT1;
+		this->jointQuaternions[33].manNiiJointType = REYE_JOINT0;
+		for (int i = 0; i < ManNiiJointType_Count; i++) {
+			this->jointQuaternions[i].quaternion = Quaternion(0.0, 0.0, 0.0, 0.0);
+		}
+	}
 
 };
 

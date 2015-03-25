@@ -106,8 +106,7 @@ void KinectV2SensorData::decodeMessage2SensorData(const std::string &message, co
 				tmpPosition.y = atof((*i).second[1].c_str());
 				tmpPosition.z = atof((*i).second[2].c_str());
 				this->rootPosition = tmpPosition;
-				break;
-
+				continue;
 			}
 			//std::cout << (*i).first << ":" << (*i).second[0] << "," << (*i).second[1] << "," << (*i).second[2] << "," << (*i).second[3] << ";" << std::endl;
 
@@ -131,14 +130,12 @@ void KinectV2SensorData::setKinectV2JointOrientation(KinectV2JointOrientation *k
 	}
 }
 
-std::vector<KinectV2JointOrientation> KinectV2SensorData::getKinectV2JointOrientation()
+void KinectV2SensorData::getKinectV2JointOrientation(KinectV2JointOrientation* destination)
 {
-	std::vector<KinectV2JointOrientation> tmp(KinectV2JointType_Count);
-	for (int i = 0; i < (int)tmp.size(); i++) {
-		tmp[i].jointType = this->jointOrientations[i].jointType;
-		tmp[i].orientation = this->jointOrientations[i].orientation;
+	for (int i = 0; i < KinectV2JointType_Count; i++) {
+		destination[i].jointType = this->jointOrientations[i].jointType;
+		destination[i].orientation = this->jointOrientations[i].orientation;
 	}
-	return tmp;
 }
 
 KinectV2JointType KinectV2SensorData::shortJointName2KinectV2JointType(const std::string &shortJointName)

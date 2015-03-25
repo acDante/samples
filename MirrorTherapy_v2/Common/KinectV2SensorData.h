@@ -88,8 +88,8 @@ private:
 	///@brief Whole body joint orientations.
 	KinectV2JointOrientation jointOrientations[KinectV2JointType_Count];
 
-	// Œ»ó‚Å‚Íƒ‹[ƒg‚Ìƒ|ƒWƒVƒ‡ƒ“‚ÆŠeŠÖß‚ÌƒIƒŠƒGƒ“ƒe[ƒVƒ‡ƒ“iƒNƒH[ƒ^ƒjƒIƒ“j‚µ‚©•ÛŽ‚µ‚Ä‚¢‚Ü‚¹‚ñ‚ªC
-	// KinectV2JointPosition ‚È‚Ç‚ÌŒ^‚ð’è‹`‚µ‚ÄCŠÖß‚ÌˆÊ’u‚ð•ÛŽ‚µ‚Ä‚à–â‘è‚È‚¢‚ÆŽv‚¢‚Ü‚·D
+	// ï¿½ï¿½ï¿½ï¿½Å‚Íƒï¿½ï¿½[ï¿½gï¿½Ìƒ|ï¿½Wï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ÆŠeï¿½Öß‚ÌƒIï¿½ï¿½ï¿½Gï¿½ï¿½ï¿½eï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½iï¿½Nï¿½Hï¿½[ï¿½^ï¿½jï¿½Iï¿½ï¿½ï¿½jï¿½ï¿½ï¿½ï¿½ï¿½ÛŽï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½Ü‚ï¿½ï¿½ñ‚ªC
+	// KinectV2JointPosition ï¿½È‚Ç‚ÌŒ^ï¿½ï¿½ï¿½`ï¿½ï¿½ï¿½ÄCï¿½Öß‚ÌˆÊ’uï¿½ï¿½ÛŽï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½ÆŽvï¿½ï¿½ï¿½Ü‚ï¿½ï¿½D
 
 public:
 
@@ -110,10 +110,13 @@ public:
 		this->rootPosition = position;
 	}
 
+	///@brief Set posture from kinect joint orientations.
 	void setKinectV2JointOrientation(KinectV2JointOrientation *kinectV2JointOrientation);
 
-	std::vector<KinectV2JointOrientation> getKinectV2JointOrientation();
+	///@brief Get orientations from kinect joint orientations.
+	void getKinectV2JointOrientation(KinectV2JointOrientation* destination);
 
+	///@brief Set joint quaternions for man-nii avatar.
 	KinectV2JointType shortJointName2KinectV2JointType(const std::string &shortJointName);
 };
 
