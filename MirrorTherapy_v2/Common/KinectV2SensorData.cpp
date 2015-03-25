@@ -131,6 +131,16 @@ void KinectV2SensorData::setKinectV2JointOrientation(KinectV2JointOrientation *k
 	}
 }
 
+std::vector<KinectV2JointOrientation> KinectV2SensorData::getKinectV2JointOrientation()
+{
+	std::vector<KinectV2JointOrientation> tmp(KinectV2JointType_Count);
+	for (int i = 0; i < (int)tmp.size(); i++) {
+		tmp[i].jointType = this->jointOrientations[i].jointType;
+		tmp[i].orientation = this->jointOrientations[i].orientation;
+	}
+	return tmp;
+}
+
 KinectV2JointType KinectV2SensorData::shortJointName2KinectV2JointType(const std::string &shortJointName)
 {
 	try {

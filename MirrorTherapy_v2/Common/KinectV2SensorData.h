@@ -112,6 +112,8 @@ public:
 
 	void setKinectV2JointOrientation(KinectV2JointOrientation *kinectV2JointOrientation);
 
+	std::vector<KinectV2JointOrientation> getKinectV2JointOrientation();
+
 	KinectV2JointType shortJointName2KinectV2JointType(const std::string &shortJointName);
 };
 
