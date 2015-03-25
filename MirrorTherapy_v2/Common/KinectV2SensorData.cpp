@@ -96,7 +96,8 @@ void KinectV2SensorData::decodeMessage2SensorData(const std::string &message, co
 	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("HTR_Q" , emptyStrings));
 	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type("ThmR_Q", emptyStrings));
 
-	for (auto i = messageMap.begin(); i != messageMap.end(); i++) {
+	std::map<std::string, std::vector<std::string> >::iterator i;
+	for (i = messageMap.begin(); i != messageMap.end(); i++) {
 		const std::string key = (*i).first;
 		if (jointMap.find(key) != jointMap.end()) {
 			if ((*i).first == "SpBs_P") {

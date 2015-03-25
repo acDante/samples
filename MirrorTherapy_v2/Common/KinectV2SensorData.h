@@ -30,7 +30,7 @@ typedef struct _Vector4
 	float z;
 	float w;
 } 	Vector4;
-#endif _Vector4_
+#endif //_Vector4_
 
 #ifndef _KinectV2JointType_
 #define _KinectV2JointType_
