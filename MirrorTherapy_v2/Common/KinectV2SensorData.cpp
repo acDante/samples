@@ -29,7 +29,7 @@ struct position2Message : public std::string {
 	}
 };
 ///@brief Generate message by posture.
-std::string KinectV2SensorData::encodeSensorData2Message(const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
+std::string KinectV2SensorData::encodeSensorData(const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
 {
 	std::stringstream ss;
 	ss << position2Message(this->rootPosition) << pairsDelim
@@ -61,7 +61,7 @@ std::string KinectV2SensorData::encodeSensorData2Message(const std::string &pair
 	return(ss.str());
 }
 
-void KinectV2SensorData::decodeMessage2SensorData(const std::string &message, const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
+void KinectV2SensorData::decodeSensorData(const std::string &message, const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
 {
 	// Generate map<string, vector<string> from message. Just split message by ";" and ":".
 	std::map<std::string, std::vector<std::string> > messageMap = this->convertMessage2Map(message);

@@ -84,7 +84,7 @@ void MirrorTherapyController::onRecvMsg(RecvMsgEvent &evt)
 		if (deviceTypeValue == devTypeKinectV2) {
 			// Decode message to sensor data of kinect v2.
 			KinectV2SensorData sensorData;
-			sensorData.decodeMessage2SensorData(allMsg);
+			sensorData.decodeSensorData(allMsg);
 
 			// Get quaternions(orientations) of kinect v2 format, from sensor data of kinect v2.
 			KinectV2JointOrientation tmpKinectV2JointOrientations[KinectV2JointType_Count];
@@ -171,7 +171,7 @@ void MirrorTherapyController::onRecvMsg(RecvMsgEvent &evt)
 		}
 		else if (deviceTypeValue == devTypeOculus) {
 			OculusRiftDK1SensorData sensorData;
-			sensorData.decodeMessage2SensorData(allMsg);
+			sensorData.decodeSensorData(allMsg);
 
 			EulerAngleType eulerAngle;
 			eulerAngle.yaw = sensorData.yaw();

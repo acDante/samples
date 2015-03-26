@@ -245,7 +245,7 @@ int KinectV2Device::run()
 
 									if (SUCCEEDED(hResult) && this->sendMessageFlag) {
 										// Send message to SigServer.
-										const std::string sensorDataMessage = this->sensorData->encodeSensorData2Message();
+										const std::string sensorDataMessage = this->sensorData->encodeSensorData();
 										const std::string messageHeader = "DEV_TYPE:KINECTV2;DEV_ID:0;";
 										const std::string message = messageHeader + sensorDataMessage;
 										this->sendMessage(sigService, message);

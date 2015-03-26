@@ -1,6 +1,6 @@
 #include "OculusRiftDK1SensorData.h"
 #include <sstream>
-std::string OculusRiftDK1SensorData::encodeSensorData2Message(const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
+std::string OculusRiftDK1SensorData::encodeSensorData(const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
 {
 	std::stringstream ss;
 	ss << sensorKey << keyValueDelim << 
@@ -8,7 +8,7 @@ std::string OculusRiftDK1SensorData::encodeSensorData2Message(const std::string 
 	return ss.str();
 }
 
-void OculusRiftDK1SensorData::decodeMessage2SensorData(const std::string &message, const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
+void OculusRiftDK1SensorData::decodeSensorData(const std::string &message, const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
 {
 	// Generate map<string, string> from message. Just split message by ";" and ":".
 	std::map<std::string, std::vector<std::string> > messageMap = SensorData::convertMessage2Map(message, pairsDelim, keyValueDelim, vectorDelim);

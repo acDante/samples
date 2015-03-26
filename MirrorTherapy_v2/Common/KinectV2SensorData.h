@@ -100,10 +100,10 @@ public:
 	static const int rootPositionPrecision = POSITION_PRECISION;
 
 	///@brief Generate message by posture.
-	std::string encodeSensorData2Message(const std::string &pairsDelim = pairsDelimDefault, const std::string &keyValueDelim = keyValueDelimDefault, const std::string &vectorDelim = vectorDelimDefault);
+	std::string encodeSensorData(const std::string &pairsDelim = pairsDelimDefault, const std::string &keyValueDelim = keyValueDelimDefault, const std::string &vectorDelim = vectorDelimDefault);
 
 	///@brief Decode message to sensor data.
-	void decodeMessage2SensorData(const std::string &message, const std::string &pairsDelim = pairsDelimDefault, const std::string &keyValueDelim = keyValueDelimDefault, const std::string &vectorDelim = vectorDelimDefault);
+	void decodeSensorData(const std::string &message, const std::string &pairsDelim = pairsDelimDefault, const std::string &keyValueDelim = keyValueDelimDefault, const std::string &vectorDelim = vectorDelimDefault);
 
 	///@brief Set root position.
 	void setRootPosition(const Vector3 &position) {

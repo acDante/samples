@@ -46,7 +46,7 @@ void ManNiiAvatarControllerByOculus::onRecvMsg(RecvMsgEvent &evt)
 	//std::cout << allMsg << std::endl;
 
 	OculusRiftDK1SensorData sensorData;
-	sensorData.decodeMessage2SensorData(allMsg);
+	sensorData.decodeSensorData(allMsg);
 
 	EulerAngleType eulerAngle;
 	eulerAngle.yaw = sensorData.yaw();
