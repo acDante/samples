@@ -124,6 +124,12 @@ typedef struct _Vector4
 class Quaternion
 {
 public:
+
+	double w;
+	double x;
+	double y;
+	double z;
+
 	Quaternion(){};
 	~Quaternion(){};
 
@@ -141,10 +147,6 @@ public:
 		this->z = v.z;
 	};
 
-	double w;
-	double x;
-	double y;
-	double z;
 
 	///@param[in] q Input quaternion.
 	///@param[in] r Input quaternion.
@@ -164,6 +166,22 @@ public:
 		std::stringstream ss;
 		ss << "(" << w << "," << x << "," << y << "," << z << ")";
 		return ss.str();
+	}
+
+	void getQuaternion(double &w, double &x, double &y, double &z)
+	{
+		w = this->w;
+		x = this->x;
+		y = this->y;
+		z = this->z;
+	}
+
+	void setQuaternion(const double w, const double x, const double y, const double z)
+	{
+		this->w = w;
+		this->x = x;
+		this->y = y;
+		this->z = z;
 	}
 
 };

@@ -66,7 +66,6 @@ void ManNiiAvatarControllerByKinectV2::onRecvMsg(RecvMsgEvent &evt)
 
 void ManNiiAvatarControllerByKinectV2::setJointQuaternion(SimObj *obj, ManNiiJointQuaternion &jq)
 {
-	std::cout << manNiiJointTypeStr(jq.manNiiJointType).c_str() << ":" << jq.quaternion.str() << std::endl;
 	obj->setJointQuaternion(manNiiJointTypeStr(jq.manNiiJointType).c_str(), jq.quaternion.w, jq.quaternion.x, jq.quaternion.y, jq.quaternion.z);
 }
 

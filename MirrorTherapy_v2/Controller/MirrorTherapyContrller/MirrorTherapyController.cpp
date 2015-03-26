@@ -1,19 +1,31 @@
 /*
  * MirrorTherapyController.cpp
  *
- *  Created on: 2015/03/16
+ *  Created on: 2015/03/25
  *      Author: Nozaki
  */
 
 #include "MirrorTherapyController.h"
+#include <sys/time.h>
 
-#include <fstream>
+enum ReverseModeType {
+	NOREVERSE = 0,
+	RIGHTHAND = 1,
+	LEFTHAND  = 2,
+	ReverseMode_Count = (LEFTHAND + 1)
+};
+
+static const std::string reverseModes[ReverseMode_Count] = {
+	"NOREVERSE",
+	"RIGHTHAND",
+	"LEFTHAND"
+};
 
 ///@brief Initialize this controller.
 void MirrorTherapyController::onInit(InitEvent &evt)
 {
-	this->kinectV2Service = NULL;
 	this->oculusDK1Service = NULL;
+	this->kinectV2Service = NULL;
 
 	this->defaultHeadJoint0Quaternion[0] = 1.0;
 	this->defaultHeadJoint0Quaternion[1] = 0.0;
@@ -22,42 +34,30 @@ void MirrorTherapyController::onInit(InitEvent &evt)
 
 	this->prevYaw = this->prevPitch = this->prevRoll = 0.0;
 
-	std::ifstream ifs(parameterFileName.c_str());
-	if (!ifs.fail())
-	{
-		std::cout << "Read parameter file: " << parameterFileName << std::endl;
-		double delaytime;
-		int revMode;
-		ifs >> delaytime >> revMode;
-		this->targetDelayTime = delaytime;
-		this->reverseMode = reverseModes[revMode];
-	}
-	else {
-		std::cout << "Start without parameter file." << std::endl;
+	SimObj *myself = getObj(myname());
 
-		// For Mirror therapy initialize.
-		this->reverseMode = reverseModes[RIGHTHAND]; // Set reverse mode.
-		//this->reverseMode = reverseModes[NOREVERSE];
+	// For Mirror therapy initialize.
+	this->reverseMode = reverseModes[RIGHTHAND]; // Set reverse mode.
+	//this->reverseMode = reverseModes[NOREVERSE];
 
-		// Set delay variables.
-		this->targetDelayTime = defaultDelayTime;
-		gettimeofday(&this->initTimeVal, NULL);
-		this->frameNumber = 0;
-		this->pastPostures = std::vector<TimeAndPostureType>(timeSeriesBufferSize);
-	}
-
-	std::cout << "Reverse: " << this->reverseMode << ", Delay: " << this->targetDelayTime << "[ms]." << std::endl;
-
-
-	SimObj *my = getObj(myname());
+	// Set delay variables.
+	this->targetDelayTime = defaultDelayTime;
+	gettimeofday(&this->initTimeVal, NULL);
+	this->frameNumber = 0;
+	this->pastPostures = std::vector<TimeAndPostureType>(timeSeriesBufferSize);
 }
-
 
 ///@brief Movement of the robot.
 double MirrorTherapyController::onAction(ActionEvent &evt)
 {
-	std::cout << '\r' << "Reverse: " << this->reverseMode << ", Delay: " << this->targetDelayTime << "[ms].";
-	fflush(stdout);
+	this->oculusDK1ServiceName = oculusDK1ServiceNameDefault;
+	bool oculusDK1Available = checkService(this->oculusDK1ServiceName);
+	if (oculusDK1Available && this->oculusDK1Service == NULL) {
+		this->oculusDK1Service = connectToService(this->oculusDK1ServiceName);
+	}
+	else if (!oculusDK1Available && this->oculusDK1Service != NULL) {
+		this->oculusDK1Service = NULL;
+	}
 
 	this->kinectV2ServiceName = kinectV2ServiceNameDefault;
 	bool kinectV2Available = checkService(this->kinectV2ServiceName);
@@ -68,321 +68,249 @@ double MirrorTherapyController::onAction(ActionEvent &evt)
 		this->kinectV2Service = NULL;
 	}
 
-	this->oculusDK1ServiceName = oculusDK1ServiceNameDefault;
-	bool oculusDK1Available = checkService(this->oculusDK1ServiceName);
-	if (oculusDK1Available && this->oculusDK1Service == NULL) {
-		this->oculusDK1Service = connectToService(this->oculusDK1ServiceName);
-	}
-	else if (!oculusDK1Available && this->oculusDK1Service != NULL) {
-		this->oculusDK1Service = NULL;
-	}
-
 	return 1.0;
 }
 
+///@brief Message heard by the robot.
 void MirrorTherapyController::onRecvMsg(RecvMsgEvent &evt)
 {
+	try {
+		// Receive message.
+		const std::string allMsg = evt.getMsg();
 
-	const std::string allMsg = evt.getMsg();
+		// Get device type from message.
+		const std::string deviceTypeValue = this->getDeviceIDFromMessage(allMsg);
 
-	//std::cout << allMsg << std::endl;
+		if (deviceTypeValue == devTypeKinectV2) {
+			// Decode message to sensor data of kinect v2.
+			KinectV2SensorData sensorData;
+			sensorData.decodeMessage2SensorData(allMsg);
 
-	if (this->setReverseModeAndDelayTime(allMsg)) {
-		return;
-	}
+			// Get quaternions(orientations) of kinect v2 format, from sensor data of kinect v2.
+			KinectV2JointOrientation tmpKinectV2JointOrientations[KinectV2JointType_Count];
+			sensorData.getKinectV2JointOrientation(tmpKinectV2JointOrientations);
 
-	this->convertMessage2Posture(allMsg);
+			// Convert kinect v2 quaternions(orientations) to man-nii posture(sigverse quaternion format).
+			ManNiiPosture manNiiPosture = ManNiiPosture();
+			this->convertKinectV2JointOrientations2ManNiiPosture(tmpKinectV2JointOrientations, manNiiPosture);
 
-}
+			// Store current posture and time stamp.
+			TimeAndPostureType current;
+			current.timeStamp = this->generateCurrentTimeStamp();
+			for (int i = 0; i < ManNiiJointType_Count; i++) {
+				current.posture.jointQuaternions[i] = manNiiPosture.jointQuaternions[i];
+			}
+			const unsigned long index = this->frameNumber % timeSeriesBufferSize;
+			this->pastPostures[index] = current;
 
-//void MirrorTherapyController::convertMessage2AvatarPosture(const std::string &message, const std::string &recordDelim, const std::string &keyDelim, const std::string &valueDelim)
-void MirrorTherapyController::convertMessage2Posture(const std::string &message)
-{
-	std::vector<Record> records;
-	this->convertMessage2Records(message, records);
+			// Search nearest neighbor of target delay time in stored time stamps.
+			// this->pastPostures に、過去の500メッセージ分の姿勢とタイムスタンプが格納されています。
+			// （現在時刻 - 目標の遅延時刻）に最も近いタイムスタンプをもつ姿勢を取得したいと思います。
+			// 過去の姿勢とタイムスタンプは、this->pastPostures に入っていて、this->pastPostures の型がstd::vector<TimeAndPosture>です。
+			// したがって、this->pastPostures[0]～this->pastPostures[timeSeriesBufferSize]のうちから、最も（現在時刻 - 目標の遅延時刻）に
+			// 近いタイムスタンプをもつ this->pastPostures の添字( = nearestIndex )を見つけます。
+			int nearestIndexTmp = index;
+			if (targetDelayTime > 0.0) { // 目標の遅延時間が0秒以下なら何もしません
+				if(current.timeStamp > this->targetDelayTime) { // 経過時間が目標の遅延時間未満の時も何もしません
 
-	Record firstRecord = records[0];
+					const double idealPastTime = current.timeStamp - (this->targetDelayTime);
 
-	if (firstRecord.key != devTypeKey) {
-		std::cout << "Illegal device type: " << firstRecord.key << std::endl;
-		return;
-	}
-
-	if (firstRecord.value == devTypeOculus) {
-
-		Record eulerRecord = records[2];
-
-		EulerAngleType eulerAngle = this->generateEulerAngleFromRecord(eulerRecord);
-
-		ManNiiPosture tmpManNiiPosture;
-		this->convertEulerAngle2ManNiiPosture(eulerAngle, tmpManNiiPosture);
-
-		SimObj *obj = getObj(myname());
-		this->setJointQuaternionsForOculus(obj, &tmpManNiiPosture);
-
-	}
-
-	if (firstRecord.value == devTypeKinectV2) {
-
-		std::vector<Record> kinectRecords;
-
-		KinectV2JointOrientation kinectV2JointOrientations[KinectV2JointType_Count];
-		this->convertRecords2KinectV2JointOrientations(records, kinectV2JointOrientations);
-
-		ManNiiPosture tmpManNiiPosture;
-		this->convertKinectV2JointOrientations2ManNiiPosture(kinectV2JointOrientations, tmpManNiiPosture);
+					double nearestTimeDistance = DBL_MAX;
+					nearestIndexTmp = 0;
 
 
-		// 反転と遅延のための記述 //
+					for (int i = timeSeriesBufferSize - 1; i >= 0; i--) {
+						double tmpTimeDistance = abs(idealPastTime - this->pastPostures[i].timeStamp);
 
-		// Store current posture and time stamp.
-		TimeAndPostureType current;
-		current.timeStamp = this->generateCurrentTimeStamp();
-		for (int i = 0; i < ManNiiJointType_Count - 1; i++) {
-			current.posture.joints[i] = tmpManNiiPosture.joints[i];
-		}
-		const unsigned long index = this->frameNumber % timeSeriesBufferSize;
-		this->pastPostures[index] = current;
-
-		// Search nearest neighbor of target delay time in stored time stamps.
-		// this->pastPostures に、過去の500メッセージ分の姿勢とタイムスタンプが格納されています。
-		// （現在時刻 - 目標の遅延時刻）に最も近いタイムスタンプをもつ姿勢を取得したいと思います。
-		// 過去の姿勢とタイムスタンプは、this->pastPostures に入っていて、this->pastPostures の型がstd::vector<TimeAndPosture>です。
-		// したがって、this->pastPostures[0]～this->pastPostures[timeSeriesBufferSize]のうちから、最も（現在時刻 - 目標の遅延時刻）に
-		// 近いタイムスタンプをもつ this->pastPostures の添字( = nearestIndex )を見つけます。
-		int nearestIndexTmp = index;
-		if (targetDelayTime > 0.0) { // 目標の遅延時間が0秒以下なら何もしません
-			if(current.timeStamp > this->targetDelayTime) { // 経過時間が目標の遅延時間未満の時も何もしません
-
-				const double idealPastTime = current.timeStamp - (this->targetDelayTime);
-
-				double nearestTimeDistance = DBL_MAX;
-				nearestIndexTmp = 0;
-
-
-				for (int i = timeSeriesBufferSize - 1; i >= 0; i--) {
-					double tmpTimeDistance = abs(idealPastTime - this->pastPostures[i].timeStamp);
-
-					if (tmpTimeDistance < nearestTimeDistance) {
-						nearestTimeDistance = tmpTimeDistance;
-						nearestIndexTmp = i;
+						if (tmpTimeDistance < nearestTimeDistance) {
+							nearestTimeDistance = tmpTimeDistance;
+							nearestIndexTmp = i;
+						}
 					}
-				}
 
-				//std::cout << "nearest: " <<
-			}
-		}
-		const int nearestIndex = nearestIndexTmp; // 上記の「何もしない」場合は、最新の姿勢情報が反転されることになります。
-
-		if (this->reverseMode == reverseModes[RIGHTHAND]) { // 左手の動きを右手へ
-
-			// Get original quaternions.
-			double w2, x2, y2, z2, w3, x3, y3, z3, w5, x5, y5, z5; // These are temporary variables.
-			this->pastPostures[nearestIndex].posture.joints[LARM_JOINT2].quaternion.getQuaternions(w2, x2, y2, z2);
-			this->pastPostures[nearestIndex].posture.joints[LARM_JOINT3].quaternion.getQuaternions(w3, x3, y3, z3);
-
-			// Set reverse quaternions.
-			// KinectV2のクォータニオンを使用するようになったことに伴い、y軸（ひねり）が反映されるように
-			// なったため、反転する要素が以前と変わりました。
-			// 以前は(w,x,y,z)のうちx,y,zの符号を反転させて逆の腕にセットしていましたが、
-			// y,zの符号を反転させてセットしています。
-			tmpManNiiPosture.joints[RARM_JOINT2].quaternion.setQuaternions(w2, x2, -y2, -z2);
-			tmpManNiiPosture.joints[RARM_JOINT3].quaternion.setQuaternions(w3, x3, -y3, -z3);
-			//tmpManNiiPosture.joints[RARM_JOINT5].quaternion.setQuaternions(w5, -x5, -y5, -z5);
-		}
-		else if (this->reverseMode == reverseModes[LEFTHAND]) { // 右手の動きを左手へ
-			// Get original quaternions.
-			double w2, x2, y2, z2, w3, x3, y3, z3, w5, x5, y5, z5;
-			this->pastPostures[nearestIndex].posture.joints[RARM_JOINT2].quaternion.getQuaternions(w2, x2, y2, z2);
-			this->pastPostures[nearestIndex].posture.joints[RARM_JOINT3].quaternion.getQuaternions(w3, x3, y3, z3);
-
-			// Set reverse quaternions.
-			tmpManNiiPosture.joints[LARM_JOINT2].quaternion.setQuaternions(w2, x2, -y2, -z2);
-			tmpManNiiPosture.joints[LARM_JOINT3].quaternion.setQuaternions(w3, x3, -y3, -z3);
-			//tmpManNiiPosture.joints[RARM_JOINT5].quaternion.setQuaternions(w5, -x5, -y5, -z5);
-
-		}
-
-//		if (this->reverseMode == reverseModes[RIGHTHAND]) {
-//
-//			// Get original quaternions.
-//			double w2, x2, y2, z2, w3, x3, y3, z3, w5, x5, y5, z5;
-//			tmpManNiiPosture.joints[LARM_JOINT2].quaternion.getQuaternions(w2, x2, y2, z2);
-//			tmpManNiiPosture.joints[LARM_JOINT3].quaternion.getQuaternions(w3, x3, y3, z3);
-//			//tmpManNiiPosture.joints[LARM_JOINT5].quaternion.getQuaternions(w5, x5, y5, z5);
-//
-//			// Set reverse quaternions.
-//			// KinectV2のクォータニオンを使用するようになったことに伴い、y軸（ひねり）が反映されるように
-//			// なったため、反転する要素が以前と変わりました。
-//			// 以前は(w,x,y,z)のうちx,y,zの符号を反転させて逆の腕にセットしていましたが、
-//			// y,zの符号を反転させてセットしています。
-//			tmpManNiiPosture.joints[RARM_JOINT2].quaternion.setQuaternions(w2, x2, -y2, -z2);
-//			tmpManNiiPosture.joints[RARM_JOINT3].quaternion.setQuaternions(w3, x3, -y3, -z3);
-//			//tmpManNiiPosture.joints[RARM_JOINT5].quaternion.setQuaternions(w5, -x5, -y5, -z5);
-//		}
-//		else if (this->reverseMode = reverseModes[LEFTHAND]) {
-//			// Get original quaternions.
-//			double w2, x2, y2, z2, w3, x3, y3, z3, w5, x5, y5, z5;
-//			tmpManNiiPosture.joints[RARM_JOINT2].quaternion.getQuaternions(w2, x2, y2, z2);
-//			tmpManNiiPosture.joints[RARM_JOINT3].quaternion.getQuaternions(w3, x3, y3, z3);
-//			//tmpManNiiPosture.joints[LARM_JOINT5].quaternion.getQuaternions(w5, x5, y5, z5);
-//
-//			// Set reverse quaternions.
-//			tmpManNiiPosture.joints[LARM_JOINT2].quaternion.setQuaternions(w2, x2, -y2, -z2);
-//			tmpManNiiPosture.joints[LARM_JOINT3].quaternion.setQuaternions(w3, x3, -y3, -z3);
-//			//tmpManNiiPosture.joints[RARM_JOINT5].quaternion.setQuaternions(w5, -x5, -y5, -z5);
-//
-//		}
-
-		SimObj *obj = getObj(myname());
-		this->setJointQuaternionsForKinect(obj, &tmpManNiiPosture);
-
-		this->frameNumber++;
-
-	}
-}
-
-void MirrorTherapyController::convertMessage2Records(const std::string &message, std::vector<Record> &records)
-{
-	try {
-		const std::string recordDelim = recordDelimDefault;
-		const std::string keyDelim = keyDelimDefault;
-		const std::string valueDelim = valueDelimDefault;
-
-		//const std::string messageHeader = this->getMessageHeader(message);
-
-	//	bool messageHeaderOK = this->checkMessageHeader(messageHeader);
-	//	if (!messageHeaderOK) {
-	//		std::cout << "Illegal message header : " << messageHeader << std::endl;
-	//	}
-
-		// Split string to records by ";". One record has one KEY and one VALUE.
-		std::vector<std::string> recordsString;
-		AvatarController::splitString(message, recordDelim, recordsString);
-
-		// Get device type.
-		const Record firstRecord = Record(recordsString[0]);
-
-//		if (firstRecord.key != devTypeKey) {
-//			std::cout << "Illegal device type: " << firstRecord.key << std::endl;
-//			throw("illegal device type");
-//		}
-
-		for (int i = 0; i < (int)recordsString.size(); i++) {
-			const Record oneRecord = Record(recordsString[i]);
-			records.push_back(oneRecord);
-		}
-
-	}
-	catch (std::exception &ex) {
-		std::cout << ex.what() << std::endl;
-	}
-}
-
-
-void MirrorTherapyController::setJointQuaternion(SimObj *obj, const ManNiiJointQuaternion &jq)
-{
-	obj->setJointQuaternion(manNiiJointTypeStr(jq.manJointType).c_str(), jq.quaternion.w, jq.quaternion.x, jq.quaternion.y, jq.quaternion.z);
-	//std::cout << manNiiJointTypeStr(jq.manJointType).c_str() << ":" << jq.quaternion.w << "," << jq.quaternion.x <<  "," << jq.quaternion.y <<  "," << jq.quaternion.z << std::endl;
-}
-
-void MirrorTherapyController::setJointQuaternions(SimObj *obj)
-{
-	//ManNiiAvatarPosture *pos = this->avatarPosture;
-	//const ManNiiJointQuaternion *jq = dynamic_cast<ManNiiJointQuaternion*>(&this->avatarPosture);
-	//ManNiiAvatarPosture *jq = dynamic_cast<ManNiiAvatarPosture*>(this->avatarPosture);
-//	ManNiiAvatarPosture *jq = this->avatarPosture;
-//
-//	this->setJointQuaternion(obj, jq->joints[WAIST_JOINT1]);
-//	this->setJointQuaternion(obj, jq->joints[RARM_JOINT2]);
-//	this->setJointQuaternion(obj, jq->joints[LARM_JOINT2]);
-//	this->setJointQuaternion(obj, jq->joints[RLEG_JOINT2]);
-//	this->setJointQuaternion(obj, jq->joints[LLEG_JOINT2]);
-//	this->setJointQuaternion(obj, jq->joints[RLEG_JOINT4]);
-//	this->setJointQuaternion(obj, jq->joints[LLEG_JOINT4]);
-//	this->setJointQuaternion(obj, jq->joints[RARM_JOINT3]);
-//	this->setJointQuaternion(obj, jq->joints[LARM_JOINT3]);
-	//this->setJointQuaternion(obj, jq[RARM_JOINT5]);
-	//this->setJointQuaternion(obj, jq[LARM_JOINT5]);
-}
-
-void MirrorTherapyController::setJointQuaternionsForKinect(SimObj *obj, ManNiiPosture *manNiiAvatarPosture)
-{
-	//Man
-	//this->avatarPosture =
-	//this->setJointQuaternion(obj, manNiiAvatarPosture->joints[HEAD_JOINT0]);
-
-	this->setJointQuaternion(obj, manNiiAvatarPosture->joints[LARM_JOINT2]);
-	this->setJointQuaternion(obj, manNiiAvatarPosture->joints[LARM_JOINT3]);
-	//this->setJointQuaternion(obj, manNiiAvatarPosture->joints[LARM_JOINT5]);
-	this->setJointQuaternion(obj, manNiiAvatarPosture->joints[RARM_JOINT2]);
-	this->setJointQuaternion(obj, manNiiAvatarPosture->joints[RARM_JOINT3]);
-	//this->setJointQuaternion(obj, manNiiAvatarPosture->joints[RARM_JOINT5]);
-	this->setJointQuaternion(obj, manNiiAvatarPosture->joints[WAIST_JOINT1]);
-	this->setJointQuaternion(obj, manNiiAvatarPosture->joints[LLEG_JOINT2]);
-	this->setJointQuaternion(obj, manNiiAvatarPosture->joints[LLEG_JOINT4]);
-	this->setJointQuaternion(obj, manNiiAvatarPosture->joints[RLEG_JOINT2]);
-	this->setJointQuaternion(obj, manNiiAvatarPosture->joints[RLEG_JOINT4]);
-	this->avatarPosture = manNiiAvatarPosture;
-	//double w = obj->getJointAngle("HEAD_JOINT1");
-	//std::cout << "Joint angle: " << w << std::endl;
-}
-
-void MirrorTherapyController::setJointQuaternionsForOculus(SimObj *obj, ManNiiPosture *manNiiAvatarPosture)
-{
-	this->setJointQuaternion(obj, manNiiAvatarPosture->joints[HEAD_JOINT0]);
-	this->avatarPosture = manNiiAvatarPosture;
-}
-
-void MirrorTherapyController::convertRecords2KinectV2JointOrientations(std::vector<Record> &kinectRecords, KinectV2JointOrientation *kinectV2JointOrientations)
-{
-
-	try {
-		for(int i = 2; i < (int)kinectRecords.size(); i++) {
-
-			std::vector<double> values = AvatarController::splitValues(kinectRecords[i].value);
-
-			if ((int)values.size() > 1) {
-				// When VALUE is vector data.
-				const KinectV2JointType jt = this->getJointTypeFromKey(kinectRecords[i].key);
-
-				if (jt != KinectV2JointType_Count) {
-					KinectV2JointOrientation tmpJO;
-					tmpJO.jointType = jt;
-					tmpJO.orientation.w = values[0];
-					tmpJO.orientation.x = values[1];
-					tmpJO.orientation.y = values[2];
-					tmpJO.orientation.z = values[3];
-					kinectV2JointOrientations[tmpJO.jointType] = tmpJO;
-					//std::cout << w << ", " << x << ", " << y << ", " << z << std::endl;
-				}
-				else if (kinectRecords[i].key == "SpBs_P") {
-					// ルートのポジションを入れるときの処理をここに書く
-				}
-				else {
-					std::cout << "ELLEGAL JointType : " << kinectRecords[i].key << std::endl;
-					throw("ELLEGAL JointType");
+					//std::cout << "nearest: " <<
 				}
 			}
+			const int nearestIndex = nearestIndexTmp; // 上記の「何もしない」場合は、最新の姿勢情報が反転されることになります。
+
+			if (this->reverseMode == reverseModes[RIGHTHAND]) { // 左手の動きを右手へ
+
+				// Get original quaternions.
+				double w2, x2, y2, z2, w3, x3, y3, z3, w5, x5, y5, z5; // These are temporary variables.
+				this->pastPostures[nearestIndex].posture.jointQuaternions[LARM_JOINT2].quaternion.getQuaternion(w2, x2, y2, z2);
+				this->pastPostures[nearestIndex].posture.jointQuaternions[LARM_JOINT3].quaternion.getQuaternion(w3, x3, y3, z3);
+
+				// Set reverse quaternions.
+				// KinectV2のクォータニオンを使用するようになったことに伴い、y軸（ひねり）が反映されるように
+				// なったため、反転する要素が以前と変わりました。
+				// 以前は(w,x,y,z)のうちx,y,zの符号を反転させて逆の腕にセットしていましたが、
+				// y,zの符号を反転させてセットしています。
+				manNiiPosture.jointQuaternions[RARM_JOINT2].quaternion.setQuaternion(w2, x2, -y2, -z2);
+				manNiiPosture.jointQuaternions[RARM_JOINT3].quaternion.setQuaternion(w3, x3, -y3, -z3);
+				//tmpManNiiPosture.joints[RARM_JOINT5].quaternion.setQuaternions(w5, -x5, -y5, -z5);
+			}
+			else if (this->reverseMode == reverseModes[LEFTHAND]) { // 右手の動きを左手へ
+				// Get original quaternions.
+				double w2, x2, y2, z2, w3, x3, y3, z3, w5, x5, y5, z5;
+				this->pastPostures[nearestIndex].posture.jointQuaternions[RARM_JOINT2].quaternion.getQuaternion(w2, x2, y2, z2);
+				this->pastPostures[nearestIndex].posture.jointQuaternions[RARM_JOINT3].quaternion.getQuaternion(w3, x3, y3, z3);
+
+				// Set reverse quaternions.
+				manNiiPosture.jointQuaternions[LARM_JOINT2].quaternion.setQuaternion(w2, x2, -y2, -z2);
+				manNiiPosture.jointQuaternions[LARM_JOINT3].quaternion.setQuaternion(w3, x3, -y3, -z3);
+				//tmpManNiiPosture.joints[RARM_JOINT5].quaternion.setQuaternions(w5, -x5, -y5, -z5);
+
+			}
+
+
+			// Set sigverse quaternions
+			SimObj *obj = getObj(myname());
+			this->setJointQuaternionsForKinect(obj, manNiiPosture);
+
+			this->frameNumber++;
 		}
+		else if (deviceTypeValue == devTypeOculus) {
+			OculusRiftDK1SensorData sensorData;
+			sensorData.decodeMessage2SensorData(allMsg);
+
+			EulerAngleType eulerAngle;
+			eulerAngle.yaw = sensorData.yaw();
+			eulerAngle.pitch = sensorData.pitch();
+			eulerAngle.roll = sensorData.roll();
+
+			ManNiiPosture manNiiPosture = ManNiiPosture();
+			this->convertEulerAngle2ManNiiPosture(eulerAngle, manNiiPosture);
+
+			SimObj *obj = getObj(myname());
+			this->setJointQuaternionsForOculus(obj, manNiiPosture);
+		}
+		else {
+			this->setReverseModeAndDelayTime(allMsg);
+		}
+
 	}
-	catch (std::exception &ex) {
-		std::cout << ex.what() << std::endl;
+	catch(SimObj::NoAttributeException &err) {
+		LOG_MSG(("NoAttributeException: %s", err.msg()));
+	}
+	catch(SimObj::AttributeReadOnlyException &err) {
+		LOG_MSG(("AttributeReadOnlyException: %s", err.msg()));
+	}
+	catch(SimObj::Exception &err) {
+		LOG_MSG(("Exception: %s", err.msg()));
 	}
 }
 
-void MirrorTherapyController::convertKinectV2JointOrientations2ManNiiPosture(KinectV2JointOrientation* kinectV2Joints, ManNiiPosture &manNiiAvatarPosture)
+std::string MirrorTherapyController::getDeviceIDFromMessage(const std::string &message)
 {
-	// 野崎からのコメント：
-	// 手首（LARM_JOINT5とRARM_JOINT5）と足首（LLEG_JOINT6とRLEG_JOINT6）向けの変換は未実装です。
-	// KinectV2が算出する全身のクォータニオンには、手首と足首のクォータニオンが含まれていないためです。
-	// サービスプロバイダの方で描画されるウィンドウでは、手首と足首の分も計算されているように見えますが、
-	// 表示しているのは関節位置（に点を表示しているだけ）なので、手首と足首のクォータニオンとは無関係です。
-	// 手先と足先のポジションを使ってクォータニオンを計算するしか無いと思います（引数が増えます）。
+	std::map<std::string, std::vector<std::string> > map = SensorData::convertMessage2Map(message);
 
+	if (map.find(devTypeKey) == map.end()) {
+		// メッセージのヘッダに"DEV_ID"が含まれていないとき
+		return "OTHER_MESSAGE";
+	}
+	else {
+		const std::string devIDValue = map[devTypeKey][0];
+		return devIDValue;
+	}
+}
+
+const double MirrorTherapyController::generateCurrentTimeStamp()
+{
+	// Get current timestamp.
+	struct timeval currentTimeVal;
+	gettimeofday(&currentTimeVal, NULL);
+	const double currentTimeStamp = (currentTimeVal.tv_sec - this->initTimeVal.tv_sec) * 1000.0 + (currentTimeVal.tv_usec - this->initTimeVal.tv_usec) / 1000.0;
+	return currentTimeStamp;
+}
+
+void MirrorTherapyController::setJointQuaternion(SimObj *obj, ManNiiJointQuaternion &jq)
+{
+	obj->setJointQuaternion(manNiiJointTypeStr(jq.manNiiJointType).c_str(), jq.quaternion.w, jq.quaternion.x, jq.quaternion.y, jq.quaternion.z);
+}
+
+bool MirrorTherapyController::setReverseModeAndDelayTime(const std::string &message)
+{
+	std::map<std::string, std::vector<std::string> > map = SensorData::convertMessage2Map(message);
+
+	if (map.find(reverseKey) != map.end()) {
+		this->reverseMode = map[reverseKey][0];
+		std::cout << "Set reverse mode:" << this->reverseMode << std::endl;
+		return true;
+	}
+	else if (map.find(delayKey) != map.end()) {
+		this->targetDelayTime = atof(map[reverseKey][0].c_str());
+		std::cout << "Set target delay time:" << this->targetDelayTime << std::endl;
+		return true;
+	}
+	return false;
+}
+
+
+void MirrorTherapyController::setJointQuaternionsForKinect(SimObj *obj, ManNiiPosture &manNiiPosture)
+{
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[WAIST_JOINT1]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[RARM_JOINT2]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[LARM_JOINT2]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[RLEG_JOINT2]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[LLEG_JOINT2]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[RLEG_JOINT4]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[LLEG_JOINT4]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[RARM_JOINT3]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[LARM_JOINT3]);
+
+}
+
+void MirrorTherapyController::setJointQuaternionsForOculus(SimObj *obj, ManNiiPosture &manNiiPosture)
+{
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[HEAD_JOINT0]);
+}
+
+void MirrorTherapyController::convertEulerAngle2ManNiiPosture(const EulerAngleType &eulerAngle, ManNiiPosture &manNiiAvatarPosture)
+{
+	dQuaternion qyaw;
+	dQuaternion qpitch;
+	dQuaternion qroll;
+
+	qyaw[0] = cos(-eulerAngle.yaw/2.0);
+	qyaw[1] = 0.0;
+	qyaw[2] = sin(-eulerAngle.yaw/2.0);
+	qyaw[3] = 0.0;
+
+	qpitch[0] = cos(-eulerAngle.pitch/2.0);
+	qpitch[1] = sin(-eulerAngle.pitch/2.0);
+	qpitch[2] = 0.0;
+	qpitch[3] = 0.0;
+
+	qroll[0] = cos(-eulerAngle.roll/2.0);
+	qroll[1] = 0.0;
+	qroll[2] = 0.0;
+	qroll[3] = sin(-eulerAngle.roll/2.0);
+	dQuaternion tmpQ1;
+	dQuaternion tmpQ2;
+
+	dQMultiply0(tmpQ1, qyaw, qpitch);
+
+	dQMultiply0(tmpQ2, tmpQ1, qroll);
+
+
+	dQuaternion tmpQ3;
+
+	//dQuaternion defaultQ = this->defaultHeadJointQuaternion;
+	dQMultiply1(tmpQ3, this->defaultHeadJoint0Quaternion, tmpQ2);
+
+	Quaternion tmpQ4(tmpQ3[0], tmpQ3[1], tmpQ3[2], tmpQ3[3]);
+
+	manNiiAvatarPosture.jointQuaternions[HEAD_JOINT0].manNiiJointType = HEAD_JOINT0;
+	manNiiAvatarPosture.jointQuaternions[HEAD_JOINT0].quaternion = tmpQ4;
+}
+void MirrorTherapyController::convertKinectV2JointOrientations2ManNiiPosture(KinectV2JointOrientation *kinectV2Joints, ManNiiPosture &manNiiPosture)
+{
+	// TODO: 首のクォータニオンを求めることと、手首や足首のクォータニオンを求めること。
+	// TODO: Calculate for Neck, both wrists and both ankles.
 	const double coef = 1.0 / sqrt(2.0);
 
 	Quaternion q0 = Quaternion(kinectV2Joints[0].orientation);
+
 	Quaternion q1 = Quaternion(kinectV2Joints[1].orientation);
 	Quaternion q1_h = Quaternion(0.0, 0.0, 1.0, 0.0);
 	Quaternion q1_rot = Quaternion::calcCrossProduct(q1_h, q1);
@@ -411,8 +339,6 @@ void MirrorTherapyController::convertKinectV2JointOrientations2ManNiiPosture(Kin
 	/////////////////////////// Neck quaternion //////////////////////
 	q30 = Quaternion::calcCrossProduct(q1_h, q30);
 	q30 = Quaternion::calcCrossProduct(q30_con, q30);
-	//std::cout << "w, x, y, z:q1_rot  " << q1_rot.w << "," << q1_rot.x <<  "," << q1_rot.y << "," << q1_rot.z << std::endl;
-	//std::cout << "w, x, y, z: " << q30.w << "," << q30.x <<  "," << q30.y << "," << q30.z << std::endl;
 
 	////////////////////////////////////////////////////////////////////
 
@@ -656,314 +582,18 @@ void MirrorTherapyController::convertKinectV2JointOrientations2ManNiiPosture(Kin
 	q22_con.z = -q22.z;
 	q28 = Quaternion::calcCrossProduct(q22_con, q28);
 
+	//ManNiiAvatarPosture posture;
+	manNiiPosture.jointQuaternions[WAIST_JOINT1].quaternion = q1_rot;
+	//manNiiPosture.jointQuaternions[HEAD_JOINT0].quaternion = q30;
+	manNiiPosture.jointQuaternions[RARM_JOINT2].quaternion = q5;
+	manNiiPosture.jointQuaternions[LARM_JOINT2].quaternion = q6;
+	manNiiPosture.jointQuaternions[RLEG_JOINT2].quaternion = q12;
+	manNiiPosture.jointQuaternions[LLEG_JOINT2].quaternion = q14;
+	manNiiPosture.jointQuaternions[RLEG_JOINT4].quaternion = q16;
+	manNiiPosture.jointQuaternions[LLEG_JOINT4].quaternion = q18;
+	manNiiPosture.jointQuaternions[RARM_JOINT3].quaternion = q8;
+	manNiiPosture.jointQuaternions[LARM_JOINT3].quaternion = q22;
+//	this->posture.jointQuaternions[ManNiiJointType_RARM_JOINT5].quaternion = q27;
+//	this->posture.jointQuaternions[ManNiiJointType_LARM_JOINT5].quaternion = q28;
 
-
-	manNiiAvatarPosture.joints[WAIST_JOINT1].quaternion = q1_rot;
-
-	manNiiAvatarPosture.joints[LARM_JOINT2].quaternion = q6;
-	manNiiAvatarPosture.joints[LARM_JOINT3].quaternion = q22;
-//	manNiiAvatarPosture.joints[LARM_JOINT5].quaternion = q28; // Calculating *_JOINT5, it isn't implemented.
-	manNiiAvatarPosture.joints[RARM_JOINT2].quaternion = q5;
-	manNiiAvatarPosture.joints[RARM_JOINT3].quaternion = q8;
-//	manNiiAvatarPosture.joints[RARM_JOINT5].quaternion = q27;
-
-
-	manNiiAvatarPosture.joints[RLEG_JOINT2].quaternion = q12;
-	manNiiAvatarPosture.joints[LLEG_JOINT2].quaternion = q14;
-	manNiiAvatarPosture.joints[RLEG_JOINT4].quaternion = q16;
-	manNiiAvatarPosture.joints[LLEG_JOINT4].quaternion = q18;
-
-
-	manNiiAvatarPosture.joints[WAIST_JOINT1].manJointType = WAIST_JOINT1;
-
-	manNiiAvatarPosture.joints[RARM_JOINT2].manJointType = RARM_JOINT2;
-	manNiiAvatarPosture.joints[LARM_JOINT2].manJointType = LARM_JOINT2;
-	manNiiAvatarPosture.joints[RARM_JOINT3].manJointType = RARM_JOINT3;
-	manNiiAvatarPosture.joints[LARM_JOINT3].manJointType = LARM_JOINT3;
-
-	manNiiAvatarPosture.joints[RLEG_JOINT2].manJointType = RLEG_JOINT2;
-	manNiiAvatarPosture.joints[LLEG_JOINT2].manJointType = LLEG_JOINT2;
-	manNiiAvatarPosture.joints[RLEG_JOINT4].manJointType = RLEG_JOINT4;
-	manNiiAvatarPosture.joints[LLEG_JOINT4].manJointType = LLEG_JOINT4;
-
-//	manNiiAvatarPosture.joints[RARM_JOINT5].manJointType = RARM_JOINT5;
-//	manNiiAvatarPosture.joints[LARM_JOINT5].manJointType = LARM_JOINT5;
-
-	this->avatarPosture = &manNiiAvatarPosture;
-
-
-
-	//this->avatarPosture = posture;
-
-//	this->posture.joints[WAIST_JOINT1].quaternion = q1_rot;
-//	this->posture.joints[RARM_JOINT2].quaternion = q5;
-//	this->posture.joints[LARM_JOINT2].quaternion = q6;
-//	this->posture.joints[RLEG_JOINT2].quaternion = q12;
-//	this->posture.joints[LLEG_JOINT2].quaternion = q14;
-//	this->posture.joints[RLEG_JOINT4].quaternion = q16;
-//	this->posture.joints[LLEG_JOINT4].quaternion = q18;
-//	this->posture.joints[RARM_JOINT3].quaternion = q8;
-//	this->posture.joints[LARM_JOINT3].quaternion = q22;
-////	this->posture.joints[ManNiiJointType_RARM_JOINT5].quaternion = q27;
-////	this->posture.joints[ManNiiJointType_LARM_JOINT5].quaternion = q28;
-//
-//	this->posture.joints[WAIST_JOINT1].manJointType = WAIST_JOINT1;
-//	this->posture.joints[RARM_JOINT2].manJointType = RARM_JOINT2;
-//	this->posture.joints[LARM_JOINT2].manJointType = LARM_JOINT2;
-//	this->posture.joints[RLEG_JOINT2].manJointType = RLEG_JOINT2;
-//	this->posture.joints[LLEG_JOINT2].manJointType = LLEG_JOINT2;
-//	this->posture.joints[RLEG_JOINT4].manJointType = RLEG_JOINT4;
-//	this->posture.joints[LLEG_JOINT4].manJointType = LLEG_JOINT4;
-//	this->posture.joints[RARM_JOINT3].manJointType = RARM_JOINT3;
-//	this->posture.joints[LARM_JOINT3].manJointType = LARM_JOINT3;
-//	this->posture.joints[RARM_JOINT5].manJointType = RARM_JOINT5;
-//	this->posture.joints[LARM_JOINT5].manJointType = LARM_JOINT5;
-
-}
-
-EulerAngleType MirrorTherapyController::generateEulerAngleFromRecord(const Record &record)
-{
-	EulerAngleType eulerAngle;
-
-	try {
-		//const std::string eulerRecord = records[2];
-		const Record eulerRecord(record);
-
-		if (eulerRecord.key != "EULER") {
-			std::cout << "Illegal key :" << eulerRecord.key << std::endl;
-			throw(std::exception());
-		}
-
-		// Split VALUE to vector by ",", if VALUE is vector.
-		std::vector<double> values = AvatarController::splitValues(eulerRecord.value);
-
-		if ((int)values.size() == 1) {
-			std::cout << "Not euler angle: " << std::cout << eulerRecord.value << std::endl;
-		}
-		else if ((int)values.size() > 1) {
-			// When VALUE is vector data.
-
-			const float yaw = values[0];
-			const float pitch = values[1];
-			const float roll = values[2];
-
-			if (yaw == this->prevYaw && pitch == this->prevPitch && roll == this->prevRoll) {
-				throw(std::exception());
-			}
-			else {
-				this->prevYaw = yaw;
-				this->prevPitch = pitch;
-				this->prevRoll = roll;
-			}
-
-			eulerAngle.yaw = yaw;
-			eulerAngle.pitch = pitch;
-			eulerAngle.roll = roll;
-
-		}
-	}
-	catch (std::exception &ex) {
-		std::cout << ex.what() << std::endl;
-	}
-
-	return eulerAngle;
-}
-
-void MirrorTherapyController::convertEulerAngle2ManNiiPosture(const EulerAngleType &eulerAngle, ManNiiPosture &manNiiAvatarPosture)
-{
-	dQuaternion qyaw;
-	dQuaternion qpitch;
-	dQuaternion qroll;
-
-	qyaw[0] = cos(-eulerAngle.yaw/2.0);
-	qyaw[1] = 0.0;
-	qyaw[2] = sin(-eulerAngle.yaw/2.0);
-	qyaw[3] = 0.0;
-
-	qpitch[0] = cos(-eulerAngle.pitch/2.0);
-	qpitch[1] = sin(-eulerAngle.pitch/2.0);
-	qpitch[2] = 0.0;
-	qpitch[3] = 0.0;
-
-	qroll[0] = cos(-eulerAngle.roll/2.0);
-	qroll[1] = 0.0;
-	qroll[2] = 0.0;
-	qroll[3] = sin(-eulerAngle.roll/2.0);
-	dQuaternion tmpQ1;
-	dQuaternion tmpQ2;
-
-	dQMultiply0(tmpQ1, qyaw, qpitch);
-
-	dQMultiply0(tmpQ2, tmpQ1, qroll);
-
-
-	dQuaternion tmpQ3;
-
-	//dQuaternion defaultQ = this->defaultHeadJointQuaternion;
-	dQMultiply1(tmpQ3, this->defaultHeadJoint0Quaternion, tmpQ2);
-
-	Quaternion tmpQ4(tmpQ3[0], tmpQ3[1], tmpQ3[2], tmpQ3[3]);
-
-	manNiiAvatarPosture.joints[HEAD_JOINT0].manJointType = HEAD_JOINT0;
-	manNiiAvatarPosture.joints[HEAD_JOINT0].quaternion = tmpQ4;
-
-	this->avatarPosture = &manNiiAvatarPosture;
-
-	//my->setJointQuaternion("HEAD_JOINT0", tmpQ3[0], tmpQ3[1], tmpQ3[2], tmpQ3[3]);
-}
-
-
-KinectV2JointType MirrorTherapyController::getJointTypeFromKey(const std::string &key)
-{
-	if (key == "SpBs_Q") {
-		return SpineBase;
-	}
-	else if (key ==	"SpMd_Q") {
-		return SpineMid;
-	}
-	else if (key ==	"Neck_Q") {
-		return Neck;
-	}
-	else if (key ==	"Head_Q") {
-		return Head;
-	}
-	else if (key ==	"ShL_Q") {
-		return ShoulderLeft;
-	}
-	else if (key ==	"LbL_Q") {
-		return ElbowLeft;
-	}
-	else if (key ==	"WrL_Q") {
-		return WristLeft;
-	}
-	else if (key ==	"HndL_Q") {
-		return HandLeft;
-	}
-	else if (key ==	"ShR_Q") {
-		return ShoulderRight;
-	}
-	else if (key ==	"LbR_Q") {
-		return ElbowRight;
-	}
-	else if (key ==	"WrR_Q") {
-		return WristRight;
-	}
-	else if (key ==	"HndR_Q") {
-		return HandRight;
-	}
-	else if (key ==	"HpL_Q") {
-		return HipLeft;
-	}
-	else if (key ==	"NeeL_Q") {
-		return KneeLeft;
-	}
-	else if (key ==	"AnkL_Q") {
-		return AnkleLeft;
-	}
-	else if (key ==	"FtL_Q") {
-		return FootLeft;
-	}
-	else if (key ==	"HpR_Q") {
-		return HandTipRight;
-	}
-	else if (key ==	"NeeR_Q") {
-		return KneeRight;
-	}
-	else if (key ==	"AnkR_Q") {
-		return AnkleRight;
-	}
-	else if (key ==	"FtR_Q") {
-		return FootRight;
-	}
-	else if (key ==	"SpSh_Q") {
-		return SpineShoulder;
-	}
-	else if (key ==	"HTL_Q") {
-		return HandTipLeft;
-	}
-	else if (key ==	"ThmL_Q") {
-		return ThumbLeft;
-	}
-	else if (key ==	"HTR_Q") {
-		return HandTipRight;
-	}
-	else if (key ==	"ThmR_Q") {
-		return ThumbRight;
-	}
-
-	return KinectV2JointType_Count;
-}
-
-const bool MirrorTherapyController::isReverseModeOk(const std::string &mode_string)
-{
-	for (int i = 0; i < ReverseMode_Count; i++) {
-		if (mode_string == reverseModes[i]) {
-			return true;
-		}
-	}
-	return false;
-};
-
-bool MirrorTherapyController::setReverseModeAndDelayTime(const std::string &message)
-{
-	std::vector<Record> records;
-	this->convertMessage2Records(message, records);
-
-	Record firstRecord = records[0];
-
-	if (firstRecord.key == reverseKey) {
-		if (this->isReverseModeOk(firstRecord.value)) {
-			this->reverseMode = firstRecord.value;
-			std::cout << std::endl << "Set reverse mode: " << firstRecord.value << std::endl;
-		}
-		else {
-			std::cout << "Illegal reverse mode: " << firstRecord.value << std::endl;
-		}
-		return true;
-	}
-	else if (firstRecord.key == delayKey) {
-		//const double delayValue = ::atof(orderValue.c_str());
-		if (this->isDelayTimeRangeOk(firstRecord.value)) {
-			this->targetDelayTime = atof(firstRecord.value.c_str());
-			std::cout << std::endl << "Set target delay time: " << firstRecord.value << std::endl;
-		}
-		else {
-			std::cout << "Illegal delay time: " << firstRecord.value << std::endl;
-		}
-		return true;
-	}
-	return false;
-}
-
-const double MirrorTherapyController::generateCurrentTimeStamp()
-{
-	// Get current timestamp.
-	struct timeval currentTimeVal;
-	gettimeofday(&currentTimeVal, NULL);
-	const double currentTimeStamp = (currentTimeVal.tv_sec - this->initTimeVal.tv_sec) * 1000.0 + (currentTimeVal.tv_usec - this->initTimeVal.tv_usec) / 1000.0;
-	return currentTimeStamp;
-}
-
-const bool MirrorTherapyController::isDelayTimeRangeOk(const double &delayTime)
-{
-	if (delayTime < 0.0) {
-		return false;
-	}
-	else if (delayTime > DBL_MAX) {
-		return false;
-	}
-	return true;
-}
-
-const bool MirrorTherapyController::isDelayTimeRangeOk(const std::string &delayTime)
-{
-	char *endPtr;
-
-	const double delayValue = ::strtod(delayTime.c_str(), &endPtr);
-	if (*endPtr == '\0') {
-		return this->isDelayTimeRangeOk(delayValue);
-	}
-	else {
-		return false;
-	}
 }
