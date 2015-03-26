@@ -69,7 +69,6 @@ void ManNiiAvatarControllerByOculus::setJointQuaternion(SimObj *obj, const ManNi
 void ManNiiAvatarControllerByOculus::setJointQuaternionsForOculus(SimObj *obj, ManNiiPosture &manNiiAvatarPosture)
 {
 	this->setJointQuaternion(obj, manNiiAvatarPosture.jointQuaternions[HEAD_JOINT0]);
-	this->avatarPosture = manNiiAvatarPosture;
 }
 
 void ManNiiAvatarControllerByOculus::convertEulerAngle2ManNiiPosture(const EulerAngleType &eulerAngle, ManNiiPosture &manNiiAvatarPosture)
