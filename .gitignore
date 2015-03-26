@@ -1,5 +1,3 @@
-Release
-Debug
 ipch
 *.ipch
 *.opensdf
@@ -14,3 +12,4 @@ ipch
 *.obj
 *.log
 *.user
+*.idb
