@@ -6,7 +6,7 @@ Applications for Embodied-Brain System project
 MirrorTherapy_v1
 ----------------
 
-次のような機能，あるいは特徴があります．　　
+次のような機能，あるいは特徴があります．  
 
 * KinectV2で計測した動作をコントローラへ送信し，SIGViewer上のman-niiを操作します．
 * KinectV2で計測した左腕の動作を，man-niiの左腕と右腕に伝えることができます（実世界で左腕を動かすと，man-niiは両腕が動きます）．
@@ -31,3 +31,4 @@ MirrorTherapy_v2
 * コントローラ側で，SIGVerseのman-nii用のクォータニオンへ変換します．
 * コントローラでは，動作の反転モードと動作の遅延時間を，SIGViewerからメッセージを送ることで実行中に変更できます．  
 ただし，v1で実装されている「物を持ち上げる」機能は実装していません．
+
