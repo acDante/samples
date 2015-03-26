@@ -50,7 +50,7 @@ public:
 
 	void setJointQuaternions(SimObj *obj);
 
-	void setJointQuaternionsForOculus(SimObj *obj, ManNiiPosture *manNiiAvatarPosture);
+	void setJointQuaternionsForOculus(SimObj *obj, ManNiiPosture &manNiiAvatarPosture);
 };
 
 extern "C" Controller * createController()

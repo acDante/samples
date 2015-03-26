@@ -53,22 +53,22 @@ void ManNiiAvatarControllerByOculus::onRecvMsg(RecvMsgEvent &evt)
 	eulerAngle.pitch = sensorData.pitch();
 	eulerAngle.roll = sensorData.roll();
 
-	ManNiiPosture manNiiPosture;
+	ManNiiPosture manNiiPosture = ManNiiPosture();
 	this->convertEulerAngle2ManNiiPosture(eulerAngle, manNiiPosture);
 
 	SimObj *obj = getObj(myname());
-	this->setJointQuaternionsForOculus(obj, &manNiiPosture);
+	this->setJointQuaternionsForOculus(obj, manNiiPosture);
 }
 
 void ManNiiAvatarControllerByOculus::setJointQuaternion(SimObj *obj, const ManNiiJointQuaternion &jq)
 {
-	obj->setJointQuaternion(manNiiJointTypeStr(jq.manJointType).c_str(), jq.quaternion.w, jq.quaternion.x, jq.quaternion.y, jq.quaternion.z);
-	//std::cout << manNiiJointTypeStr(jq.manJointType).c_str() << jq.quaternion.w << jq.quaternion.x << jq.quaternion.y << jq.quaternion.z << std::endl;
+	obj->setJointQuaternion(manNiiJointTypeStr(jq.manNiiJointType).c_str(), jq.quaternion.w, jq.quaternion.x, jq.quaternion.y, jq.quaternion.z);
+	//std::cout << manNiiJointTypeStr(jq.manNiiJointType).c_str() << jq.quaternion.w << jq.quaternion.x << jq.quaternion.y << jq.quaternion.z << std::endl;
 }
 
-void ManNiiAvatarControllerByOculus::setJointQuaternionsForOculus(SimObj *obj, ManNiiPosture *manNiiAvatarPosture)
+void ManNiiAvatarControllerByOculus::setJointQuaternionsForOculus(SimObj *obj, ManNiiPosture &manNiiAvatarPosture)
 {
-	this->setJointQuaternion(obj, manNiiAvatarPosture->joints[HEAD_JOINT0]);
+	this->setJointQuaternion(obj, manNiiAvatarPosture.jointQuaternions[HEAD_JOINT0]);
 	this->avatarPosture = manNiiAvatarPosture;
 }
 
@@ -107,10 +107,7 @@ void ManNiiAvatarControllerByOculus::convertEulerAngle2ManNiiPosture(const Euler
 
 	Quaternion tmpQ4(tmpQ3[0], tmpQ3[1], tmpQ3[2], tmpQ3[3]);
 
-	manNiiAvatarPosture.joints[HEAD_JOINT0].manJointType = HEAD_JOINT0;
-	manNiiAvatarPosture.joints[HEAD_JOINT0].quaternion = tmpQ4;
+	manNiiAvatarPosture.jointQuaternions[HEAD_JOINT0].manNiiJointType = HEAD_JOINT0;
+	manNiiAvatarPosture.jointQuaternions[HEAD_JOINT0].quaternion = tmpQ4;
 
-	this->avatarPosture = &manNiiAvatarPosture;
-
-	//my->setJointQuaternion("HEAD_JOINT0", tmpQ3[0], tmpQ3[1], tmpQ3[2], tmpQ3[3]);
 }
