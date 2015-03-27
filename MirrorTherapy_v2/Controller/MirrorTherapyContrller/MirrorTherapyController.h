@@ -39,31 +39,39 @@ static const double defaultDelayTime = DEFAULT_DELAY_TIME;
 class MirrorTherapyController : public AvatarController
 {
 private:
+	// Base services for each device.
 	BaseService *kinectV2Service;
 	std::string kinectV2ServiceName;
 	BaseService *oculusDK1Service;
 	std::string oculusDK1ServiceName;
-
+	
+	///@brief Default quaternion for head.
 	dQuaternion defaultHeadJoint0Quaternion;
 
+	///@brief Previous euler angle for head.
 	double prevYaw, prevPitch, prevRoll;
 
-	// For Mirror therapy variables.
+	///@brief For Mirror therapy variables.
 	std::string reverseMode;
 
 	///@brief Time stamp on initialize.
 	struct timeval initTimeVal;
 
+	///@brief Frame numbers during receive message from kinect v2 plugin.
 	unsigned long frameNumber;
 
+	///@brief Target delay time.
 	double targetDelayTime;
 
 	double actualDelayTime;
 
+	///@brief Structure of posture record (with time stamp).
 	struct TimeAndPostureType {
 		long timeStamp;
 		ManNiiPosture posture;
 	};
+	
+	///@brief Posture record.
 	std::vector<TimeAndPostureType> pastPostures;
 
 public:
@@ -77,6 +85,7 @@ public:
 	///@brief Message heard by the robot.
 	void onRecvMsg(RecvMsgEvent &evt);
 
+	///@brief Get value of DEV_ID from whole message.
 	std::string getDeviceIDFromMessage(const std::string &message);
 
 	///@brief Convert kinect v2 joint orientations to avatar posture structure.
@@ -85,15 +94,19 @@ public:
 	///@brief Convert euler angle to avatar posture structure.
 	void convertEulerAngle2ManNiiPosture(const EulerAngleType &eulerAngle, ManNiiPosture &manNiiAvatarPosture);
 
-	///
+	///@brief Set avatar's joint quaternion. 
 	void setJointQuaternion(SimObj *obj, ManNiiJointQuaternion &jq);
 
+	///@brief Set avatar's joint quaternions from kinect plugin message.
 	void setJointQuaternionsForKinect(SimObj *obj, ManNiiPosture &manNiiPosture);
 
+	///@brief Set avatar's joint quaternions from oculus plugin message.
 	void setJointQuaternionsForOculus(SimObj *obj, ManNiiPosture &manNiiAvatarPosture);
 
+	///@brief Generate time stamp for posture record.
 	const double generateCurrentTimeStamp();
 
+	///@brief Modify the mode for MirrorTherapy.
 	bool setReverseModeAndDelayTime(const std::string &message);
 };
 

@@ -238,7 +238,7 @@ bool MirrorTherapyController::setReverseModeAndDelayTime(const std::string &mess
 		return true;
 	}
 	else if (map.find(delayKey) != map.end()) {
-		this->targetDelayTime = atof(map[reverseKey][0].c_str());
+		this->targetDelayTime = atof(map[delayKey][0].c_str());
 		std::cout << "Set target delay time:" << this->targetDelayTime << std::endl;
 		return true;
 	}
