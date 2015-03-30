@@ -15,8 +15,8 @@ UbuntuでSIGServerを起動し，Pluginから送信されるメッセージを受け取って，SIGViewer
 実装したサービスプロバイダの機能は次のようなものです．
 
 * Windowsで動作するKinectV2とOculusRiftDK1の情報をControllerへ送信する．  
- * KinectV2用のサービスプロバイダでは，KinectV2のSDKで算出されるクォータニオンを送信する．  
- * OculusRiftDK1用のサービスプロバイダでは，OculusのSDKで算出される首のオイラー角を送信する．
+* KinectV2用のサービスプロバイダでは，KinectV2のSDKで算出されるクォータニオンを送信する．  
+* OculusRiftDK1用のサービスプロバイダでは，OculusのSDKで算出される首のオイラー角を送信する．
 
 (3) Common
 ----------
@@ -24,11 +24,11 @@ ControllerとPluginの両方に必要なソースコードのディレクトリです．
 SensorDataクラスの実装が含まれています．  
 注意点などを次に列挙します．
 
-* Window と Ubuntu の両方で使用する．
-* 実装には boost が含まれているので，ソースコードのビルドのために Ubuntu へ boost をインストールする必要がある．
+* Windows と Ubuntu の両方で使用する．
+* 実装には boost が含まれているので，ソースコードのビルドのために boost をインストールする必要がある．
 * Ubuntu への boost のインストール例（端末で打つコマンド）を次に示す．
 
-` sudo apt-get install boost-all-dev
+` sudo apt-get install boost-all-dev`
 
 
 (4) 基本的な使い方

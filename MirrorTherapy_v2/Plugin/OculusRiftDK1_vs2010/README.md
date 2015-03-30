@@ -6,7 +6,6 @@ OculuRiftDK1_vs2010.sig を生成する手順を説明します．
 
 OculuRiftDK1_vs2010.sln を使って OculuRiftDK1\_vs2010.sig をビルドするために，次の環境などが必要です．
 
-* Windows8 （またはそれ以上のWindows OS）
 * Microsoft Visual C++ 2010 Express（以降はVS2010と表記します）
 * VS2010 用にビルドされた SIGService.lib  
 * Oculus 用の SDK（OculusSDK）がインストールされていること（動作確認したバージョンは0.2.5）

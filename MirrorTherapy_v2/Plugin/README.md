@@ -2,7 +2,7 @@
 
 Plugin は，主に Windows の PC に接続したデバイスの情報を SIGServer の Controller へ送信する機能を持ちます．  
 
-##KinectV2\_vs2013ディレクトリ##
+##KinectV2\_vs2013##
 
 KinectV2 から得られる情報（全身のクォータニオン）を Controller へ送信するプログラムのソースコードを，  
 VisualStudio2013 のプロジェクト形式で格納しています．  

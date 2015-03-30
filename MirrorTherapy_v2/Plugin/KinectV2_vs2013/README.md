@@ -40,9 +40,9 @@ KinectV2_vs2013.sln ‚ğg‚Á‚Ä KinectV2_vs2013.sig ‚ğƒrƒ‹ƒh‚·‚é‚½‚ß‚ÉCŸ‚ÌŠÂ‹«‚È‚
 6. ’Ç‰Á‚ÌˆË‘¶ƒtƒ@ƒCƒ‹‚ÉCŸ‚Ì•¶š—ñ‚ğ’Ç‰Á‚·‚éD
  * SIGService.lib
  * kinect20.lib
- * opencv\_highgui*.lib
- * opencv\_core*.lib
- * opencv\_imgproc*.lib  
+ * opencv\_highgui\*.lib
+ * opencv\_core\*.lib
+ * opencv\_imgproc\*.lib  
  ¦u\*v‚Ì•”•ª‚ÍCƒCƒ“ƒXƒg[ƒ‹‚µ‚Ä‚ ‚é OpenCV ‚Ìƒo[ƒWƒ‡ƒ“‚É‡‚í‚¹‚Ä•ÏX‚µ‚Ä‚­‚¾‚³‚¢D
 7. ƒ^[ƒQƒbƒg‚ÌŠg’£q‚ğu.exev‚©‚çu.sigv‚Ö•ÏX‚·‚éD
 8. ƒrƒ‹ƒh‚·‚éD

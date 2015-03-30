@@ -5,7 +5,7 @@
  *      Author: Nozaki
  */
 
-#ifndef MANNIIAVATARPOSTURE_H_
+#ifndef MANNIIPOSTURE_H_
 #define MANNIIPOSTURE_H_
 
 #include "Posture.h"
