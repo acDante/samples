@@ -75,4 +75,4 @@ public:
 ///@brief Send message to SIGServer.
 ///@param sigService Pointer to SIGService.
 ///@param message Message you want to send to SIGServer.
-void sendMessage_(sigverse::SIGService &sigService, const std::string &message);
+void sendMessage_(sigverse::SIGService *sigService, const std::string &message);

@@ -357,7 +357,7 @@ void __cdecl DataHandler(sFrameOfMocapData* data, void* pUserData)
 		ss << "DEV_TYPE:OPTITRACK;" << "DEV_ID:0;" <<
 			"QUATERNION:(" << data->RigidBodies[i].qw << "," << data->RigidBodies[i].qx << "," << data->RigidBodies[i].qy << "," << data->RigidBodies[i].qz << ");";
 
-		sendMessage_(*::sigService, ss.str().c_str());
+		sendMessage_(::sigService, ss.str().c_str());
 
 		//printf("\tRigid body markers [Count=%d]\n", data->RigidBodies[i].nMarkers);
 		//for(int iMarker=0; iMarker < data->RigidBodies[i].nMarkers; iMarker++)
@@ -430,16 +430,16 @@ void __cdecl MessageHandler(int msgType, char* msg)
 	printf("\n%s\n", msg);
 }
 
-void sendMessage_(sigverse::SIGService &sigService, const std::string &message)
+void sendMessage_(sigverse::SIGService *sigService, const std::string &message)
 {
 	try {
-		if (!sigService.checkRecvData(0)) {
+		if (!sigService->checkRecvData(0)) {
 			std::cout << "SIGService::chkRecvData ERR." << std::endl;
 		}
 		else {
-			std::vector<std::string> connectedEntitiesName = sigService.getAllConnectedEntitiesName();
+			std::vector<std::string> connectedEntitiesName = sigService->getAllConnectedEntitiesName();
 			for (int i = 0; i < (int)connectedEntitiesName.size(); i++) {
-				sigService.sendMsgToCtr(connectedEntitiesName[i].c_str(), message);
+				sigService->sendMsgToCtr(connectedEntitiesName[i].c_str(), message);
 			}
 		}
 	}
