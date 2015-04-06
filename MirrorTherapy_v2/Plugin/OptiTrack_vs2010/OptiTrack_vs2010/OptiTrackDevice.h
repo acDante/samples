@@ -57,7 +57,8 @@ public:
 	OptiTrackDevice(int argc, char **argv);
 
 	///@brief Set service name.
-	void setSigServiceName() {
+	void setSigServiceName() 
+	{
 		this->serviceName = defaultServiceName;
 	};
 

@@ -3,12 +3,14 @@
 std::map<std::string, std::vector<std::string> > SensorData::convertMessage2Map(const std::string &message, const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
 {
 	std::map<std::string, std::vector<std::string> > map;
+
 	try {
 		// ‚Ü‚¸‚Íu;v‚ÅKEY:VALUE‚²‚Æ‚É•¶š—ñ‚ğæ“¾‚·‚é
 		std::vector<std::string> pairs;
 		boost::split(pairs, message, boost::is_any_of(pairsDelim));
 
-		for(int i = 0; i < (int)pairs.size(); i++) {
+		for(int i = 0; i < (int)pairs.size(); i++) 
+		{
 			if (pairs[i] == "") continue;
 
 			//std::cout << pairs[i] << std::endl;
@@ -28,7 +30,8 @@ std::map<std::string, std::vector<std::string> > SensorData::convertMessage2Map(
 			map.insert( std::map<std::string, std::vector<std::string> >::value_type(keyAndValues[0], valuesVector) );
 		}
 	}
-	catch (std::exception &ex) {
+	catch (std::exception &ex) 
+	{
 		std::cout << ex.what() << std::endl;
 	}
 	return map;

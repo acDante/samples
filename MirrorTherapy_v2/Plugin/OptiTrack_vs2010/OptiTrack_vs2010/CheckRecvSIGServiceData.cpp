@@ -15,7 +15,7 @@ void CheckRecvSIGServiceData::run(sigverse::SIGService *m_srv)
 		{
 			std::cout << "SIGService::chkRecvData ERR." << std::endl;
 		}
-
+		
 		//sleep 1 sec.
 		Sleep(1000);
 	}

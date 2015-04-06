@@ -6,13 +6,13 @@
 #include <iostream>
 
 // Define delimiters to split string.
-#define PAIRS_DELIMITER			";" // Delimiter to make pair(s) from whole message.
-#define KEYandVALUE_DELIMITER	":" // Delimter to split to KEY and VALUE from one pair.
-#define VECTOR_DELIMITER		"," // Delimiter to vector(multi dimentional values) from one VALUE.
+#define PAIRS_DELIMITER       ";" // Delimiter to make pair(s) from whole message.
+#define KEYandVALUE_DELIMITER ":" // Delimter to split to KEY and VALUE from one pair.
+#define VECTOR_DELIMITER      "," // Delimiter to vector(multi dimentional values) from one VALUE.
 
-static const std::string pairsDelimDefault		= PAIRS_DELIMITER;
-static const std::string keyValueDelimDefault	= KEYandVALUE_DELIMITER;
-static const std::string vectorDelimDefault		= VECTOR_DELIMITER;
+static const std::string pairsDelimDefault    = PAIRS_DELIMITER;
+static const std::string keyValueDelimDefault = KEYandVALUE_DELIMITER;
+static const std::string vectorDelimDefault   = VECTOR_DELIMITER;
 
 class SensorData
 {
