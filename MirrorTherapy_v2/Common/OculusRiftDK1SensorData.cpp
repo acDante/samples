@@ -1,52 +1,66 @@
 #include "OculusRiftDK1SensorData.h"
 #include <sstream>
-std::string OculusRiftDK1SensorData::encodeSensorData(const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
+
+
+///@brief generate message by posture.
+std::string OculusRiftDK1SensorData::encodeSensorData(const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim) const
 {
-	std::stringstream ss;
-	ss << sensorKey << keyValueDelim << 
-		"(" << this->eulerAngle.yaw << vectorDelim << this->eulerAngle.pitch << vectorDelim << this->eulerAngle.roll << ")" << pairsDelim;
-	return ss.str();
+
+	std::vector<std::string> vec;
+
+	std::stringstream ssValue;
+
+	ssValue << this->eulerAngle.yaw;   vec.push_back(ssValue.str()); ssValue.clear(); ssValue.str("");
+	ssValue << this->eulerAngle.pitch; vec.push_back(ssValue.str()); ssValue.clear(); ssValue.str("");
+	ssValue << this->eulerAngle.roll;  vec.push_back(ssValue.str());
+
+	std::map<std::string, std::vector<std::string> > messageMap;
+
+	messageMap.insert(make_pair(MSG_KEY_EULER, vec) );
+
+	return this->convertMap2Message(messageMap, itemsDelim, keyValueDelim, valuesDelim);
 }
 
-void OculusRiftDK1SensorData::decodeSensorData(const std::string &message, const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
-{
-	// Generate map<string, string> from message. Just split message by ";" and ":".
-	std::map<std::string, std::vector<std::string> > messageMap = SensorData::convertMessage2Map(message, pairsDelim, keyValueDelim, vectorDelim);
 
+bool OculusRiftDK1SensorData::setSensorData(const std::map<std::string, std::vector<std::string> > &sensorDataMap)
+{
 	// Get values (vector data) from euler value "(yaw, pitch, roll)".
 
-	try {
+	std::map<std::string, std::vector<std::string> >::const_iterator it;
 
-		// Split values by ",".
-		std::vector<std::string> tmpValuesStringVector = messageMap[sensorKey];
-	
-		// 3ŸŒ³‚Ì’l‚Å‚È‚¢‚Æ‚«‚ÍC“ü—Íƒf[ƒ^‚ğo—Í‚µ‚ÄI—¹
-		if((int)tmpValuesStringVector.size() != 3) {
-			std::cout << "Not euler value: " << message << std::endl;
-			return;
+	for (it = sensorDataMap.begin(); it != sensorDataMap.end(); it++)
+	{
+		if((*it).first==MSG_KEY_EULER)
+		{
+			if((*it).second.size()!=3)
+			{
+				std::cout << "Not euler value. Number of value items is " << (*it).second.size() << std::endl;
+				return false;
+			}
+
+			// Eulerè§’ã‚’æŠ½å‡ºã—ã¦ã‚»ãƒƒãƒˆã™ã‚‹ï¼
+			// Extract euler angle.
+			const float yaw   = (float)atof((*it).second[0].c_str());
+			const float pitch = (float)atof((*it).second[1].c_str());
+			const float roll  = (float)atof((*it).second[2].c_str());
+
+//			std::cout << "yaw, pitch, roll = " << yaw << "," << pitch << "," << roll << std::endl;
+
+			// Set extracted angle to sensor data.
+			this->setEulerAngle(yaw, pitch, roll);
+
+			continue;
 		}
-
-		// EulerŠp‚ğ’Šo‚µ‚ÄƒZƒbƒg‚·‚éD
-		// Extract euler angle.
-		const float yaw		 = atof(tmpValuesStringVector[0].c_str());
-		const float pitch	 = atof(tmpValuesStringVector[1].c_str());
-		const float roll	 = atof(tmpValuesStringVector[2].c_str());
-
-		//std::cout << "yaw, pitch, roll = " << yaw << "," << pitch << "," << roll << std::endl;
-
-		// Set extracted angle to sensor data.
-		this->setEulerAngle(yaw, pitch, roll);
-	}
-	catch (std::exception &ex) {
-		std::cout << ex.what() << std::endl;
 	}
 
+	return true;
 }
+
 
 ///@brief Set sensor data.
 void OculusRiftDK1SensorData::setEulerAngle(const float &yaw, const float &pitch, const float &roll)
 {
-	this->eulerAngle.yaw = yaw;
+	this->eulerAngle.yaw   = yaw;
 	this->eulerAngle.pitch = pitch;
-	this->eulerAngle.roll = roll;
+	this->eulerAngle.roll  = roll;
 }

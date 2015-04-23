@@ -1,56 +1,117 @@
 #include "SensorData.h"
 
-std::map<std::string, std::vector<std::string> > SensorData::convertMessage2Map(const std::string &message, const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim)
+
+std::string SensorData::encodeSensorData(const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim) const { return NULL; }
+
+
+std::map<std::string, std::vector<std::string> > SensorData::decodeSensorData(const std::string &message, const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim) const
+{
+	// Generate map<string, vector<string> from message. Just split message by ";" and ":".
+	return this->convertMessage2Map(message, itemsDelim, keyValueDelim, valuesDelim);
+}
+
+
+bool SensorData::setSensorData(const std::map<std::string, std::vector<std::string> > &sensorDataMap){ return NULL; }
+
+
+std::map<std::string, std::vector<std::string> > SensorData::convertMessage2Map(const std::string &message, const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim)
 {
 	std::map<std::string, std::vector<std::string> > map;
-	try {
-		// ‚Ü‚¸‚Íu;v‚ÅKEY:VALUE‚²‚Æ‚É•¶š—ñ‚ğæ“¾‚·‚é
-		std::vector<std::string> pairs;
-		boost::split(pairs, message, boost::is_any_of(pairsDelim));
 
-		for(int i = 0; i < (int)pairs.size(); i++) {
-			if (pairs[i] == "") continue;
+	try
+	{
+		// ã¾ãšã¯ã€Œ;ã€ã§KEY:VALUEã”ã¨ã«æ–‡å­—åˆ—ã‚’å–å¾—ã™ã‚‹
+		std::vector<std::string> items;
+		boost::split(items, message, boost::is_any_of(itemsDelim));
+
+		for(int i = 0; i < (int)items.size(); i++)
+		{
+			if (items[i] == "") continue ;
 
 			//std::cout << pairs[i] << std::endl;
 			
-			// KEY:VALUE ‚Æ‚È‚Á‚Ä‚¢‚é•¶š—ñ‚©‚ç KEY ‚Æ VALUE ‚ğ’Šo‚µ‚Äƒ}ƒbƒv‚É‚·‚é
+			// KEY:VALUE ã¨ãªã£ã¦ã„ã‚‹æ–‡å­—åˆ—ã‹ã‚‰ KEY ã¨ VALUE ã‚’æŠ½å‡ºã—ã¦ãƒãƒƒãƒ—ã«ã™ã‚‹
 			std::vector<std::string> keyAndValues;
-			boost::split(keyAndValues, pairs[i], boost::is_any_of(keyValueDelim));
+			boost::split(keyAndValues, items[i], boost::is_any_of(keyValueDelim));
 
-			// u(v‚Æu)v‚ğíœ‚·‚éi–³‚¢ê‡‚Í‰½‚à‚µ‚È‚¢jD
-			// Delete "(" and ")" from message.
-			const std::string valuesStringDeletedParentheses = SensorData::deleteParenthesesFromString(keyAndValues[1]);
+//			// ã€Œ(ã€ã¨ã€Œ)ã€ã‚’å‰Šé™¤ã™ã‚‹ï¼ˆç„¡ã„å ´åˆã¯ä½•ã‚‚ã—ãªã„ï¼‰ï¼
+//			// Delete "(" and ")" from message.
+//			const std::string valuesStringDeletedParentheses = SensorData::deleteParenthesesFromString(keyAndValues[1]);
 
-			// VALUE•”•ª‚ğu,v‚Å•ªŠ„‚·‚é
-			std::vector<std::string> valuesVector;
-			boost::split(valuesVector, valuesStringDeletedParentheses, boost::is_any_of(vectorDelim));
+			// VALUEéƒ¨åˆ†ã‚’ã€Œ,ã€ã§åˆ†å‰²ã™ã‚‹
+			std::vector<std::string> values;
+//			boost::split(valuesVector, valuesStringDeletedParentheses, boost::is_any_of(valuesDelim));
+			boost::split(values, keyAndValues[1], boost::is_any_of(valuesDelim));
 
-			map.insert( std::map<std::string, std::vector<std::string> >::value_type(keyAndValues[0], valuesVector) );
+			map.insert( std::map<std::string, std::vector<std::string> >::value_type(keyAndValues[0], values) );
 		}
 	}
-	catch (std::exception &ex) {
-		std::cout << ex.what() << std::endl;
+	catch (std::exception &ex)
+	{
+		std::cout << "error!(SensorData::convertMessage2Map):" << ex.what() << std::endl;
+		throw ex;
 	}
 	return map;
 }
 
-std::string SensorData::deleteParenthesesFromString(const std::string &input, const std::string &pBegin, const std::string &pEnd)
+
+std::string SensorData::convertMap2Message(const std::map<std::string, std::vector<std::string> > &map, const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim)
 {
-	// u(v‚Æu)v‚ğíœ‚·‚éD
-	// Delete "(" and ")" from message.
-	
-	// ( ‚ğ’T‚·
-	std::string tmpValuesString = input;
-	const std::string::size_type pos1(tmpValuesString.find("("));
-	
-	// ( ‚ª–³‚¢ê‡‚Í“ü—Í‚Ì•¶š—ñ‚ğ•Ô‚µ‚ÄI—¹‚·‚éD
-	if (pos1 == std::string::npos) {
-		return input;
+	std::stringstream ss;
+
+	try
+	{
+		std::map<std::string, std::vector<std::string> >::const_iterator itItem = map.begin();
+
+		while(itItem != map.end())
+		{
+			ss << (*itItem).first << keyValueDelim;
+
+			std::vector<std::string> values = (*itItem).second;
+
+			std::vector<std::string>::const_iterator itValues = values.begin();
+
+			while(itValues != values.end())
+			{
+				ss << *itValues;
+
+				itValues++;
+
+				if(itValues != values.end()){ ss << valuesDelim; }
+			}
+
+			itItem++;
+
+			if(itItem!=map.end()){ ss << itemsDelim; }
+		}
+	}
+	catch (std::exception &ex)
+	{
+		std::cout << "error!(SensorData::convertMap2Message):" << ex.what() << std::endl;
+		throw ex;
 	}
 
-	tmpValuesString.replace(pos1, 1, "");
-	const std::string::size_type pos2(tmpValuesString.find(")"));
-	tmpValuesString.replace(pos2, 1, "");
-	const std::string valuesStringDeletedParenthesis = tmpValuesString;
-	return tmpValuesString;
+	return ss.str();
 }
+
+
+//std::string SensorData::deleteParenthesesFromString(const std::string &input, const std::string &pBegin, const std::string &pEnd)
+//{
+//	// ã€Œ(ã€ã¨ã€Œ)ã€ã‚’å‰Šé™¤ã™ã‚‹ï¼
+//	// Delete "(" and ")" from message.
+//
+//	// ( ã‚’æ¢ã™
+//	std::string tmpValuesString = input;
+//	const std::string::size_type pos1(tmpValuesString.find("("));
+//
+//	// ( ãŒç„¡ã„å ´åˆã¯å…¥åŠ›ã®æ–‡å­—åˆ—ã‚’è¿”ã—ã¦çµ‚äº†ã™ã‚‹ï¼
+//	if (pos1 == std::string::npos) {
+//		return input;
+//	}
+//
+//	tmpValuesString.replace(pos1, 1, "");
+//	const std::string::size_type pos2(tmpValuesString.find(")"));
+//	tmpValuesString.replace(pos2, 1, "");
+//	const std::string valuesStringDeletedParenthesis = tmpValuesString;
+//	return tmpValuesString;
+//}
