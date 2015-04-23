@@ -1,5 +1,5 @@
-#ifndef OculusRiftDK1SensorData_h
-#define OculusRiftDK1SensorData_h
+#ifndef __OCULUS_RIFT_DK1_SENSOR_DATA_H__
+#define __OCULUS_RIFT_DK1_SENSOR_DATA_H__
 
 #include "SensorData.h"
 
@@ -59,4 +59,4 @@ public:
 };
 
 
-#endif //OculusRiftDK1SensorData_h
+#endif //__OCULUS_RIFT_DK1_SENSOR_DATA_H__

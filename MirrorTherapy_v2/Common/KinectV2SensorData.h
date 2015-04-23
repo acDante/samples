@@ -1,5 +1,5 @@
-#ifndef KinectV2SensorData_h
-#define KinectV2SensorData_h
+#ifndef __KINECT_V2_SENSOR_DATA_H__
+#define __KINECT_V2_SENSOR_DATA_H__
 
 #include "SensorData.h"
 
@@ -110,5 +110,6 @@ public:
 	KinectV2JointType shortJointName2KinectV2JointType(const std::string &shortJointName) const;
 };
 
-#endif //KinectV2SensorData_h
+#endif //__KINECT_V2_SENSOR_DATA_H__
+
 

@@ -1,5 +1,5 @@
-#ifndef DeviceCommon_h
-#define DeviceCommon_h
+#ifndef __DEVICE_COMMON_H__
+#define __DEVICE_COMMON_H__
 
 //Device Information
 #define SERVICE_NAME_KINECT_V2  "SIG_KINECT_V2"
@@ -29,4 +29,4 @@
 #define PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE       "General.device_type"
 #define PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID  "General.device_unique_id"
 
-#endif //DeviceCommon_h
+#endif //__DEVICE_COMMON_H__

@@ -1,5 +1,5 @@
-#ifndef SensorData_h
-#define SensorData_h
+#ifndef __SENSOR_DATA_H__
+#define __SENSOR_DATA_H__
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string.hpp>
@@ -82,4 +82,4 @@ public:
 //	static std::string deleteParenthesesFromString(const std::string &input, const std::string &pBegin = "(", const std::string &pEnd = ")");
 };
 
-#endif //SensorData_h
+#endif //__SENSOR_DATA_H__

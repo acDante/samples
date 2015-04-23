@@ -1,5 +1,5 @@
-#ifndef OptiTrackSensorData_h
-#define OptiTrackSensorData_h
+#ifndef __OPTITRACK_SENSOR_DATA_H__
+#define __OPTITRACK_SENSOR_DATA_H__
 
 #include "SensorData.h"
 //can't include NatNetTypes.h, because NatNetTypes.h is only for Windows.
@@ -76,5 +76,5 @@ public:
 };
 
 
-#endif //OptiTrackSensorData_h
+#endif //__OPTITRACK_SENSOR_DATA_H__
 
