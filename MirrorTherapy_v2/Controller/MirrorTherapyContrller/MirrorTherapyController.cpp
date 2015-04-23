@@ -104,6 +104,7 @@ void MirrorTherapyController::onRecvMsg(RecvMsgEvent &evt)
 			std::string deviceTypeValue = sensorDataMap[MSG_KEY_DEV_TYPE][0];
 			std::string deviceUniqueId  = sensorDataMap[MSG_KEY_DEV_UNIQUE_ID][0];
 
+			//Kinect V2
 			if (deviceTypeValue == this->kinectV2DeviceType && deviceUniqueId == this->kinectV2DeviceUniqueID)
 			{
 				// Decode message to sensor data of kinect v2.
@@ -131,16 +132,13 @@ void MirrorTherapyController::onRecvMsg(RecvMsgEvent &evt)
 				this->pastPostures[index] = current;
 
 				// Search nearest neighbor of target delay time in stored time stamps.
-				// this->pastPostures に、過去の500メッセージ分の姿勢とタイムスタンプが格納されています。
-				// （現在時刻 - 目標の遅延時刻）に最も近いタイムスタンプをもつ姿勢を取得したいと思います。
-				// 過去の姿勢とタイムスタンプは、this->pastPostures に入っていて、this->pastPostures の型がstd::vector<TimeAndPosture>です。
-				// したがって、this->pastPostures[0]～this->pastPostures[timeSeriesBufferSize]のうちから、最も（現在時刻 - 目標の遅延時刻）に
-				// 近いタイムスタンプをもつ this->pastPostures の添字( = nearestIndex )を見つけます。
+				//   last 500 postures is in this->pastPostures.
+				//   find nearest index.
 				int nearestIndexTmp = index;
 
-				if (this->targetDelayTime > 0.0)  // 目標の遅延時間が0秒以下なら何もしません
+				if (this->targetDelayTime > 0.0)  // If targetDelayTime < 0, don't do anything.
 				{
-					if(current.timeStamp > this->targetDelayTime)  // 経過時間が目標の遅延時間未満の時も何もしません
+					if(current.timeStamp > this->targetDelayTime)  // If elapsed time < targetDelayTime, don't do anything.
 					{
 						const double idealPastTime = current.timeStamp - (this->targetDelayTime);
 
@@ -159,9 +157,11 @@ void MirrorTherapyController::onRecvMsg(RecvMsgEvent &evt)
 						}
 					}
 				}
-				const int nearestIndex = nearestIndexTmp; // 上記の「何もしない」場合は、最新の姿勢情報が反転されることになります。
 
-				if (this->reverseMode == reverseModes[RIGHTHAND])  // 左手の動きを右手へ
+				const int nearestIndex = nearestIndexTmp;
+
+				// left hand motion affects right hand.
+				if (this->reverseMode == reverseModes[RIGHTHAND])
 				{
 					// Get original quaternions.
 					double w2, x2, y2, z2, w3, x3, y3, z3, w5, x5, y5, z5; // These are temporary variables.
@@ -169,15 +169,12 @@ void MirrorTherapyController::onRecvMsg(RecvMsgEvent &evt)
 					this->pastPostures[nearestIndex].posture.joint[ManNiiPosture::LARM_JOINT3].quaternion.getQuaternion(w3, x3, y3, z3);
 
 					// Set reverse quaternions.
-					// KinectV2のクォータニオンを使用するようになったことに伴い、y軸（ひねり）が反映されるように
-					// なったため、反転する要素が以前と変わりました。
-					// 以前は(w,x,y,z)のうちx,y,zの符号を反転させて逆の腕にセットしていましたが、
-					// y,zの符号を反転させてセットしています。
 					manNiiPosture.joint[ManNiiPosture::RARM_JOINT2].quaternion.setQuaternion(w2, x2, -y2, -z2);
 					manNiiPosture.joint[ManNiiPosture::RARM_JOINT3].quaternion.setQuaternion(w3, x3, -y3, -z3);
 					//tmpManNiiPosture.joints[RARM_JOINT5].quaternion.setQuaternions(w5, -x5, -y5, -z5);
 				}
-				else if (this->reverseMode == reverseModes[LEFTHAND]) // 右手の動きを左手へ
+				// right hand motion affects left hand.
+				else if (this->reverseMode == reverseModes[LEFTHAND])
 				{
 					// Get original quaternions.
 					double w2, x2, y2, z2, w3, x3, y3, z3, w5, x5, y5, z5;
@@ -196,6 +193,7 @@ void MirrorTherapyController::onRecvMsg(RecvMsgEvent &evt)
 
 				this->frameNumber++;
 			}
+			// Oculus DK1
 			else if (deviceTypeValue == this->oculusDK1DeviceType && deviceUniqueId ==  this->oculusDK1DeviceUniqueID)
 			{
 				OculusRiftDK1SensorData oculusRiftDK1SensorData;
@@ -239,7 +237,6 @@ void MirrorTherapyController::onRecvMsg(RecvMsgEvent &evt)
 //
 //	if (map.find(MSG_KEY_DEV_TYPE) == map.end())
 //	{
-//		// メッセージのヘッダに"DEV_ID"が含まれていないとき
 //		return "OTHER_MESSAGE";
 //	}
 //	else
@@ -346,7 +343,6 @@ void MirrorTherapyController::convertEulerAngle2ManNiiPosture(const SensorData::
 
 void MirrorTherapyController::convertKinectV2JointOrientations2ManNiiPosture(KinectV2SensorData::KinectV2JointOrientation *kinectV2Joints, ManNiiPosture &manNiiPosture)
 {
-	// TODO: 首のクォータニオンを求めることと、手首や足首のクォータニオンを求めること。
 	// TODO: Calculate for Neck, both wrists and both ankles.
 	const double coef = 1.0 / sqrt(2.0);
 
@@ -645,6 +641,7 @@ void MirrorTherapyController::readIniFile()
 {
 	std::ifstream ifs(this->parameterFileName.c_str());
 
+	// Parameter file is "not" exists.
 	if (ifs.fail())
 	{
 		std::cout << "Not exist : " << this->parameterFileName << std::endl;
@@ -658,11 +655,11 @@ void MirrorTherapyController::readIniFile()
 		this->oculusDK1DeviceType     = DEV_TYPE_OCULUS_DK1;
 		this->oculusDK1DeviceUniqueID = DEV_UNIQUE_ID_0;
 	}
+	// Parameter file is exists.
 	else
 	{
 		try
 		{
-			// パラメータファイルが見つかった時は，書いてある内容を取得してセットする．
 			std::cout << "Read " << this->parameterFileName << std::endl;
 			boost::property_tree::ptree pt;
 			boost::property_tree::read_ini(this->parameterFileName, pt);

@@ -15,8 +15,7 @@
 //
 //	//
 //	if ((int)records.size() < 2) {
-//		// メッセージからヘッダを読み込めなかったときの処理
-//		// 例外を投げたい
+//		// want to throw Exception
 //	}
 //
 //	const std::string messageHeader = records[0] + recordDelim + records[1] + recordDelim;
@@ -26,8 +25,6 @@
 //
 //bool AvatarController::checkMessageHeader(const std::string &messageHeader, const std::string &recordDelim, const std::string &keyDelim)
 //{
-//	// エラーチェックが甘い
-//
 //	// Split string to records by ";".
 //	std::vector<std::string> records;
 //	AvatarController::splitString(messageHeader, recordDelim, records);
@@ -36,7 +33,7 @@
 //	AvatarController::splitString(records[0], keyDelim, deviceTypeRecord);
 //
 //	if ((int)deviceTypeRecord.size() < 2) {
-//		// 例外を投げたい
+//		// want to throw Exception
 //		std::cout << "ILLEGAL DEVICE TYPE : " << messageHeader << std::endl;
 //		return false;
 //	}
@@ -48,12 +45,12 @@
 //	std::vector<std::string> deviceIDRecord;
 //	AvatarController::splitString(records[1], keyDelim, deviceIDRecord);
 //	if ((int)deviceIDRecord.size() < 2) {
-//		// 例外を投げたい
+//		// want to throw Exception
 //		std::cout << "ILLEGAL DEVICE ID : " << messageHeader << std::endl;
 //		return false;
 //	}
 //	if (deviceIDRecord[0] != devIDKey) {
-//		// 例外を投げたい
+//		// want to throw Exception
 //		std::cout << "ILLEGAL DEVICE ID : " << messageHeader << std::endl;
 //		return false;
 //	}

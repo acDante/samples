@@ -129,6 +129,7 @@ void ManNiiAvatarControllerByOculus::readIniFile()
 {
 	std::ifstream ifs(this->parameterFileName.c_str());
 
+	// Parameter file is "not" exists.
 	if (ifs.fail())
 	{
 		std::cout << "Not exist : " << this->parameterFileName << std::endl;
@@ -138,11 +139,11 @@ void ManNiiAvatarControllerByOculus::readIniFile()
 		this->oculusDK1DeviceType     = DEV_TYPE_OCULUS_DK1;
 		this->oculusDK1DeviceUniqueID = DEV_UNIQUE_ID_0;
 	}
+	// Parameter file is exists.
 	else
 	{
 		try
 		{
-			// パラメータファイルが見つかった時は，書いてある内容を取得してセットする．
 			std::cout << "Read " << this->parameterFileName << std::endl;
 			boost::property_tree::ptree pt;
 			boost::property_tree::read_ini(this->parameterFileName, pt);

@@ -103,7 +103,6 @@ void ManNiiAvatarControllerByKinectV2::setJointQuaternionsForKinect(SimObj *obj,
 
 void ManNiiAvatarControllerByKinectV2::convertKinectV2JointOrientations2ManNiiPosture(KinectV2SensorData::KinectV2JointOrientation* kinectV2Joints, ManNiiPosture &manNiiPosture)
 {
-	// TODO: 首のクォータニオンを求めることと、手首や足首のクォータニオンを求めること。
 	// TODO: Calculate for Neck, both wrists and both ankles.
 	const double coef = 1.0 / sqrt(2.0);
 
@@ -402,6 +401,7 @@ void ManNiiAvatarControllerByKinectV2::readIniFile()
 {
 	std::ifstream ifs(this->parameterFileName.c_str());
 
+	// Parameter file is "not" exists.
 	if (ifs.fail())
 	{
 		std::cout << "Not exist : " << this->parameterFileName << std::endl;
@@ -411,11 +411,11 @@ void ManNiiAvatarControllerByKinectV2::readIniFile()
 		this->kinectV2DeviceType     = DEV_TYPE_KINECT_V2;
 		this->kinectV2DeviceUniqueID = DEV_UNIQUE_ID_0;
 	}
+	// Parameter file is exists.
 	else
 	{
 		try
 		{
-			// パラメータファイルが見つかった時は，書いてある内容を取得してセットする．
 			std::cout << "Read " << this->parameterFileName << std::endl;
 			boost::property_tree::ptree pt;
 			boost::property_tree::read_ini(this->parameterFileName, pt);
