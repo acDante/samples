@@ -1,9 +1,7 @@
-# 生成する.soファイル名
+# target file (.so)
 TARGET = ./ManNiiAvatarControllerByOculus.so
 
-# コンパイルしたいソースコードのファイル名
-# ・ソースコードを変更したりする場合はここの記述を変更する
-# ・「\」をファイル名の末尾に加えて記述する
+# sources
 SRCS =\
 	$(COMMON)SensorData.cpp \
 	$(COMMON)OculusRiftDK1SensorData.cpp \
@@ -12,40 +10,36 @@ SRCS =\
 	$(CONTROLLER_COMMON)ManNiiPosture.cpp \
 	$(CURRENT)ManNiiAvatarControllerByOculus.cpp \
 
-# ソースコードのある場所
+# source directories
 CURRENT = ./
 COMMON = ../../Common/
 CONTROLLER_COMMON = ../ControllerCommon/
 
-# sigverseのパス
+# sigverse path
 SIG_SRC = $(SIGVERSE_PATH)/include
 
-# コンパイラ
+# compiler
 CXX = g++
 
-# コンパイルオプションなど
+# compile option
 CFLAGS = -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(SIG_SRC) -fPIC -shared
 
-# 中間ファイル名をソースコードのファイル名から生成する（.cpp -> .o）
+# generate intermediate object file from sources.
 OBJS := $(SRCS:.cpp=.o)
 
-# ここまでは変数の定義
-# ここからはコンパイルのルールを記述
+# -- compile rule --
 
-# make に対する引数が無いときのルール
 all: $(TARGET)
 
-# 中間ファイルを生成するルール
+# intermediate output file
 %.o: %.cpp
 	$(CXX) $(CFLAGS) -o $@ -c $<
-#.cpp.o:
-#	$(CXX) $(CFLAGS) -c $< # Generate object file
 
-# .soファイルを生成するルール
+# target file(.so)
 $(TARGET): $(OBJS) $(SRCS)
 	$(CXX) $(CFLAGS) -o $@ $(OBJS) # Link object files.
 	rm -f $(OBJS) # Remove intermediate files.
 
-# 生成したファイルを削除するルール
+# remove object file
 clean:
 	rm -f $(TARGET) $(OBJS)
