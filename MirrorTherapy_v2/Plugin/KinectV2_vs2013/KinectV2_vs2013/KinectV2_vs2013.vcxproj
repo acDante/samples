@@ -69,14 +69,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Common\DeviceCommon.h" />
     <ClInclude Include="..\..\..\Common\KinectV2SensorData.h" />
     <ClInclude Include="..\..\..\Common\SensorData.h" />
+    <ClInclude Include="..\..\PluginCommon\CheckRecvSIGServiceData.h" />
     <ClInclude Include="..\..\PluginCommon\Device.h" />
     <ClInclude Include="KinectV2Device.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Common\KinectV2SensorData.cpp" />
     <ClCompile Include="..\..\..\Common\SensorData.cpp" />
+    <ClCompile Include="..\..\PluginCommon\CheckRecvSIGServiceData.cpp" />
     <ClCompile Include="..\..\PluginCommon\Device.cpp" />
     <ClCompile Include="KinectV2Device.cpp" />
     <ClCompile Include="Main.cpp" />
