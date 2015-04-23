@@ -72,19 +72,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Common\OptiTrackSensorData.cpp" />
     <ClCompile Include="..\..\..\Common\SensorData.cpp" />
+    <ClCompile Include="..\..\PluginCommon\CheckRecvSIGServiceData.cpp" />
     <ClCompile Include="..\..\PluginCommon\Device.cpp" />
-    <ClCompile Include="CheckRecvSIGServiceData.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="OptiTrackDevice.cpp" />
-    <ClCompile Include="OptiTrackSensorData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Common\DeviceCommon.h" />
+    <ClInclude Include="..\..\..\Common\OptiTrackSensorData.h" />
     <ClInclude Include="..\..\..\Common\SensorData.h" />
+    <ClInclude Include="..\..\PluginCommon\CheckRecvSIGServiceData.h" />
     <ClInclude Include="..\..\PluginCommon\Device.h" />
-    <ClInclude Include="CheckRecvSIGServiceData.h" />
     <ClInclude Include="OptiTrackDevice.h" />
-    <ClInclude Include="OptiTrackSensorData.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

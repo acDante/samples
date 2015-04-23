@@ -27,10 +27,10 @@
     <ClCompile Include="OptiTrackDevice.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="OptiTrackSensorData.cpp">
+    <ClCompile Include="..\..\..\Common\OptiTrackSensorData.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="CheckRecvSIGServiceData.cpp">
+    <ClCompile Include="..\..\PluginCommon\CheckRecvSIGServiceData.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,10 +44,13 @@
     <ClInclude Include="OptiTrackDevice.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="OptiTrackSensorData.h">
+    <ClInclude Include="..\..\..\Common\OptiTrackSensorData.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="CheckRecvSIGServiceData.h">
+    <ClInclude Include="..\..\PluginCommon\CheckRecvSIGServiceData.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Common\DeviceCommon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
