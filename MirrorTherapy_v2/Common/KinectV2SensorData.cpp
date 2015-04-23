@@ -1,6 +1,4 @@
 #include "KinectV2SensorData.h"
-//#include <sigverse/SimObj.h>
-//#include <sigverse/Logger.h>
 
 ///@brief Generate message by posture.
 std::string KinectV2SensorData::encodeSensorData(const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim) const

@@ -14,29 +14,6 @@ OptiTrackSensorData::~OptiTrackSensorData(void)
 }
 
 
-/////@brief RigidBody(ID, qw, qx, qy, qz) to string( "RIGIDx:(ID,qw,qx,qy,qz)" ).
-//std::string OptiTrackSensorData::rigidBody2Str(const sRigidBodyDataSgv &rigidBody, const std::string &keyValueDelim, const std::string &valuesDelim) const
-//{
-////	bool bTrackingValid = rigidBody.params & 0x01;
-////
-////	if(!bTrackingValid){ return ""; }
-//
-//	std::stringstream ss;
-//
-//	ss << "RIGID" << rigidBody.ID << keyValueDelim
-//		<< "("
-//		<< rigidBody.ID << valuesDelim
-//		<< rigidBody.qw << valuesDelim
-//		<< rigidBody.qx << valuesDelim
-//		<< rigidBody.qy << valuesDelim
-//		<< rigidBody.qz << valuesDelim
-//		<< rigidBody.params
-//		<< ")";
-//
-//	return ss.str();
-//};
-
-
 void OptiTrackSensorData::addNRigidBodies(std::map<std::string, std::vector<std::string> > &messageMap) const
 {
 	std::vector<std::string> vec;
@@ -69,51 +46,8 @@ void OptiTrackSensorData::addRigidBody(std::map<std::string, std::vector<std::st
 	ssValue << rigidBody.qz;     vec.push_back(ssValue.str()); ssValue.clear(); ssValue.str("");
 	ssValue << rigidBody.params; vec.push_back(ssValue.str());
 
-//	std::stringstream ss;
-//
-//	ss << "RIGID" << rigidBody.ID << keyValueDelim
-//		<< "("
-//		<< rigidBody.ID << valuesDelim
-//		<< rigidBody.qw << valuesDelim
-//		<< rigidBody.qx << valuesDelim
-//		<< rigidBody.qy << valuesDelim
-//		<< rigidBody.qz << valuesDelim
-//		<< rigidBody.params
-//		<< ")";
-
 	messageMap.insert(make_pair(ssKey.str(), vec));
 };
-
-
-/////@brief generate message by posture.
-//std::string OptiTrackSensorData::encodeSensorData(const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim) const
-//{
-//	std::map<std::string, std::vector<std::string> > messageMap;
-//
-//	std::stringstream ss;
-//
-//	if(this->nRigidBodies == 0){ return ""; }
-//
-////	int dataCnt = 0;
-//
-//	ss << "N_RIGID_BODIES" << keyValueDelim << "(" << this->nRigidBodies << ")" << itemsDelim;
-//
-//	//second or subsequent data
-//	for(int i=0; i<this->nRigidBodies; i++)
-//	{
-////		std::string msg = rigidBody2Str(this->rigidBodies[i], keyValueDelim, vectorDelim);
-//
-////		if(msg==""){ continue; }
-//
-////		if(dataCnt!=0){ ss << pairsDelim; }
-////		if(i!=0){ ss << pairsDelim; }
-//		ss << itemsDelim << rigidBody2Str(this->rigidBodies[i], keyValueDelim, valuesDelim);
-//
-////		dataCnt++;
-//	}
-//
-//	return this->convertMap2Message(messageMap, itemsDelim, keyValueDelim, valuesDelim);
-//}
 
 
 ///@brief generate message by posture.
@@ -178,12 +112,6 @@ bool OptiTrackSensorData::setSensorData(const std::map<std::string, std::vector<
 	}
 
 	return true;
-//	}
-//	catch (...)
-//	{
-//		std::cout << "catch (...) in OptiTrackSensorData::decodeSensorData" << std::endl;
-//		return false;
-//	}
 }
 
 

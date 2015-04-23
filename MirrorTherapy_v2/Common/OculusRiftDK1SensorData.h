@@ -3,20 +3,8 @@
 
 #include "SensorData.h"
 
-//#ifndef _EulerAngleType_
-//#define _EulerAngleType_
-
 #define MSG_KEY_EULER "EULER"
-//static const std::string sensorKey = SENSOR_KEY;
 
-/////@brief For expression position.
-//typedef struct EulerAngleType
-//{
-//	float yaw;
-//	float pitch;
-//	float roll;
-//} EulerAngleType;
-//#endif
 
 class OculusRiftDK1SensorData : public SensorData
 {
@@ -34,11 +22,6 @@ public:
 	///@brief Set to sensor data.
 	///@param Map of sensor data;
 	bool setSensorData(const std::map<std::string, std::vector<std::string> > &sensorDataMap);
-
-//	///@brief Convert posture information to string.
-//	std::string encodeSensorData(const std::string &pairsDelim = pairsDelimDefault, const std::string &keyValueDelim = keyValueDelimDefault, const std::string &vectorDelim = vectorDelimDefault);
-//
-//	void decodeSensorData(const std::string &message, const std::string &pairsDelim = pairsDelimDefault, const std::string &keyValueDelim = keyValueDelimDefault, const std::string &vectorDelim = vectorDelimDefault);
 
 	///@brief Set sensor data.
 	void setEulerAngle(const float &yaw, const float &pitch, const float &roll);

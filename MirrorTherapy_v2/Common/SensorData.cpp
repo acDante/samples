@@ -115,3 +115,4 @@ std::string SensorData::convertMap2Message(const std::map<std::string, std::vect
 //	const std::string valuesStringDeletedParenthesis = tmpValuesString;
 //	return tmpValuesString;
 //}
+

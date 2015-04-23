@@ -10,7 +10,6 @@
 
 #include "DeviceCommon.h"
 
-
 class SensorData
 {
 public:
@@ -38,13 +37,6 @@ public:
 		float pitch;
 		float roll;
 	} EulerAngleType;
-
-//	static std::string intToStr(const int x)
-//	{
-//		std::stringstream ss;
-//		ss << x;
-//		return ss.str();
-//	}
 
 	SensorData() {};
 	virtual ~SensorData() {};
@@ -77,9 +69,6 @@ public:
 	///@param keyValueDelim Symbol to split KEY and VALUE.
 	///@param valuesDelim Symbol to split each componet of VALUE. When VALUE is multidimensional data, you use this symbol.
 	static std::string convertMap2Message(const std::map<std::string, std::vector<std::string> > &map, const std::string &itemsDelim = ITEMS_DELIMITER, const std::string &keyValueDelim = KEY_AND_VALUE_DELIMITER, const std::string &valuesDelim = VALUES_DELIMITER);
-
-//	///@brief Delete parentheses '(' and ')' from string.
-//	static std::string deleteParenthesesFromString(const std::string &input, const std::string &pBegin = "(", const std::string &pEnd = ")");
 };
 
 #endif //__SENSOR_DATA_H__

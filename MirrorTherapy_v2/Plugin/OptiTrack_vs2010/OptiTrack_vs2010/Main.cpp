@@ -9,13 +9,13 @@
 
 int main(int argc, char **argv) 
 {
-	try {
-
+	try
+	{
 		OptiTrackDevice optiTrackDevice(argc, argv);
-
 		optiTrackDevice.run();
 	}
-	catch (...) {
+	catch (...) 
+	{
 		std::cout << " catch (...) " << std::endl;
 	}
 

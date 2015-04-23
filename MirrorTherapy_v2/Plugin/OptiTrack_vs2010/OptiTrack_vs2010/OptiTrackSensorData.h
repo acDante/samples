@@ -7,7 +7,5 @@ class OptiTrackSensorData :
 public:
 	OptiTrackSensorData(void);
 	~OptiTrackSensorData(void);
-
-
 };
 

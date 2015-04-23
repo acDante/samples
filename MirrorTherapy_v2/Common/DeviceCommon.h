@@ -1,12 +1,12 @@
 #ifndef __DEVICE_COMMON_H__
 #define __DEVICE_COMMON_H__
 
-//Device Information
+//Device information
 #define SERVICE_NAME_KINECT_V2  "SIG_KINECT_V2"
 #define SERVICE_NAME_OCULUS     "SIG_OCULUS"
 #define SERVICE_NAME_OPTITRACK  "SIG_OPTITRACK"
 
-//Device Message Information
+//Device message information
 // Define delimiters to split string.
 #define ITEMS_DELIMITER         ";" // Delimiter to make items from whole message.
 #define KEY_AND_VALUE_DELIMITER ":" // Delimiter to split to KEY and VALUE from one item.
