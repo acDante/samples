@@ -38,7 +38,6 @@ bool OculusRiftDK1SensorData::setSensorData(const std::map<std::string, std::vec
 				return false;
 			}
 
-			// Euler角を抽出してセットする．
 			// Extract euler angle.
 			const float yaw   = (float)atof((*it).second[0].c_str());
 			const float pitch = (float)atof((*it).second[1].c_str());

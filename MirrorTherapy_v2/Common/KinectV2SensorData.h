@@ -61,9 +61,6 @@ private:
 	///@brief Whole body joint orientations.
 	KinectV2JointOrientation jointOrientations[KinectV2JointType_Count];
 
-	// 現状ではルートのポジションと各関節のオリエンテーション（クォータニオン）しか保持していませんが，
-	// KinectV2JointPosition などの型を定義して，関節の位置を保持しても問題ないと思います．
-
 	std::string orientation2Message(const SensorData::Vector4 &orientation, const std::string &valuesDelim) const;
 
 	///@brief JointOrientation (jointname, w, x, y, z) to string.

@@ -20,7 +20,7 @@ std::map<std::string, std::vector<std::string> > SensorData::convertMessage2Map(
 
 	try
 	{
-		// まずは「;」でKEY:VALUEごとに文字列を取得する
+		// split message by ";"(itemsDelim). (Get key and value items.)
 		std::vector<std::string> items;
 		boost::split(items, message, boost::is_any_of(itemsDelim));
 
@@ -30,19 +30,16 @@ std::map<std::string, std::vector<std::string> > SensorData::convertMessage2Map(
 
 			//std::cout << pairs[i] << std::endl;
 			
-			// KEY:VALUE となっている文字列から KEY と VALUE を抽出してマップにする
+			// split key and values by ":"(keyValueDelim).
 			std::vector<std::string> keyAndValues;
 			boost::split(keyAndValues, items[i], boost::is_any_of(keyValueDelim));
 
-//			// 「(」と「)」を削除する（無い場合は何もしない）．
-//			// Delete "(" and ")" from message.
-//			const std::string valuesStringDeletedParentheses = SensorData::deleteParenthesesFromString(keyAndValues[1]);
-
-			// VALUE部分を「,」で分割する
+			// split values by ","(valuesDelim).
 			std::vector<std::string> values;
 //			boost::split(valuesVector, valuesStringDeletedParentheses, boost::is_any_of(valuesDelim));
 			boost::split(values, keyAndValues[1], boost::is_any_of(valuesDelim));
 
+			//create the map
 			map.insert( std::map<std::string, std::vector<std::string> >::value_type(keyAndValues[0], values) );
 		}
 	}
