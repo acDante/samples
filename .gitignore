@@ -3,6 +3,10 @@
 *.so
 *~
 
+#eclipse
+.settings/
+.cproject
+.project
 
 *.dat
 
