@@ -4,36 +4,41 @@
  *  Created on: 2015/03/12
  *      Author: Nozaki
  */
+#ifndef __MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_H__
+#define __MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_H__
 
 #include <sigverse/Controller.h>
 #include <sigverse/ControllerEvent.h>
 
+#include "../../Common/OculusRiftDK1SensorData.h"
+
 #include "../ControllerCommon/AvatarController.h"
 #include "../ControllerCommon/ManNiiPosture.h"
 
-#define OCULUS_SERVICE_NAME "SIGOCULUS"
-static const std::string oculusDK1ServiceNameDefault = OCULUS_SERVICE_NAME;
 
-// Define DEV_TYPE.
-static const std::string devTypeOculus = "OCULUSDK1";
+#define PARAM_FILE_NAME_OCULUS_RIFT_DK1_INI  "OculusRiftDK1.ini"
 
 class ManNiiAvatarControllerByOculus : public AvatarController
 {
 private:
-	//ManNiiAvatarPosture posture;
-	BaseService *kinectV2Service;
-	std::string kinectV2ServiceName;
+	///@brief Parameter file name.
+	std::string parameterFileName;
+
 	BaseService *oculusDK1Service;
+
 	std::string oculusDK1ServiceName;
+	std::string oculusDK1DeviceType;
+	std::string oculusDK1DeviceUniqueID;
 
 	dQuaternion defaultHeadJoint0Quaternion;
 
-	double prevYaw, prevPitch, prevRoll;
+//	double prevYaw, prevPitch, prevRoll;
+
+	ManNiiPosture posture;
+
+	void readIniFile();
 
 public:
-
-	//ManNiiAvatarPosture posture;
-
 	///@brief Movement of the robot.
 	double onAction(ActionEvent &evt);
 
@@ -44,16 +49,16 @@ public:
 	void onInit(InitEvent &evt);
 
 	///@brief Convert euler angle to avatar posture structure.
-	void convertEulerAngle2ManNiiPosture(const EulerAngleType &eulerAngle, ManNiiPosture &manNiiAvatarPosture);
-
-	void setJointQuaternion(SimObj *obj, const ManNiiJointQuaternion &jq);
+	void convertEulerAngle2ManNiiPosture(const SensorData::EulerAngleType &eulerAngle);
 
 	void setJointQuaternions(SimObj *obj);
 
-	void setJointQuaternionsForOculus(SimObj *obj, ManNiiPosture &manNiiAvatarPosture);
+	void setJointQuaternionsForOculus(SimObj *obj);
 };
 
 extern "C" Controller * createController()
 {
 	return new ManNiiAvatarControllerByOculus;
 }
+
+#endif //__MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_H__

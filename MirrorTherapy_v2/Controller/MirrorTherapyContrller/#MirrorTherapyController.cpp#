@@ -5,23 +5,17 @@
  *      Author: Nozaki
  */
 
-#include "../../Common/SensorData.h"
 #include "MirrorTherapyController.h"
 #include <sys/time.h>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/ini_parser.hpp>
-#include <boost/exception/diagnostic_information.hpp>
 
-enum ReverseModeType
-{
+enum ReverseModeType {
 	NOREVERSE = 0,
 	RIGHTHAND = 1,
 	LEFTHAND  = 2,
 	ReverseMode_Count = (LEFTHAND + 1)
 };
 
-static const std::string reverseModes[ReverseMode_Count] =
-{
+static const std::string reverseModes[ReverseMode_Count] = {
 	"NOREVERSE",
 	"RIGHTHAND",
 	"LEFTHAND"
@@ -30,11 +24,8 @@ static const std::string reverseModes[ReverseMode_Count] =
 ///@brief Initialize this controller.
 void MirrorTherapyController::onInit(InitEvent &evt)
 {
-	this->parameterFileName = PARAM_FILE_NAME_MIRROR_THERAPY_INI;
-	readIniFile();
-
 	this->oculusDK1Service = NULL;
-	this->kinectV2Service  = NULL;
+	this->kinectV2Service = NULL;
 
 	this->defaultHeadJoint0Quaternion[0] = 1.0;
 	this->defaultHeadJoint0Quaternion[1] = 0.0;
@@ -47,207 +38,181 @@ void MirrorTherapyController::onInit(InitEvent &evt)
 
 	// For Mirror therapy initialize.
 	this->reverseMode = reverseModes[RIGHTHAND]; // Set reverse mode.
+	//this->reverseMode = reverseModes[NOREVERSE];
 
 	// Set delay variables.
-	this->targetDelayTime = DEFAULT_DELAY_TIME;
+	this->targetDelayTime = defaultDelayTime;
 	gettimeofday(&this->initTimeVal, NULL);
 	this->frameNumber = 0;
-	this->pastPostures = std::vector<TimeAndPostureType>(TIME_SERIES_BUFFER_SIZE);
+	this->pastPostures = std::vector<TimeAndPostureType>(timeSeriesBufferSize);
 }
 
 ///@brief Movement of the robot.
 double MirrorTherapyController::onAction(ActionEvent &evt)
 {
+	this->oculusDK1ServiceName = oculusDK1ServiceNameDefault;
 	bool oculusDK1Available = checkService(this->oculusDK1ServiceName);
-
-	if (oculusDK1Available && this->oculusDK1Service == NULL)
-	{
+	if (oculusDK1Available && this->oculusDK1Service == NULL) {
 		this->oculusDK1Service = connectToService(this->oculusDK1ServiceName);
 	}
-	else if (!oculusDK1Available && this->oculusDK1Service != NULL)
-	{
+	else if (!oculusDK1Available && this->oculusDK1Service != NULL) {
 		this->oculusDK1Service = NULL;
 	}
 
+	this->kinectV2ServiceName = kinectV2ServiceNameDefault;
 	bool kinectV2Available = checkService(this->kinectV2ServiceName);
-
-	if (kinectV2Available && this->kinectV2Service == NULL)
-	{
+	if (kinectV2Available && this->kinectV2Service == NULL) {
 		this->kinectV2Service = connectToService(this->kinectV2ServiceName);
 	}
-	else if (!kinectV2Available && this->kinectV2Service != NULL)
-	{
+	else if (!kinectV2Available && this->kinectV2Service != NULL) {
 		this->kinectV2Service = NULL;
 	}
 
 	return 1.0;
 }
 
-
 ///@brief Message heard by the robot.
 void MirrorTherapyController::onRecvMsg(RecvMsgEvent &evt)
 {
-	try
-	{
+	try {
 		// Receive message.
 		const std::string allMsg = evt.getMsg();
 
-//		std::cout << allMsg << std::endl;
-
 		// Get device type from message.
-		SensorData sensorData;
-		std::map<std::string, std::vector<std::string> > sensorDataMap = sensorData.decodeSensorData(allMsg);
+		const std::string deviceTypeValue = this->getDeviceIDFromMessage(allMsg);
 
-		// Device
-		if (sensorDataMap.find(MSG_KEY_DEV_TYPE) != sensorDataMap.end())
-		{
-			std::string deviceTypeValue = sensorDataMap[MSG_KEY_DEV_TYPE][0];
-			std::string deviceUniqueId  = sensorDataMap[MSG_KEY_DEV_UNIQUE_ID][0];
+		if (deviceTypeValue == devTypeKinectV2) {
+			// Decode message to sensor data of kinect v2.
+			KinectV2SensorData sensorData;
+			sensorData.decodeSensorData(allMsg);
 
-			if (deviceTypeValue == this->kinectV2DeviceType && deviceUniqueId == this->kinectV2DeviceUniqueID)
-			{
-				// Decode message to sensor data of kinect v2.
-				KinectV2SensorData kinectV2SensorData;
-				kinectV2SensorData.setSensorData(sensorDataMap);
+			// Get quaternions(orientations) of kinect v2 format, from sensor data of kinect v2.
+			KinectV2JointOrientation tmpKinectV2JointOrientations[KinectV2JointType_Count];
+			sensorData.getKinectV2JointOrientation(tmpKinectV2JointOrientations);
 
-				// Get quaternions(orientations) of kinect v2 format, from sensor data of kinect v2.
-				KinectV2SensorData::KinectV2JointOrientation tmpKinectV2JointOrientations[KinectV2SensorData::KinectV2JointType_Count];
-				kinectV2SensorData.getKinectV2JointOrientation(tmpKinectV2JointOrientations);
+			// Convert kinect v2 quaternions(orientations) to man-nii posture(sigverse quaternion format).
+			ManNiiPosture manNiiPosture = ManNiiPosture();
+			this->convertKinectV2JointOrientations2ManNiiPosture(tmpKinectV2JointOrientations, manNiiPosture);
 
-				// Convert kinect v2 quaternions(orientations) to man-nii posture(sigverse quaternion format).
-				ManNiiPosture manNiiPosture = ManNiiPosture();
-				this->convertKinectV2JointOrientations2ManNiiPosture(tmpKinectV2JointOrientations, manNiiPosture);
+			// Store current posture and time stamp.
+			TimeAndPostureType current;
+			current.timeStamp = this->generateCurrentTimeStamp();
+			for (int i = 0; i < ManNiiJointType_Count; i++) {
+				current.posture.jointQuaternions[i] = manNiiPosture.jointQuaternions[i];
+			}
+			const unsigned long index = this->frameNumber % timeSeriesBufferSize;
+			this->pastPostures[index] = current;
 
-				// Store current posture and time stamp.
-				TimeAndPostureType current;
-				current.timeStamp = this->generateCurrentTimeStamp();
+			// Search nearest neighbor of target delay time in stored time stamps.
+			// this->pastPostures に、過去の500メッセージ分の姿勢とタイムスタンプが格納されています。
+			// （現在時刻 - 目標の遅延時刻）に最も近いタイムスタンプをもつ姿勢を取得したいと思います。
+			// 過去の姿勢とタイムスタンプは、this->pastPostures に入っていて、this->pastPostures の型がstd::vector<TimeAndPosture>です。
+			// したがって、this->pastPostures[0]～this->pastPostures[timeSeriesBufferSize]のうちから、最も（現在時刻 - 目標の遅延時刻）に
+			// 近いタイムスタンプをもつ this->pastPostures の添字( = nearestIndex )を見つけます。
+			int nearestIndexTmp = index;
+			if (targetDelayTime > 0.0) { // 目標の遅延時間が0秒以下なら何もしません
+				if(current.timeStamp > this->targetDelayTime) { // 経過時間が目標の遅延時間未満の時も何もしません
 
-				for (int i = 0; i < ManNiiPosture::ManNiiJointType_Count; i++)
-				{
-					current.posture.joint[i] = manNiiPosture.joint[i];
-				}
+					const double idealPastTime = current.timeStamp - (this->targetDelayTime);
 
-				const unsigned long index = this->frameNumber % TIME_SERIES_BUFFER_SIZE;
-				this->pastPostures[index] = current;
+					double nearestTimeDistance = DBL_MAX;
+					nearestIndexTmp = 0;
 
-				// Search nearest neighbor of target delay time in stored time stamps.
-				// this->pastPostures に、過去の500メッセージ分の姿勢とタイムスタンプが格納されています。
-				// （現在時刻 - 目標の遅延時刻）に最も近いタイムスタンプをもつ姿勢を取得したいと思います。
-				// 過去の姿勢とタイムスタンプは、this->pastPostures に入っていて、this->pastPostures の型がstd::vector<TimeAndPosture>です。
-				// したがって、this->pastPostures[0]～this->pastPostures[timeSeriesBufferSize]のうちから、最も（現在時刻 - 目標の遅延時刻）に
-				// 近いタイムスタンプをもつ this->pastPostures の添字( = nearestIndex )を見つけます。
-				int nearestIndexTmp = index;
 
-				if (this->targetDelayTime > 0.0)  // 目標の遅延時間が0秒以下なら何もしません
-				{
-					if(current.timeStamp > this->targetDelayTime)  // 経過時間が目標の遅延時間未満の時も何もしません
-					{
-						const double idealPastTime = current.timeStamp - (this->targetDelayTime);
+					for (int i = timeSeriesBufferSize - 1; i >= 0; i--) {
+						double tmpTimeDistance = abs(idealPastTime - this->pastPostures[i].timeStamp);
 
-						double nearestTimeDistance = DBL_MAX;
-						nearestIndexTmp = 0;
-
-						for (int i = TIME_SERIES_BUFFER_SIZE - 1; i >= 0; i--)
-						{
-							double tmpTimeDistance = abs(idealPastTime - this->pastPostures[i].timeStamp);
-
-							if (tmpTimeDistance < nearestTimeDistance)
-							{
-								nearestTimeDistance = tmpTimeDistance;
-								nearestIndexTmp = i;
-							}
+						if (tmpTimeDistance < nearestTimeDistance) {
+							nearestTimeDistance = tmpTimeDistance;
+							nearestIndexTmp = i;
 						}
 					}
+
+					//std::cout << "nearest: " <<
 				}
-				const int nearestIndex = nearestIndexTmp; // 上記の「何もしない」場合は、最新の姿勢情報が反転されることになります。
-
-				if (this->reverseMode == reverseModes[RIGHTHAND])  // 左手の動きを右手へ
-				{
-					// Get original quaternions.
-					double w2, x2, y2, z2, w3, x3, y3, z3, w5, x5, y5, z5; // These are temporary variables.
-					this->pastPostures[nearestIndex].posture.joint[ManNiiPosture::LARM_JOINT2].quaternion.getQuaternion(w2, x2, y2, z2);
-					this->pastPostures[nearestIndex].posture.joint[ManNiiPosture::LARM_JOINT3].quaternion.getQuaternion(w3, x3, y3, z3);
-
-					// Set reverse quaternions.
-					// KinectV2のクォータニオンを使用するようになったことに伴い、y軸（ひねり）が反映されるように
-					// なったため、反転する要素が以前と変わりました。
-					// 以前は(w,x,y,z)のうちx,y,zの符号を反転させて逆の腕にセットしていましたが、
-					// y,zの符号を反転させてセットしています。
-					manNiiPosture.joint[ManNiiPosture::RARM_JOINT2].quaternion.setQuaternion(w2, x2, -y2, -z2);
-					manNiiPosture.joint[ManNiiPosture::RARM_JOINT3].quaternion.setQuaternion(w3, x3, -y3, -z3);
-					//tmpManNiiPosture.joints[RARM_JOINT5].quaternion.setQuaternions(w5, -x5, -y5, -z5);
-				}
-				else if (this->reverseMode == reverseModes[LEFTHAND]) // 右手の動きを左手へ
-				{
-					// Get original quaternions.
-					double w2, x2, y2, z2, w3, x3, y3, z3, w5, x5, y5, z5;
-					this->pastPostures[nearestIndex].posture.joint[ManNiiPosture::RARM_JOINT2].quaternion.getQuaternion(w2, x2, y2, z2);
-					this->pastPostures[nearestIndex].posture.joint[ManNiiPosture::RARM_JOINT3].quaternion.getQuaternion(w3, x3, y3, z3);
-
-					// Set reverse quaternions.
-					manNiiPosture.joint[ManNiiPosture::LARM_JOINT2].quaternion.setQuaternion(w2, x2, -y2, -z2);
-					manNiiPosture.joint[ManNiiPosture::LARM_JOINT3].quaternion.setQuaternion(w3, x3, -y3, -z3);
-					//tmpManNiiPosture.joints[RARM_JOINT5].quaternion.setQuaternions(w5, -x5, -y5, -z5);
-				}
-
-				// Set sigverse quaternions
-				SimObj *obj = getObj(myname());
-				this->setJointQuaternionsForKinect(obj, manNiiPosture);
-
-				this->frameNumber++;
 			}
-			else if (deviceTypeValue == this->oculusDK1DeviceType && deviceUniqueId ==  this->oculusDK1DeviceUniqueID)
-			{
-				OculusRiftDK1SensorData oculusRiftDK1SensorData;
-				oculusRiftDK1SensorData.setSensorData(sensorDataMap);
+			const int nearestIndex = nearestIndexTmp; // 上記の「何もしない」場合は、最新の姿勢情報が反転されることになります。
 
-				SensorData::EulerAngleType eulerAngle;
-				eulerAngle.yaw   = oculusRiftDK1SensorData.getYaw();
-				eulerAngle.pitch = oculusRiftDK1SensorData.getPitch();
-				eulerAngle.roll  = oculusRiftDK1SensorData.getRoll();
+			if (this->reverseMode == reverseModes[RIGHTHAND]) { // 左手の動きを右手へ
 
-				ManNiiPosture manNiiPosture = ManNiiPosture();
-				this->convertEulerAngle2ManNiiPosture(eulerAngle, manNiiPosture);
+				// Get original quaternions.
+				double w2, x2, y2, z2, w3, x3, y3, z3, w5, x5, y5, z5; // These are temporary variables.
+				this->pastPostures[nearestIndex].posture.jointQuaternions[LARM_JOINT2].quaternion.getQuaternion(w2, x2, y2, z2);
+				this->pastPostures[nearestIndex].posture.jointQuaternions[LARM_JOINT3].quaternion.getQuaternion(w3, x3, y3, z3);
 
-				SimObj *obj = getObj(myname());
-				this->setJointQuaternionsForOculus(obj, manNiiPosture);
+				// Set reverse quaternions.
+				// KinectV2のクォータニオンを使用するようになったことに伴い、y軸（ひねり）が反映されるように
+				// なったため、反転する要素が以前と変わりました。
+				// 以前は(w,x,y,z)のうちx,y,zの符号を反転させて逆の腕にセットしていましたが、
+				// y,zの符号を反転させてセットしています。
+				manNiiPosture.jointQuaternions[RARM_JOINT2].quaternion.setQuaternion(w2, x2, -y2, -z2);
+				manNiiPosture.jointQuaternions[RARM_JOINT3].quaternion.setQuaternion(w3, x3, -y3, -z3);
+				//tmpManNiiPosture.joints[RARM_JOINT5].quaternion.setQuaternions(w5, -x5, -y5, -z5);
 			}
+			else if (this->reverseMode == reverseModes[LEFTHAND]) { // 右手の動きを左手へ
+				// Get original quaternions.
+				double w2, x2, y2, z2, w3, x3, y3, z3, w5, x5, y5, z5;
+				this->pastPostures[nearestIndex].posture.jointQuaternions[RARM_JOINT2].quaternion.getQuaternion(w2, x2, y2, z2);
+				this->pastPostures[nearestIndex].posture.jointQuaternions[RARM_JOINT3].quaternion.getQuaternion(w3, x3, y3, z3);
+
+				// Set reverse quaternions.
+				manNiiPosture.jointQuaternions[LARM_JOINT2].quaternion.setQuaternion(w2, x2, -y2, -z2);
+				manNiiPosture.jointQuaternions[LARM_JOINT3].quaternion.setQuaternion(w3, x3, -y3, -z3);
+				//tmpManNiiPosture.joints[RARM_JOINT5].quaternion.setQuaternions(w5, -x5, -y5, -z5);
+
+			}
+
+
+			// Set sigverse quaternions
+			SimObj *obj = getObj(myname());
+			this->setJointQuaternionsForKinect(obj, manNiiPosture);
+
+			this->frameNumber++;
 		}
-		// Not a device.
-		else
-		{
-			this->setReverseModeAndDelayTime(sensorDataMap);
+		else if (deviceTypeValue == devTypeOculus) {
+			OculusRiftDK1SensorData sensorData;
+			sensorData.decodeSensorData(allMsg);
+
+			EulerAngleType eulerAngle;
+			eulerAngle.yaw = sensorData.yaw();
+			eulerAngle.pitch = sensorData.pitch();
+			eulerAngle.roll = sensorData.roll();
+
+			ManNiiPosture manNiiPosture = ManNiiPosture();
+			this->convertEulerAngle2ManNiiPosture(eulerAngle, manNiiPosture);
+
+			SimObj *obj = getObj(myname());
+			this->setJointQuaternionsForOculus(obj, manNiiPosture);
 		}
+		else {
+			this->setReverseModeAndDelayTime(allMsg);
+		}
+
 	}
-	catch(SimObj::NoAttributeException &err)
-	{
+	catch(SimObj::NoAttributeException &err) {
 		LOG_MSG(("NoAttributeException: %s", err.msg()));
 	}
-	catch(SimObj::AttributeReadOnlyException &err)
-	{
+	catch(SimObj::AttributeReadOnlyException &err) {
 		LOG_MSG(("AttributeReadOnlyException: %s", err.msg()));
 	}
-	catch(SimObj::Exception &err)
-	{
+	catch(SimObj::Exception &err) {
 		LOG_MSG(("Exception: %s", err.msg()));
 	}
 }
 
-//std::string MirrorTherapyController::getDeviceIDFromMessage(const std::string &message)
-//{
-//	std::map<std::string, std::vector<std::string> > map = SensorData::convertMessage2Map(message);
-//
-//	if (map.find(MSG_KEY_DEV_TYPE) == map.end())
-//	{
-//		// メッセージのヘッダに"DEV_ID"が含まれていないとき
-//		return "OTHER_MESSAGE";
-//	}
-//	else
-//	{
-//		const std::string devIDValue = map[MSG_KEY_DEV_TYPE][0];
-//		return devIDValue;
-//	}
-//}
+std::string MirrorTherapyController::getDeviceIDFromMessage(const std::string &message)
+{
+	std::map<std::string, std::vector<std::string> > map = SensorData::convertMessage2Map(message);
+
+	if (map.find(devTypeKey) == map.end()) {
+		// メッセージのヘッダに"DEV_ID"が含まれていないとき
+		return "OTHER_MESSAGE";
+	}
+	else {
+		const std::string devIDValue = map[devTypeKey][0];
+		return devIDValue;
+	}
+}
 
 const double MirrorTherapyController::generateCurrentTimeStamp()
 {
@@ -258,26 +223,22 @@ const double MirrorTherapyController::generateCurrentTimeStamp()
 	return currentTimeStamp;
 }
 
-void MirrorTherapyController::setJointQuaternion(SimObj *obj, ManNiiPosture::ManNiiJoint &jq)
+void MirrorTherapyController::setJointQuaternion(SimObj *obj, ManNiiJointQuaternion &jq)
 {
-	obj->setJointQuaternion(ManNiiPosture::manNiiJointTypeStr(jq.jointType).c_str(), jq.quaternion.w, jq.quaternion.x, jq.quaternion.y, jq.quaternion.z);
+	obj->setJointQuaternion(manNiiJointTypeStr(jq.manNiiJointType).c_str(), jq.quaternion.w, jq.quaternion.x, jq.quaternion.y, jq.quaternion.z);
 }
 
-bool MirrorTherapyController::setReverseModeAndDelayTime(const std::map<std::string, std::vector<std::string> > &map)
+bool MirrorTherapyController::setReverseModeAndDelayTime(const std::string &message)
 {
-	if (map.find(MSG_KEY_REVERSE) != map.end())
-	{
-		std::map<std::string, std::vector<std::string> >::const_iterator it = map.find(MSG_KEY_REVERSE);
-		this->reverseMode = it->second[0];
+	std::map<std::string, std::vector<std::string> > map = SensorData::convertMessage2Map(message);
 
+	if (map.find(reverseKey) != map.end()) {
+		this->reverseMode = map[reverseKey][0];
 		std::cout << "Set reverse mode:" << this->reverseMode << std::endl;
 		return true;
 	}
-	else if (map.find(MSG_KEY_DELAY) != map.end())
-	{
-		std::map<std::string, std::vector<std::string> >::const_iterator it = map.find(MSG_KEY_DELAY);
-		this->targetDelayTime = atof(it->second[0].c_str());
-
+	else if (map.find(delayKey) != map.end()) {
+		this->targetDelayTime = atof(map[delayKey][0].c_str());
 		std::cout << "Set target delay time:" << this->targetDelayTime << std::endl;
 		return true;
 	}
@@ -287,24 +248,24 @@ bool MirrorTherapyController::setReverseModeAndDelayTime(const std::map<std::str
 
 void MirrorTherapyController::setJointQuaternionsForKinect(SimObj *obj, ManNiiPosture &manNiiPosture)
 {
-	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::WAIST_JOINT1]);
-	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::RARM_JOINT2]);
-	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::LARM_JOINT2]);
-	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::RLEG_JOINT2]);
-	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::LLEG_JOINT2]);
-	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::RLEG_JOINT4]);
-	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::LLEG_JOINT4]);
-	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::RARM_JOINT3]);
-	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::LARM_JOINT3]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[WAIST_JOINT1]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[RARM_JOINT2]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[LARM_JOINT2]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[RLEG_JOINT2]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[LLEG_JOINT2]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[RLEG_JOINT4]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[LLEG_JOINT4]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[RARM_JOINT3]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[LARM_JOINT3]);
 
 }
 
 void MirrorTherapyController::setJointQuaternionsForOculus(SimObj *obj, ManNiiPosture &manNiiPosture)
 {
-	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::HEAD_JOINT0]);
+	this->setJointQuaternion(obj, manNiiPosture.jointQuaternions[HEAD_JOINT0]);
 }
 
-void MirrorTherapyController::convertEulerAngle2ManNiiPosture(const SensorData::EulerAngleType &eulerAngle, ManNiiPosture &manNiiAvatarPosture)
+void MirrorTherapyController::convertEulerAngle2ManNiiPosture(const EulerAngleType &eulerAngle, ManNiiPosture &manNiiAvatarPosture)
 {
 	dQuaternion qyaw;
 	dQuaternion qpitch;
@@ -339,12 +300,10 @@ void MirrorTherapyController::convertEulerAngle2ManNiiPosture(const SensorData::
 
 	Quaternion tmpQ4(tmpQ3[0], tmpQ3[1], tmpQ3[2], tmpQ3[3]);
 
-	manNiiAvatarPosture.joint[ManNiiPosture::HEAD_JOINT0].jointType  = ManNiiPosture::HEAD_JOINT0;
-	manNiiAvatarPosture.joint[ManNiiPosture::HEAD_JOINT0].quaternion = tmpQ4;
+	manNiiAvatarPosture.jointQuaternions[HEAD_JOINT0].manNiiJointType = HEAD_JOINT0;
+	manNiiAvatarPosture.jointQuaternions[HEAD_JOINT0].quaternion = tmpQ4;
 }
-
-
-void MirrorTherapyController::convertKinectV2JointOrientations2ManNiiPosture(KinectV2SensorData::KinectV2JointOrientation *kinectV2Joints, ManNiiPosture &manNiiPosture)
+void MirrorTherapyController::convertKinectV2JointOrientations2ManNiiPosture(KinectV2JointOrientation *kinectV2Joints, ManNiiPosture &manNiiPosture)
 {
 	// TODO: 首のクォータニオンを求めることと、手首や足首のクォータニオンを求めること。
 	// TODO: Calculate for Neck, both wrists and both ankles.
@@ -382,6 +341,7 @@ void MirrorTherapyController::convertKinectV2JointOrientations2ManNiiPosture(Kin
 	q30 = Quaternion::calcCrossProduct(q30_con, q30);
 
 	////////////////////////////////////////////////////////////////////
+
 
 
 	///////////////////////////  Right Arm quaternion //////////////////////
@@ -623,70 +583,17 @@ void MirrorTherapyController::convertKinectV2JointOrientations2ManNiiPosture(Kin
 	q28 = Quaternion::calcCrossProduct(q22_con, q28);
 
 	//ManNiiAvatarPosture posture;
-	manNiiPosture.joint[ManNiiPosture::WAIST_JOINT1].quaternion = q1_rot;
-	//manNiiPosture.joint[HEAD_JOINT0].quaternion = q30;
-	manNiiPosture.joint[ManNiiPosture::RARM_JOINT2].quaternion = q5;
-	manNiiPosture.joint[ManNiiPosture::LARM_JOINT2].quaternion = q6;
-	manNiiPosture.joint[ManNiiPosture::RLEG_JOINT2].quaternion = q12;
-	manNiiPosture.joint[ManNiiPosture::LLEG_JOINT2].quaternion = q14;
-	manNiiPosture.joint[ManNiiPosture::RLEG_JOINT4].quaternion = q16;
-	manNiiPosture.joint[ManNiiPosture::LLEG_JOINT4].quaternion = q18;
-	manNiiPosture.joint[ManNiiPosture::RARM_JOINT3].quaternion = q8;
-	manNiiPosture.joint[ManNiiPosture::LARM_JOINT3].quaternion = q22;
-//	this->posture.joint[ManNiiPosture::RARM_JOINT5].quaternion = q27;
-//	this->posture.joint[ManNiiPosture::LARM_JOINT5].quaternion = q28;
+	manNiiPosture.jointQuaternions[WAIST_JOINT1].quaternion = q1_rot;
+	//manNiiPosture.jointQuaternions[HEAD_JOINT0].quaternion = q30;
+	manNiiPosture.jointQuaternions[RARM_JOINT2].quaternion = q5;
+	manNiiPosture.jointQuaternions[LARM_JOINT2].quaternion = q6;
+	manNiiPosture.jointQuaternions[RLEG_JOINT2].quaternion = q12;
+	manNiiPosture.jointQuaternions[LLEG_JOINT2].quaternion = q14;
+	manNiiPosture.jointQuaternions[RLEG_JOINT4].quaternion = q16;
+	manNiiPosture.jointQuaternions[LLEG_JOINT4].quaternion = q18;
+	manNiiPosture.jointQuaternions[RARM_JOINT3].quaternion = q8;
+	manNiiPosture.jointQuaternions[LARM_JOINT3].quaternion = q22;
+//	this->posture.jointQuaternions[ManNiiJointType_RARM_JOINT5].quaternion = q27;
+//	this->posture.jointQuaternions[ManNiiJointType_LARM_JOINT5].quaternion = q28;
 
 }
-
-
-///@brief Read parameter file.
-///@return When couldn't read parameter file, return false;
-void MirrorTherapyController::readIniFile()
-{
-	std::ifstream ifs(this->parameterFileName.c_str());
-
-	if (ifs.fail())
-	{
-		std::cout << "Not exist : " << this->parameterFileName << std::endl;
-		std::cout << "Use default parameter." << std::endl;
-
-		this->kinectV2ServiceName    = SERVICE_NAME_KINECT_V2;
-		this->kinectV2DeviceType     = DEV_TYPE_KINECT_V2;
-		this->kinectV2DeviceUniqueID = DEV_UNIQUE_ID_0;
-
-		this->oculusDK1ServiceName    = SERVICE_NAME_OCULUS;
-		this->oculusDK1DeviceType     = DEV_TYPE_OCULUS_DK1;
-		this->oculusDK1DeviceUniqueID = DEV_UNIQUE_ID_0;
-	}
-	else
-	{
-		try
-		{
-			// パラメータファイルが見つかった時は，書いてある内容を取得してセットする．
-			std::cout << "Read " << this->parameterFileName << std::endl;
-			boost::property_tree::ptree pt;
-			boost::property_tree::read_ini(this->parameterFileName, pt);
-
-			this->kinectV2ServiceName    = pt.get<std::string>(PARAMETER_FILE_KEY_KINECTV2_SERVICE_NAME);
-			this->kinectV2DeviceType     = pt.get<std::string>(PARAMETER_FILE_KEY_KINECTV2_DEVICE_TYPE);
-			this->kinectV2DeviceUniqueID = pt.get<std::string>(PARAMETER_FILE_KEY_KINECTV2_DEVICE_UNIQUE_ID);
-
-			this->oculusDK1ServiceName    = pt.get<std::string>(PARAMETER_FILE_KEY_OCULUS_SERVICE_NAME);
-			this->oculusDK1DeviceType     = pt.get<std::string>(PARAMETER_FILE_KEY_OCULUS_DEVICE_TYPE);
-			this->oculusDK1DeviceUniqueID = pt.get<std::string>(PARAMETER_FILE_KEY_OCULUS_DEVICE_UNIQUE_ID);
-		}
-		catch (boost::exception &ex)
-		{
-			std::cout << this->parameterFileName << " ERR :" << *boost::diagnostic_information_what(ex) << std::endl;
-		}
-	}
-
-	std::cout << PARAMETER_FILE_KEY_KINECTV2_SERVICE_NAME     << ":" << this->kinectV2ServiceName    << std::endl;
-	std::cout << PARAMETER_FILE_KEY_KINECTV2_DEVICE_TYPE      << ":" << this->kinectV2DeviceType     << std::endl;
-	std::cout << PARAMETER_FILE_KEY_KINECTV2_DEVICE_UNIQUE_ID << ":" << this->kinectV2DeviceUniqueID << std::endl;
-
-	std::cout << PARAMETER_FILE_KEY_OCULUS_SERVICE_NAME     << ":" << this->oculusDK1ServiceName    << std::endl;
-	std::cout << PARAMETER_FILE_KEY_OCULUS_DEVICE_TYPE      << ":" << this->oculusDK1DeviceType     << std::endl;
-	std::cout << PARAMETER_FILE_KEY_OCULUS_DEVICE_UNIQUE_ID << ":" << this->oculusDK1DeviceUniqueID << std::endl;
-}
-

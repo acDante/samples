@@ -26,7 +26,7 @@
  <!--Agent position(x,y,z)-->
         <set-attr-value name="x" value="0.0"/>
         <set-attr-value name="y" value="60.0"/>
-        <set-attr-value name="z" value="130.0"/>
+        <set-attr-value name="z" value="0.0"/>
         
         <camera id="1"
 			link="HEAD_LINK"

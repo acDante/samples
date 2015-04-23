@@ -6,7 +6,6 @@ TARGET = ./ManNiiAvatarControllerByKinectV2.so
 # ・「\」をファイル名の末尾に加えて記述する
 SRCS =\
 	$(COMMON)SensorData.cpp \
-	$(COMMON)OculusRiftDK1SensorData.cpp \
 	$(COMMON)KinectV2SensorData.cpp \
 	$(CONTROLLER_COMMON)Posture.cpp \
 	$(CONTROLLER_COMMON)AvatarController.cpp \

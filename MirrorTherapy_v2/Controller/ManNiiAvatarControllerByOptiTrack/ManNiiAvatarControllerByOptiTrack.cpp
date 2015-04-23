@@ -6,33 +6,50 @@
  */
 
 #include "ManNiiAvatarControllerByOptiTrack.h"
-#include "../../Common/OculusRiftDK1SensorData.h"
+#include <math.h>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
+#include <boost/exception/diagnostic_information.hpp>
+
 
 ///@brief Initialize this controller.
 void ManNiiAvatarControllerByOptiTrack::onInit(InitEvent &evt)
 {
+	this->parameterFileName = PARAM_FILE_NAME_OPTITRACK_INI;
+	readIniFile();
+
 	this->optiTrackService = NULL;
 
-	//this->defaultHeadJoint0Quaternion[0] = 1.0;
-	//this->defaultHeadJoint0Quaternion[1] = 0.0;
-	//this->defaultHeadJoint0Quaternion[2] = 0.0;
-	//this->defaultHeadJoint0Quaternion[3] = 0.0;
+	SimObj *myself = getObj(myname());
 
-	//this->prevYaw = this->prevPitch = this->prevRoll = 0.0;
+	/* Adjustment of knee angles to sit on the chair */
+	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::RARM_JOINT0).c_str(), DEG2RAD(+90));
+	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::LARM_JOINT0).c_str(), DEG2RAD(-90));
 
-	SimObj *my = getObj(myname());
+	/* Root of both legs */
+	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::RLEG_JOINT2).c_str(), DEG2RAD(-90));
+	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::LLEG_JOINT2).c_str(), DEG2RAD(-90));
+	/* Both knee */
+	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::RLEG_JOINT4).c_str(), DEG2RAD(+90));
+	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::LLEG_JOINT4).c_str(), DEG2RAD(+90));
+
+	this->handsType = RIGHT_HAND;
+
+	this->posture = ManNiiPosture();
 }
 
 
 ///@brief Movement of the robot.
 double ManNiiAvatarControllerByOptiTrack::onAction(ActionEvent &evt)
 {
-	this->optiTrackServiceName = optiTrackServiceNameDefault;
 	bool optiTrackAvailable = checkService(this->optiTrackServiceName);
-	if (optiTrackAvailable && this->optiTrackService == NULL) {
+
+	if (optiTrackAvailable && this->optiTrackService == NULL)
+	{
 		this->optiTrackService = connectToService(this->optiTrackServiceName);
 	}
-	else if (!optiTrackAvailable && this->optiTrackService != NULL) {
+	else if (!optiTrackAvailable && this->optiTrackService != NULL)
+	{
 		this->optiTrackService = NULL;
 	}
 
@@ -41,89 +58,142 @@ double ManNiiAvatarControllerByOptiTrack::onAction(ActionEvent &evt)
 
 void ManNiiAvatarControllerByOptiTrack::onRecvMsg(RecvMsgEvent &evt)
 {
-	const std::string allMsg = evt.getMsg();
+	try
+	{
+		const std::string msg = evt.getMsg();
 
-	//std::cout << allMsg << std::endl;
+		if(msg==handsType2Str(RIGHT_HAND))
+		{
+			this->handsType = RIGHT_HAND;
+			std::cout << "change HandsType to [" << handsType2Str(RIGHT_HAND) << "]" << std::endl;
+		}
+		else if(msg==handsType2Str(LEFT_HAND))
+		{
+			this->handsType = LEFT_HAND;
+			std::cout << "change HandsType to [" << handsType2Str(LEFT_HAND) << "]" << std::endl;
+		}
+		else
+		{
+			OptiTrackSensorData sensorData;
+			std::map<std::string, std::vector<std::string> > sensorDataMap = sensorData.decodeSensorData(msg);
 
-	std::map<std::string, std::vector<std::string> > messageMap = SensorData::convertMessage2Map(allMsg);
+			if (sensorDataMap.find(MSG_KEY_DEV_TYPE) == sensorDataMap.end()){ return; }
 
-	std::vector<std::string> tmpValuesStringVector = messageMap["QUATERNION"];
+			if(sensorDataMap[MSG_KEY_DEV_TYPE][0]     !=this->optiTrackDeviceType    ){ return; }
+			if(sensorDataMap[MSG_KEY_DEV_UNIQUE_ID][0]!=this->optiTrackDeviceUniqueID){ return; }
 
-	const double w = atof(tmpValuesStringVector[0].c_str());
-	const double x = atof(tmpValuesStringVector[1].c_str());
-	const double y = atof(tmpValuesStringVector[2].c_str());
-	const double z = atof(tmpValuesStringVector[3].c_str());
+			sensorData.setSensorData(sensorDataMap);
 
-	SimObj *obj = getObj(myname());
-	obj->setJointQuaternion("LARM_JOINT4", w, x, y, z);
+			this->setPosture(sensorData);
 
-	//OculusRiftDK1SensorData sensorData;
-	//sensorData.decodeSensorData(allMsg);
-
-	//EulerAngleType eulerAngle;
-	//eulerAngle.yaw = sensorData.yaw();
-	//eulerAngle.pitch = sensorData.pitch();
-	//eulerAngle.roll = sensorData.roll();
-
-	//ManNiiPosture manNiiPosture = ManNiiPosture();
-	//this->convertEulerAngle2ManNiiPosture(eulerAngle, manNiiPosture);
-
-	//SimObj *obj = getObj(myname());
-	//this->setJointQuaternionsForOculus(obj, manNiiPosture);
+			SimObj *obj = getObj(myname());
+			this->setJointQuaternionForOptiTrack(obj);
+		}
+	}
+	catch (...)
+	{
+		std::cout << "catch (...) in ManNiiAvatarControllerByOptiTrack::onRecvMsg" << std::endl;
+	}
 }
 
-void ManNiiAvatarControllerByOptiTrack::setJointQuaternion(SimObj *obj, const ManNiiJointQuaternion &jq)
+
+void ManNiiAvatarControllerByOptiTrack::setJointQuaternionForOptiTrack(SimObj *obj)
 {
-	obj->setJointQuaternion(manNiiJointTypeStr(jq.manNiiJointType).c_str(), jq.quaternion.w, jq.quaternion.x, jq.quaternion.y, jq.quaternion.z);
-	//std::cout << manNiiJointTypeStr(jq.manNiiJointType).c_str() << jq.quaternion.w << jq.quaternion.x << jq.quaternion.y << jq.quaternion.z << std::endl;
+	for(int i=0; i<ManNiiPosture::ManNiiJointType_Count; i++)
+	{
+		ManNiiPosture::ManNiiJoint joint = posture.joint[i];
+
+		if(joint.isValid)
+		{
+			obj->setJointQuaternion(ManNiiPosture::manNiiJointTypeStr(joint.jointType).c_str(), joint.quaternion.w, joint.quaternion.x, joint.quaternion.y, joint.quaternion.z);
+		}
+	}
 }
 
-
-void ManNiiAvatarControllerByOptiTrack::setJointQuaternionForOptiTrack(SimObj *obj, ManNiiPosture &ManNiiAvatarPosture)
+void ManNiiAvatarControllerByOptiTrack::setRigidBody2ManNiiJoint(ManNiiPosture::ManNiiJoint &manNiiJoint, const OptiTrackSensorData::sRigidBodyDataSgv &rigidBodySgv)
 {
-
+	manNiiJoint.quaternion.w = rigidBodySgv.qw;
+	manNiiJoint.quaternion.x = rigidBodySgv.qx;
+	manNiiJoint.quaternion.y = rigidBodySgv.qy;
+	manNiiJoint.quaternion.z = rigidBodySgv.qz;
+	manNiiJoint.isValid      = rigidBodySgv.params;
 }
-//void ManNiiAvatarControllerByOptiTrack::setJointQuaternionsForOculus(SimObj *obj, ManNiiPosture &manNiiAvatarPosture)
-//{
-	//this->setJointQuaternion(obj, manNiiAvatarPosture.jointQuaternions[HEAD_JOINT0]);
-//}
-
-//void ManNiiAvatarControllerByOptiTrack::convertEulerAngle2ManNiiPosture(const EulerAngleType &eulerAngle, ManNiiPosture &manNiiAvatarPosture)
-//{
-	//dQuaternion qyaw;
-	//dQuaternion qpitch;
-	//dQuaternion qroll;
-
-	//qyaw[0] = cos(-eulerAngle.yaw/2.0);
-	//qyaw[1] = 0.0;
-	//qyaw[2] = sin(-eulerAngle.yaw/2.0);
-	//qyaw[3] = 0.0;
-
-	//qpitch[0] = cos(-eulerAngle.pitch/2.0);
-	//qpitch[1] = sin(-eulerAngle.pitch/2.0);
-	//qpitch[2] = 0.0;
-	//qpitch[3] = 0.0;
-
-	//qroll[0] = cos(-eulerAngle.roll/2.0);
-	//qroll[1] = 0.0;
-	//qroll[2] = 0.0;
-	//qroll[3] = sin(-eulerAngle.roll/2.0);
-	//dQuaternion tmpQ1;
-	//dQuaternion tmpQ2;
-
-	//dQMultiply0(tmpQ1, qyaw, qpitch);
-
-	//dQMultiply0(tmpQ2, tmpQ1, qroll);
 
 
-	//dQuaternion tmpQ3;
+void ManNiiAvatarControllerByOptiTrack::setPosture(const OptiTrackSensorData &sensorData)
+{
+	this->posture.clearJointValidFlag();
 
-	////dQuaternion defaultQ = this->defaultHeadJointQuaternion;
-	//dQMultiply1(tmpQ3, this->defaultHeadJoint0Quaternion, tmpQ2);
+	for(int i=0; i<sensorData.getNRigidBodies(); i++)
+	{
+		short params = sensorData.getSRigidBodyDataSgv(i).params;
 
-	//Quaternion tmpQ4(tmpQ3[0], tmpQ3[1], tmpQ3[2], tmpQ3[3]);
+		if(this->handsType==RIGHT_HAND)
+		{
+			switch(sensorData.getSRigidBodyDataSgv(i).ID)
+			{
+				//RIGID1->RARM_JOINT1
+				case 1:{ setRigidBody2ManNiiJoint(this->posture.joint[ManNiiPosture::RARM_JOINT1], sensorData.getSRigidBodyDataSgv(i)); break; }
+				//RIGID2->RARM_JOINT4
+				case 2:{ setRigidBody2ManNiiJoint(this->posture.joint[ManNiiPosture::RARM_JOINT4], sensorData.getSRigidBodyDataSgv(i)); break; }
+				//RIGID3->RARM_JOINT6
+				case 3:{ setRigidBody2ManNiiJoint(this->posture.joint[ManNiiPosture::RARM_JOINT6], sensorData.getSRigidBodyDataSgv(i)); break; }
+				default:{ break; }
+			}
+		}
+		if(this->handsType==LEFT_HAND)
+		{
+			switch(sensorData.getSRigidBodyDataSgv(i).ID)
+			{
+				//RIGID1->LARM_JOINT1
+				case 1:{ setRigidBody2ManNiiJoint(this->posture.joint[ManNiiPosture::LARM_JOINT1], sensorData.getSRigidBodyDataSgv(i)); break; }
+				//RIGID2->LARM_JOINT4
+				case 2:{ setRigidBody2ManNiiJoint(this->posture.joint[ManNiiPosture::LARM_JOINT4], sensorData.getSRigidBodyDataSgv(i)); break; }
+				//RIGID3->LARM_JOINT6
+				case 3:{ setRigidBody2ManNiiJoint(this->posture.joint[ManNiiPosture::LARM_JOINT6], sensorData.getSRigidBodyDataSgv(i)); break; }
+				default:{ break; }
+			}
+		}
+	}
+}
 
-	//manNiiAvatarPosture.jointQuaternions[HEAD_JOINT0].manNiiJointType = HEAD_JOINT0;
-	//manNiiAvatarPosture.jointQuaternions[HEAD_JOINT0].quaternion = tmpQ4;
 
-//}
+///@brief Read parameter file.
+///@return When couldn't read parameter file, return false;
+void ManNiiAvatarControllerByOptiTrack::readIniFile()
+{
+	std::ifstream ifs(this->parameterFileName.c_str());
+
+	if (ifs.fail())
+	{
+		std::cout << "Not exist : " << this->parameterFileName << std::endl;
+		std::cout << "Use default parameter." << std::endl;
+
+		this->optiTrackServiceName    = SERVICE_NAME_OPTITRACK;
+		this->optiTrackDeviceType     = DEV_TYPE_OPTITRACK;
+		this->optiTrackDeviceUniqueID = DEV_UNIQUE_ID_0;
+	}
+	else
+	{
+		try
+		{
+			// パラメータファイルが見つかった時は，書いてある内容を取得してセットする．
+			std::cout << "Read " << this->parameterFileName << std::endl;
+			boost::property_tree::ptree pt;
+			boost::property_tree::read_ini(this->parameterFileName, pt);
+
+			this->optiTrackServiceName    = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME);
+			this->optiTrackDeviceType     = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE);
+			this->optiTrackDeviceUniqueID = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID);
+		}
+		catch (boost::exception &ex)
+		{
+			std::cout << this->parameterFileName << " ERR :" << *boost::diagnostic_information_what(ex) << std::endl;
+		}
+	}
+
+	std::cout << PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME     << ":" << this->optiTrackServiceName    << std::endl;
+	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE      << ":" << this->optiTrackDeviceType     << std::endl;
+	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID << ":" << this->optiTrackDeviceUniqueID << std::endl;
+}
+

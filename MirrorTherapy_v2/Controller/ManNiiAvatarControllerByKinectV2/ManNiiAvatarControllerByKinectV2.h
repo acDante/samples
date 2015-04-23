@@ -4,6 +4,8 @@
  *  Created on: 2015/03/12
  *      Author: Nozaki
  */
+#ifndef __MAN_NII_AVATAR_CONTROLLER_BY_KINECT_V2_H__
+#define __MAN_NII_AVATAR_CONTROLLER_BY_KINECT_V2_H__
 
 #include <sigverse/Controller.h>
 #include <sigverse/comm/controller/Controller.h>
@@ -14,24 +16,24 @@
 #include "../../Common/KinectV2SensorData.h"
 
 
-#define KINECT_SERVICE_NAME "SIGKINECT"
-static const std::string kinectV2ServiceNameDefault = KINECT_SERVICE_NAME;
+#define PARAM_FILE_NAME_KINECTV2_INI  "KinectV2.ini"
 
-// Define DEV_TYPE.
-static const std::string devTypeKinectV2 = "KINECTV2";
 
 class ManNiiAvatarControllerByKinectV2 : public AvatarController
 {
 private:
+	///@brief Parameter file name.
+	std::string parameterFileName;
+
 	//ManNiiAvatarPosture posture;
 	BaseService *kinectV2Service;
 	std::string kinectV2ServiceName;
+	std::string kinectV2DeviceType;
+	std::string kinectV2DeviceUniqueID;
 
+	void readIniFile();
 
 public:
-
-	//ManNiiAvatarPosture posture;
-
 	///@brief Movement of the robot.
 	double onAction(ActionEvent &evt);
 
@@ -42,10 +44,10 @@ public:
 	void onInit(InitEvent &evt);
 
 	///@brief Convert euler angle to avatar posture structure.
-	void convertKinectV2JointOrientations2ManNiiPosture(KinectV2JointOrientation *kinectV2Joints, ManNiiPosture &manNiiPosture);
+	void convertKinectV2JointOrientations2ManNiiPosture(KinectV2SensorData::KinectV2JointOrientation *kinectV2Joints, ManNiiPosture &manNiiPosture);
 	//void convertKinectV2JointOrientations2ManNiiPosture(std::vector<KinectV2JointOrientation> &kinectV2Joints, ManNiiPosture &manNiiPosture);
 
-	void setJointQuaternion(SimObj *obj, ManNiiJointQuaternion &jq);
+	void setJointQuaternion(SimObj *obj, ManNiiPosture::ManNiiJoint &jq);
 
 	void setJointQuaternionsForKinect(SimObj *obj, ManNiiPosture &manNiiPosture);
 };
@@ -54,3 +56,5 @@ extern "C" Controller * createController()
 {
 	return new ManNiiAvatarControllerByKinectV2;
 }
+
+#endif //__MAN_NII_AVATAR_CONTROLLER_BY_KINECT_V2_H__

@@ -4,6 +4,8 @@
  *  Created on: 2015/03/25
  *      Author: Nozaki
  */
+#ifndef __MIRROR_THERAPY_CONTROLLER_H__
+#define __MIRROR_THERAPY_CONTROLLER_H__
 
 #include <sigverse/Controller.h>
 #include <sigverse/ControllerEvent.h>
@@ -14,36 +16,45 @@
 #include "../../Common/KinectV2SensorData.h"
 #include "../../Common/OculusRiftDK1SensorData.h"
 
-// Define service name.
-#define KINECT_SERVICE_NAME "SIGKINECT"
-static const std::string kinectV2ServiceNameDefault = KINECT_SERVICE_NAME;
-#define OCULUS_SERVICE_NAME "SIGOCULUS"
-static const std::string oculusDK1ServiceNameDefault = OCULUS_SERVICE_NAME;
 
-// Define DEV_TYPE.
-static const std::string devTypeKinectV2 = "KINECTV2";
-static const std::string devTypeOculus = "OCULUSDK1";
+#define PARAM_FILE_NAME_MIRROR_THERAPY_INI  "MirrorTherapy.ini"
 
-#define TIMESERIESBUFFERSIZE 500
-static const int timeSeriesBufferSize = TIMESERIESBUFFERSIZE;
+//Parameter file information
+#define PARAMETER_FILE_KEY_KINECTV2_SERVICE_NAME      "KinectV2.service_name"
+#define PARAMETER_FILE_KEY_KINECTV2_DEVICE_TYPE       "KinectV2.device_type"
+#define PARAMETER_FILE_KEY_KINECTV2_DEVICE_UNIQUE_ID  "KinectV2.device_unique_id"
 
-#define REVERSEKEY "REVERSE"
-static const std::string reverseKey = REVERSEKEY;
+//Parameter file information
+#define PARAMETER_FILE_KEY_OCULUS_SERVICE_NAME      "Oculus.service_name"
+#define PARAMETER_FILE_KEY_OCULUS_DEVICE_TYPE       "Oculus.device_type"
+#define PARAMETER_FILE_KEY_OCULUS_DEVICE_UNIQUE_ID  "Oculus.device_unique_id"
 
-#define DELAYKEY "DELAY"
-static const std::string delayKey = DELAYKEY;
+
+#define MSG_KEY_REVERSE "REVERSE"
+
+#define MSG_KEY_DELAY "DELAY"
 
 #define DEFAULT_DELAY_TIME 1000.0
-static const double defaultDelayTime = DEFAULT_DELAY_TIME;
+
+#define TIME_SERIES_BUFFER_SIZE 500
+
 
 class MirrorTherapyController : public AvatarController
 {
 private:
+	///@brief Parameter file name.
+	std::string parameterFileName;
+
 	// Base services for each device.
 	BaseService *kinectV2Service;
 	std::string kinectV2ServiceName;
+	std::string kinectV2DeviceType;
+	std::string kinectV2DeviceUniqueID;
+
 	BaseService *oculusDK1Service;
 	std::string oculusDK1ServiceName;
+	std::string oculusDK1DeviceType;
+	std::string oculusDK1DeviceUniqueID;
 	
 	///@brief Default quaternion for head.
 	dQuaternion defaultHeadJoint0Quaternion;
@@ -66,7 +77,8 @@ private:
 	double actualDelayTime;
 
 	///@brief Structure of posture record (with time stamp).
-	struct TimeAndPostureType {
+	struct TimeAndPostureType
+	{
 		long timeStamp;
 		ManNiiPosture posture;
 	};
@@ -74,8 +86,9 @@ private:
 	///@brief Posture record.
 	std::vector<TimeAndPostureType> pastPostures;
 
-public:
+	void readIniFile();
 
+public:
 	///@brief Initialize this controller.
 	void onInit(InitEvent &evt);
 
@@ -85,17 +98,17 @@ public:
 	///@brief Message heard by the robot.
 	void onRecvMsg(RecvMsgEvent &evt);
 
-	///@brief Get value of DEV_ID from whole message.
-	std::string getDeviceIDFromMessage(const std::string &message);
+//	///@brief Get value of DEV_ID from whole message.
+//	std::string getDeviceIDFromMessage(const std::string &message);
 
 	///@brief Convert kinect v2 joint orientations to avatar posture structure.
-	void convertKinectV2JointOrientations2ManNiiPosture(KinectV2JointOrientation *kinectV2Joints, ManNiiPosture &manNiiPosture);
+	void convertKinectV2JointOrientations2ManNiiPosture(KinectV2SensorData::KinectV2JointOrientation *kinectV2Joints, ManNiiPosture &manNiiPosture);
 
 	///@brief Convert euler angle to avatar posture structure.
-	void convertEulerAngle2ManNiiPosture(const EulerAngleType &eulerAngle, ManNiiPosture &manNiiAvatarPosture);
+	void convertEulerAngle2ManNiiPosture(const SensorData::EulerAngleType &eulerAngle, ManNiiPosture &manNiiAvatarPosture);
 
 	///@brief Set avatar's joint quaternion. 
-	void setJointQuaternion(SimObj *obj, ManNiiJointQuaternion &jq);
+	void setJointQuaternion(SimObj *obj, ManNiiPosture::ManNiiJoint &jq);
 
 	///@brief Set avatar's joint quaternions from kinect plugin message.
 	void setJointQuaternionsForKinect(SimObj *obj, ManNiiPosture &manNiiPosture);
@@ -107,10 +120,12 @@ public:
 	const double generateCurrentTimeStamp();
 
 	///@brief Modify the mode for MirrorTherapy.
-	bool setReverseModeAndDelayTime(const std::string &message);
+	bool setReverseModeAndDelayTime(const std::map<std::string, std::vector<std::string> > &map);
 };
 
 extern "C" Controller * createController()
 {
 	return new MirrorTherapyController;
 }
+
+#endif //__MIRROR_THERAPY_CONTROLLER_H__
