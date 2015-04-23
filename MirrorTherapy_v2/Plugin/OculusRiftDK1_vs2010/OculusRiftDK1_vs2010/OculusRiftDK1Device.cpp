@@ -1,22 +1,32 @@
 #include "OculusRiftDK1Device.h"
 #include <Common/OculusRiftDK1SensorData.h>
+#include "../../PluginCommon/CheckRecvSIGServiceData.h"
 #include <Windows.h>
+#include <boost/thread.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
+#include <boost/exception/diagnostic_information.hpp>
 
 OculusRiftDK1Device::OculusRiftDK1Device(int argc, char **argv)
 {
-	if (argc == 3) {
+	if (argc == 3) 
+	{
 		std::cout << "SIGServer IP address: " << argv[1] << std::endl;
 		std::cout << "Port number: " << argv[2] << std::endl;
+
 		this->sendMessageFlag = true;
 		this->serverAddress = argv[1];
 		this->portNumber = atoi(argv[2]);
-		this->setDeviceType(defaultDeviceType);
-		this->setDeviceUniqueID(defaultDeviceUniqueID);
-	} else {
+		this->setDeviceType(DEV_TYPE_OCULUS_DK1);
+		this->setDeviceUniqueID(DEV_UNIQUE_ID_0);
+	} 
+	else 
+	{
 		std::cout << "Please execute with SIGServer address and port number." << std::endl;
 		exit(1);
 	}
-	this->parameterFileName = defaultParameterFileName;
+	this->parameterFileName = PARAM_FILE_NAME_OCULUS_RIFT_DK1_INI;
 }
 
 OculusRiftDK1Device::~OculusRiftDK1Device()
@@ -29,62 +39,71 @@ OculusRiftDK1Device::~OculusRiftDK1Device()
 	OVR::System::Destroy();
 }
 
-void OculusRiftDK1Device::setSigServiceName()
-{
-	// パラメータファイルを読み込んでサービスネームを設定します．
-	// パラメータファイルが見つからなかった場合，ヘッダファイルに記述したサービスネームを設定します．
-	if (!this->Device::readIniFile()) {
-		this->serviceName = defaultServiceName;
-		std::cout << "Set default service name : " << this->serviceName << std::endl;
-	}
-}
-
+/**
+ * @brief initialization
+ */
 void OculusRiftDK1Device::init()
 {
 	// initialization(prepare varibles for data acquisition of OculusRift's sensors)
 	OVR::System::Init();
 
-	pFusionResult = new SensorFusion();
-	pManager = *DeviceManager::Create();
+	pFusionResult = new OVR::SensorFusion();
+	pManager = *OVR::DeviceManager::Create();
 
-	pHMD = *pManager->EnumerateDevices<HMDDevice>().CreateDevice();
+	pHMD = *pManager->EnumerateDevices<OVR::HMDDevice>().CreateDevice();
 
-	if (pHMD){
+	if (pHMD)
+	{
 		InfoLoaded = pHMD->GetDeviceInfo(&Info);
 		pSensor = *pHMD->GetSensor();
 	}
-	else{
-	   pSensor = *pManager->EnumerateDevices<SensorDevice>().CreateDevice();
+	else
+	{
+		pSensor = *pManager->EnumerateDevices<OVR::SensorDevice>().CreateDevice();
 	}
 
-	if (pSensor){
-	   pFusionResult->AttachToSensor(pSensor);
+	if (pSensor)
+	{
+		pFusionResult->AttachToSensor(pSensor);
 	}
 }
 
+/**
+ * @brief main routine
+ */
 void OculusRiftDK1Device::run()
 {
 	init();
 
-	this->setSigServiceName();
+	this->readIniFile();
+
+	//this->setSigServiceName();
+	
 	sigverse::SIGService sigService(this->serviceName);
 	this->initializeSigService(sigService);
 
+	// check receive SIGService data by another thread
+	CheckRecvSIGServiceData checkRecvSIGServiceData;
+	boost::thread thCheckRecvData(&CheckRecvSIGServiceData::run, &checkRecvSIGServiceData, &sigService);
+
 	bool sendSuccessPrev = false;
 
-	while (1) {
-
+	while (1) 
+	{
 		float r_yaw, r_pitch, r_roll;
 
-		Quatf q = pFusionResult->GetOrientation();
-		Matrix4f bodyFrameMatrix(q);
-		q.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&r_yaw, &r_pitch, &r_roll);
+		OVR::Quatf q = pFusionResult->GetOrientation();
+		OVR::Matrix4f bodyFrameMatrix(q);
+		q.GetEulerAngles<OVR::Axis_Y, OVR::Axis_X, OVR::Axis_Z>(&r_yaw, &r_pitch, &r_roll);
+
+//		std::cout << "yaw, pitch, roll = " << r_yaw << "," << r_pitch << "," << r_roll << std::endl;
 
 		OculusRiftDK1SensorData oculusRiftDK1SensorData;
 		oculusRiftDK1SensorData.setEulerAngle(r_yaw, r_pitch, r_roll);
 		this->sensorData = &oculusRiftDK1SensorData;
 
-		if (this->sendMessageFlag) {
+		if (this->sendMessageFlag) 
+		{
 			const std::string sensorDataMessage = this->sensorData->encodeSensorData();
 			const std::string messageHeader = this->generateMessageHeader();
 			const std::string message = messageHeader + sensorDataMessage;
@@ -92,7 +111,8 @@ void OculusRiftDK1Device::run()
 			this->sendMessage(sigService, message);
 
 			OculusRiftDK1SensorData tmp;
-			tmp.decodeSensorData(message);
+			std::map<std::string, std::vector<std::string> > sensorDataMap = tmp.decodeSensorData(message);
+			tmp.setSensorData(sensorDataMap);
 		}
 		Sleep(100);
 	}
@@ -101,5 +121,46 @@ void OculusRiftDK1Device::run()
 
 	std::cout << "end program" << std::endl;
 	Sleep(2000);
+}
+
+
+///@brief Read parameter file.
+///@return When couldn't read parameter file, return false;
+void OculusRiftDK1Device::readIniFile()
+{
+	std::ifstream ifs(this->parameterFileName);
+
+	// Parameter file is "not" exists.
+	if (ifs.fail()) 
+	{
+		std::cout << "Not exist : " << this->parameterFileName << std::endl;
+		std::cout << "Use default parameter." << std::endl;
+
+		this->serviceName    = SERVICE_NAME_OCULUS;
+		this->deviceType     = DEV_TYPE_OCULUS_DK1;
+		this->deviceUniqueID = DEV_UNIQUE_ID_0;
+	}
+	// Parameter file is exists.
+	else 
+	{
+		try 
+		{
+			std::cout << "Read " << this->parameterFileName << std::endl;
+			boost::property_tree::ptree pt;
+			boost::property_tree::read_ini(this->parameterFileName, pt);
+
+			this->serviceName    = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME);
+			this->deviceType     = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE);
+			this->deviceUniqueID = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID);
+		}
+		catch (boost::exception &ex) 
+		{
+			std::cout << this->parameterFileName << " ERR :" << *boost::diagnostic_information_what(ex) << std::endl;
+		}
+	}
+
+	std::cout << PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME     << ":" << this->serviceName    << std::endl;
+	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE      << ":" << this->deviceType     << std::endl;
+	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID << ":" << this->deviceUniqueID << std::endl;
 }
 

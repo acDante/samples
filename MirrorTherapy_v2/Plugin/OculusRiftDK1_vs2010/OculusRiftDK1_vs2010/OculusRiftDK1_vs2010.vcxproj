@@ -74,13 +74,16 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\Common\OculusRiftDK1SensorData.cpp" />
     <ClCompile Include="..\..\..\Common\SensorData.cpp" />
+    <ClCompile Include="..\..\PluginCommon\CheckRecvSIGServiceData.cpp" />
     <ClCompile Include="..\..\PluginCommon\Device.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="OculusRiftDK1Device.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Common\DeviceCommon.h" />
     <ClInclude Include="..\..\..\Common\OculusRiftDK1SensorData.h" />
     <ClInclude Include="..\..\..\Common\SensorData.h" />
+    <ClInclude Include="..\..\PluginCommon\CheckRecvSIGServiceData.h" />
     <ClInclude Include="..\..\PluginCommon\Device.h" />
     <ClInclude Include="OculusRiftDK1Device.h" />
   </ItemGroup>
