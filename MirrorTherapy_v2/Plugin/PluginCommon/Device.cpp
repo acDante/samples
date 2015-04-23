@@ -6,7 +6,10 @@
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 
-///@brief Initialize SIGService.
+
+/**
+ * @brief Initialize SIGService.
+ */
 void Device::initializeSigService(sigverse::SIGService &sigService)
 {
 	if (this->sendMessageFlag) 
@@ -33,63 +36,23 @@ void Device::initializeSigService(sigverse::SIGService &sigService)
 }
 
 
-///@brief Read parameter file.
-///@return When couldn't read parameter file, return false;
-// パラメータファイルが見つかった時の処理．
-// パラメータファイル名は継承先で記述するべきなので，多少は回りくどい記述になっているかもしれない．
-bool Device::readIniFile()
-{
-	std::ifstream ifs(this->parameterFileName);
-
-	if (ifs.fail()) 
-	{
-		// When there isn't parameter file, return false.
-		// パラメータファイルが見つからなかった時は，パラメータのデフォルト値を
-		// どうするべきかは継承先でしかわからないので，継承先の処理に任せる．
-		std::cout << "Not exist " << this->parameterFileName << std::endl;
-		return false;
-	}
-	else 
-	{
-		try 
-		{
-			// パラメータファイルが見つかった時は，書いてある内容からサービスネームを取得してセットする．
-			std::cout << "Read " << this->parameterFileName << std::endl;
-			boost::property_tree::ptree pt;
-			boost::property_tree::read_ini(this->parameterFileName, pt);
-			this->serviceName = pt.get<std::string>("General.service_name");
-			std::cout << "service_name:" << this->serviceName << std::endl;
-			return true;
-		}
-		catch (boost::exception &ex) 
-		{
-			std::cout << this->parameterFileName << " ERR :" << *boost::diagnostic_information_what(ex) << std::endl;
-		}
-	}
-	return true;
-}
-
+/**
+ * @brief send message to Controller
+ */
 const void Device::sendMessage(sigverse::SIGService &sigService, const std::string &message)
 {
 	try 
 	{
-		if (!sigService.checkRecvData(0)) 
-		{
-			std::cout << "SIGService::chkRecvData ERR." << std::endl;
-		}
-		else 
-		{
-			std::vector<std::string> connectedEntitiesName = sigService.getAllConnectedEntitiesName();
+		std::vector<std::string> connectedEntitiesName = sigService.getAllConnectedEntitiesName();
 			
-			for (int i = 0; i < (int)connectedEntitiesName.size(); i++) 
-			{
-				sigService.sendMsgToCtr(connectedEntitiesName[i].c_str(), message);
-			}
+		for (int i = 0; i < (int)connectedEntitiesName.size(); i++) 
+		{
+			sigService.sendMsgToCtr(connectedEntitiesName[i].c_str(), message);
 		}
 	}
 	catch (...) 
 	{
-		std::cout << "catch (...) " << std::endl;
+		std::cout << "catch (...) in Device::sendMessage" << std::endl;
 		Sleep(20000);
 	}
 }
