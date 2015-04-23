@@ -94,14 +94,13 @@ std::string SensorData::convertMap2Message(const std::map<std::string, std::vect
 
 //std::string SensorData::deleteParenthesesFromString(const std::string &input, const std::string &pBegin, const std::string &pEnd)
 //{
-//	// 「(」と「)」を削除する．
 //	// Delete "(" and ")" from message.
 //
-//	// ( を探す
+//	// search "("
 //	std::string tmpValuesString = input;
 //	const std::string::size_type pos1(tmpValuesString.find("("));
 //
-//	// ( が無い場合は入力の文字列を返して終了する．
+//	// if "(" is not exists, return input string.
 //	if (pos1 == std::string::npos) {
 //		return input;
 //	}
