@@ -1,4 +1,6 @@
-#pragma once
+#ifndef OculusRiftDK1SensorData_h
+#define OculusRiftDK1SensorData_h
+
 #include "SensorData.h"
 
 //#ifndef _EulerAngleType_
@@ -55,3 +57,6 @@ public:
 		return this->eulerAngle.roll;
 	}
 };
+
+
+#endif //OculusRiftDK1SensorData_h

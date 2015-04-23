@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SensorData_h
+#define SensorData_h
+
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string.hpp>
 #include <vector>
@@ -79,3 +81,5 @@ public:
 //	///@brief Delete parentheses '(' and ')' from string.
 //	static std::string deleteParenthesesFromString(const std::string &input, const std::string &pBegin = "(", const std::string &pEnd = ")");
 };
+
+#endif //SensorData_h

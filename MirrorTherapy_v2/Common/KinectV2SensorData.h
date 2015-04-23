@@ -1,4 +1,6 @@
-#pragma once
+#ifndef KinectV2SensorData_h
+#define KinectV2SensorData_h
+
 #include "SensorData.h"
 
 #include <string>
@@ -107,4 +109,6 @@ public:
 	///@brief Set joint quaternions for man-nii avatar.
 	KinectV2JointType shortJointName2KinectV2JointType(const std::string &shortJointName) const;
 };
+
+#endif //KinectV2SensorData_h
 

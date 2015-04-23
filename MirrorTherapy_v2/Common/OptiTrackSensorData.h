@@ -1,4 +1,6 @@
-#pragma once
+#ifndef OptiTrackSensorData_h
+#define OptiTrackSensorData_h
+
 #include "SensorData.h"
 //can't include NatNetTypes.h, because NatNetTypes.h is only for Windows.
 //#include <NatNetTypes.h>
@@ -72,3 +74,7 @@ public:
 
 	OptiTrackSensorData::sRigidBodyDataSgv getSRigidBodyDataSgv(const int i) const;
 };
+
+
+#endif //OptiTrackSensorData_h
+

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DeviceCommon_h
+#define DeviceCommon_h
 
 //Device Information
 #define SERVICE_NAME_KINECT_V2  "SIG_KINECT_V2"
@@ -24,7 +25,8 @@
 #define DEV_UNIQUE_ID_3     "3"
 
 //Parameter file information
-#define PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME     ("General.service_name")
-#define PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE      ("General.device_type")
-#define PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID ("General.device_unique_id")
+#define PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME      "General.service_name"
+#define PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE       "General.device_type"
+#define PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID  "General.device_unique_id"
 
+#endif //DeviceCommon_h
