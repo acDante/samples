@@ -118,7 +118,6 @@ double SendController::onAction(ActionEvent &evt)
 	}
 
 	ros::spinOnce();
-	//1秒おきにonActionが呼び出されます
 	return 0.00001;
 }
 
@@ -366,7 +365,7 @@ Vector3d SendController::changeBasis_WorldToRobot(Vector3d pos)
 	return ret;
 }
 
-//自身のインスタンスをSIGVerseに返します
+
 extern "C" Controller * createController() {
   return new SendController;
 }
