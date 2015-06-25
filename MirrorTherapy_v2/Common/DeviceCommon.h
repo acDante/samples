@@ -2,9 +2,9 @@
 #define __DEVICE_COMMON_H__
 
 //Device information
-#define SERVICE_NAME_KINECT_V2  "SIG_KINECT_V2"
-#define SERVICE_NAME_OCULUS     "SIG_OCULUS"
-#define SERVICE_NAME_OPTITRACK  "SIG_OPTITRACK"
+#define SERVICE_NAME_KINECT_V2   "SVC_KINECT_V2"
+#define SERVICE_NAME_OCULUS_DK1  "SVC_OCULUS_DK1"
+#define SERVICE_NAME_OPTITRACK   "SVC_OPTITRACK"
 
 //Device message information
 // Define delimiters to split string.

@@ -17,7 +17,7 @@ private:
 	//AvatarPosture *avatarPosture;
 
 protected:
-	Posture *avatarPosture;
+//	Posture *avatarPosture;
 };
 
 #endif /* __AVATAR_CONTROLLER_H__ */

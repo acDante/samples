@@ -135,7 +135,7 @@ void ManNiiAvatarControllerByOculus::readIniFile()
 		std::cout << "Not exist : " << this->parameterFileName << std::endl;
 		std::cout << "Use default parameter." << std::endl;
 
-		this->oculusDK1ServiceName    = SERVICE_NAME_OCULUS;
+		this->oculusDK1ServiceName    = SERVICE_NAME_OCULUS_DK1;
 		this->oculusDK1DeviceType     = DEV_TYPE_OCULUS_DK1;
 		this->oculusDK1DeviceUniqueID = DEV_UNIQUE_ID_0;
 	}
