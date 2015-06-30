@@ -100,10 +100,12 @@ private:
 
 	std::string jointType2ShortJointName(KinectV2JointType e) const;
 
+	void setSensorDataMode(std::string sensorDataModeStr);
+
 public:
 
 	///@brief Constructor
-	KinectV2SensorData::KinectV2SensorData(std::string sensorDataModeStr);
+	KinectV2SensorData(std::string sensorDataModeStr);
 
 	//sensor data mode.("Quaternion" or "Position")
 	SensorDataMode sensorDataMode;
@@ -142,7 +144,6 @@ public:
 	///@brief Set joint quaternions for man-nii avatar.
 	KinectV2JointType shortJointName2KinectV2JointType(const std::string &shortJointName) const;
 
-	void setSensorDataMode(std::string sensorDataModeStr);
 	std::string getSensorDataModeStr();
 };
 
