@@ -125,7 +125,7 @@ public:
 	void setRootPosition(const Vector3 &position);
 
 	///@brief Set posture from kinect joint positions.
-	void KinectV2SensorData::setKinectV2JointPosition(KinectV2JointPosition *kinectV2JointPositions);
+	void setKinectV2JointPosition(KinectV2JointPosition *kinectV2JointPositions);
 
 	///@brief Get orientations from kinect joint positions.
 	void getKinectV2JointPosition(KinectV2JointPosition *destination);
