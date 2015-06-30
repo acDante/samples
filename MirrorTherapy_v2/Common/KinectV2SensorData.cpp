@@ -1,35 +1,104 @@
 #include "KinectV2SensorData.h"
 
+
+void KinectV2SensorData::setSensorDataMode(std::string sensorDataModeStr)
+{
+	if(sensorDataModeStr == "Quaternion")
+	{
+		this->sensorDataMode = Quaternion;
+	}
+	else if (sensorDataModeStr == "Position")
+	{
+		this->sensorDataMode = Position; 
+	}
+	else 
+	{ 
+		throw std::string("invalid sensor data mode:"+sensorDataModeStr); 
+	}
+}
+
+
+std::string KinectV2SensorData::getSensorDataModeStr()
+{
+	switch (this->sensorDataMode)
+	{
+		case Quaternion:{ return "Quaternion"; break; }
+		case Position:  { return "Position";   break; }
+		default:        { return "";           break; }
+	}
+};
+
+
+
 ///@brief Generate message by posture.
 std::string KinectV2SensorData::encodeSensorData(const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim) const
 {
 	std::stringstream ss;
-	ss  << position2Message        (this->rootPosition,                     keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[SpineBase],     keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[SpineMid],      keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[Neck],          keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[Head],          keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[ShoulderLeft],  keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[ElbowLeft],     keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[WristLeft],     keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[HandLeft],      keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[ShoulderRight], keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[ElbowRight],    keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[WristRight],    keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[HandRight],     keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[HipLeft],       keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[KneeLeft],      keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[AnkleLeft],     keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[FootLeft],      keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[HipRight],      keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[KneeRight],     keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[AnkleRight],    keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[FootRight],     keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[SpineShoulder], keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[HandTipLeft],   keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[ThumbLeft],     keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[HandTipRight],  keyValueDelim, vectorDelim) << pairsDelim
-		<< jointOrientation2Message(this->jointOrientations[ThumbRight],    keyValueDelim, vectorDelim);
+
+	switch (this->sensorDataMode)
+	{
+		case Position:
+		{
+			ss  << position2Message     (this->rootPosition,                                    vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[SpineBase],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[SpineMid],      keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[Neck],          keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[Head],          keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[ShoulderLeft],  keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[ElbowLeft],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[WristLeft],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[HandLeft],      keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[ShoulderRight], keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[ElbowRight],    keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[WristRight],    keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[HandRight],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[HipLeft],       keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[KneeLeft],      keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[AnkleLeft],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[FootLeft],      keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[HipRight],      keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[KneeRight],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[AnkleRight],    keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[FootRight],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[SpineShoulder], keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[HandTipLeft],   keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[ThumbLeft],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[HandTipRight],  keyValueDelim, vectorDelim) << pairsDelim
+				<< jointPosition2Message(this->jointPositions[ThumbRight],    keyValueDelim, vectorDelim);
+			break;
+		}
+		case Quaternion:
+		{
+			ss  << position2Message        (this->rootPosition,                                    vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[SpineBase],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[SpineMid],      keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[Neck],          keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[Head],          keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[ShoulderLeft],  keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[ElbowLeft],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[WristLeft],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[HandLeft],      keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[ShoulderRight], keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[ElbowRight],    keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[WristRight],    keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[HandRight],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[HipLeft],       keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[KneeLeft],      keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[AnkleLeft],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[FootLeft],      keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[HipRight],      keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[KneeRight],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[AnkleRight],    keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[FootRight],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[SpineShoulder], keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[HandTipLeft],   keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[ThumbLeft],     keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[HandTipRight],  keyValueDelim, vectorDelim) << pairsDelim
+				<< jointOrientation2Message(this->jointOrientations[ThumbRight],    keyValueDelim, vectorDelim);
+			break;
+		}
+	}
+
 	return(ss.str());
 }
 
@@ -89,14 +158,35 @@ bool KinectV2SensorData::setSensorData(const std::map<std::string, std::vector<s
 		{
 			try
 			{
-				KinectV2JointOrientation tmpJointOrientation;
-				tmpJointOrientation.jointType = this->shortJointName2KinectV2JointType((*it).first);
-				tmpJointOrientation.orientation.w = (float)atof((*it).second[0].c_str());
-				tmpJointOrientation.orientation.x = (float)atof((*it).second[1].c_str());
-				tmpJointOrientation.orientation.y = (float)atof((*it).second[2].c_str());
-				tmpJointOrientation.orientation.z = (float)atof((*it).second[3].c_str());
+				switch (this->sensorDataMode)
+				{
+					case Position:
+					{
 
-				this->jointOrientations[tmpJointOrientation.jointType] = tmpJointOrientation;
+						KinectV2JointPosition tmpJointPosition;
+						tmpJointPosition.jointType     = this->shortJointName2KinectV2JointType((*it).first);
+						tmpJointPosition.position.x    = (float)atof((*it).second[1].c_str());
+						tmpJointPosition.position.y    = (float)atof((*it).second[2].c_str());
+						tmpJointPosition.position.z    = (float)atof((*it).second[3].c_str());
+						tmpJointPosition.trackingState = (KinectV2TrackingState)atoi((*it).second[0].c_str());
+
+						this->jointPositions[tmpJointPosition.jointType] = tmpJointPosition;
+						break;
+					}
+					case Quaternion:
+					{
+
+						KinectV2JointOrientation tmpJointOrientation;
+						tmpJointOrientation.jointType = this->shortJointName2KinectV2JointType((*it).first);
+						tmpJointOrientation.orientation.w = (float)atof((*it).second[0].c_str());
+						tmpJointOrientation.orientation.x = (float)atof((*it).second[1].c_str());
+						tmpJointOrientation.orientation.y = (float)atof((*it).second[2].c_str());
+						tmpJointOrientation.orientation.z = (float)atof((*it).second[3].c_str());
+
+						this->jointOrientations[tmpJointOrientation.jointType] = tmpJointOrientation;
+						break;
+					}
+				}
 			}
 			catch(std::string &ex)
 			{
@@ -107,6 +197,33 @@ bool KinectV2SensorData::setSensorData(const std::map<std::string, std::vector<s
 	}
 
 	return true;
+}
+
+///@brief Set root position.
+void KinectV2SensorData::setRootPosition(const Vector3 &position)
+{
+	this->rootPosition = position;
+}
+
+
+void KinectV2SensorData::setKinectV2JointPosition(KinectV2JointPosition *kinectV2JointPositions)
+{
+	for (int i = 0; i < KinectV2JointType_Count; i++)
+	{
+		this->jointPositions[i].jointType     = kinectV2JointPositions[i].jointType;
+		this->jointPositions[i].position      = kinectV2JointPositions[i].position;
+		this->jointPositions[i].trackingState = kinectV2JointPositions[i].trackingState;
+	}
+}
+
+void KinectV2SensorData::getKinectV2JointPosition(KinectV2JointPosition* destination)
+{
+	for (int i = 0; i < KinectV2JointType_Count; i++)
+	{
+		destination[i].jointType     = this->jointPositions[i].jointType;
+		destination[i].position      = this->jointPositions[i].position;
+		destination[i].trackingState = this->jointPositions[i].trackingState;
+	}
 }
 
 void KinectV2SensorData::setKinectV2JointOrientation(KinectV2JointOrientation *kinectV2JointOrientations)
@@ -227,6 +344,23 @@ KinectV2SensorData::KinectV2JointType KinectV2SensorData::shortJointName2KinectV
 }
 
 
+///@brief Three dimensional position (x, y, z) to string.
+std::string KinectV2SensorData::position2Message(const SensorData::Vector3 &position, const std::string &valuesDelim) const
+{
+	std::stringstream ssPosition;
+	ssPosition << std::setprecision(KinectV2SensorData::rootPositionPrecision);
+	ssPosition << position.x << valuesDelim << position.y << valuesDelim << position.z;
+	return ssPosition.str();
+}
+
+///@brief JointPosition (jointname, x, y, z) to string.
+std::string KinectV2SensorData::jointPosition2Message(const KinectV2JointPosition &jp, const std::string &keyValueDelim, const std::string &valuesDelim) const
+{
+	std::stringstream ss;
+	ss << jointType2ShortJointName(jp.jointType) << keyValueDelim << position2Message(jp.position, valuesDelim) << valuesDelim << jp.trackingState;
+	return ss.str();
+}
+
 ///@brief Orientation (w, x, y, z) to string.
 std::string KinectV2SensorData::orientation2Message(const SensorData::Vector4 &orientation, const std::string &valuesDelim) const
 {
@@ -244,12 +378,4 @@ std::string KinectV2SensorData::jointOrientation2Message(const KinectV2JointOrie
 	return ss.str();
 }
 
-///@brief Three dimensional position (x, y, z) to string.
-std::string KinectV2SensorData::position2Message(const SensorData::Vector3 &position, const std::string &keyValueDelim, const std::string &valuesDelim) const
-{
-	std::stringstream ssPosition;
-	ssPosition << std::setprecision(KinectV2SensorData::rootPositionPrecision);
-	ssPosition << MSG_KEY_SPBS_P << keyValueDelim  << position.x << valuesDelim << position.y << valuesDelim << position.z;
-	return ssPosition.str();
-}
 
