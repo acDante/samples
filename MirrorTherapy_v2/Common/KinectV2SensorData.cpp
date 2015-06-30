@@ -1,6 +1,12 @@
 #include "KinectV2SensorData.h"
 
 
+///@brief Constructor
+KinectV2SensorData::KinectV2SensorData(std::string sensorDataModeStr)
+{
+	this->setSensorDataMode(sensorDataModeStr);
+}
+
 void KinectV2SensorData::setSensorDataMode(std::string sensorDataModeStr)
 {
 	if(sensorDataModeStr == "Quaternion")

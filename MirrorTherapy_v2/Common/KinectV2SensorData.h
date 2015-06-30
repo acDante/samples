@@ -102,6 +102,9 @@ private:
 
 public:
 
+	///@brief Constructor
+	KinectV2SensorData::KinectV2SensorData(std::string sensorDataModeStr);
+
 	//sensor data mode.("Quaternion" or "Position")
 	SensorDataMode sensorDataMode;
 
