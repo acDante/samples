@@ -1,7 +1,10 @@
 #include "SensorData.h"
 
 
-std::string SensorData::encodeSensorData(const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim) const { return NULL; }
+std::string SensorData::encodeSensorData(const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim) const
+{
+	return NULL;
+}
 
 
 std::map<std::string, std::vector<std::string> > SensorData::decodeSensorData(const std::string &message, const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim) const
