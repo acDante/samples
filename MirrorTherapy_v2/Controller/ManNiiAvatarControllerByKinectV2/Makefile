@@ -9,6 +9,7 @@ SRCS =\
 	$(CONTROLLER_COMMON)AvatarController.cpp \
 	$(CONTROLLER_COMMON)ManNiiPosture.cpp \
 	$(CURRENT)ManNiiAvatarControllerByKinectV2.cpp \
+	$(CURRENT)ManNiiAvatarControllerByKinectV2_ConvertKinect2Posture.cpp \
 
 # source directories
 CURRENT = ./
@@ -22,7 +23,7 @@ SIG_SRC = $(SIGVERSE_PATH)/include
 CXX = g++
 
 # compile option
-CFLAGS = -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(SIG_SRC) -fPIC -shared
+CFLAGS =  -std=c++11 -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(SIG_SRC) -fPIC -shared
 
 # generate intermediate object file from sources.
 OBJS := $(SRCS:.cpp=.o)
