@@ -9,9 +9,6 @@
 class Device
 {
 protected:
-	///@brief Sensor data.
-	SensorData *sensorData;
-	
 	///@brief Device type.
 	std::string deviceType;
 
