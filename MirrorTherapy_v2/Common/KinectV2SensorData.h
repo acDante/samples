@@ -11,6 +11,8 @@
 #define ORIENTATION_PRECISION 5
 #define POSITION_PRECISION 5
 
+#define MSG_KEY_ROOT_P "Root_P"
+
 
 ///@brief Posture class for using kinect v2 device.
 class KinectV2SensorData : public SensorData
@@ -83,6 +85,9 @@ private:
 	///@brief Whole body joint orientations.
 	KinectV2JointOrientation jointOrientations[KinectV2JointType_Count];
 
+	///@brief root position (Root_P, x, y, z) to string.
+	std::string rootPosition2Message(const SensorData::Vector3 &position, const std::string &keyValueDelim, const std::string &valuesDelim) const;
+
 	///@brief Three dimensional position (x, y, z) to string.
 	std::string position2Message(const SensorData::Vector3 &position, const std::string &valuesDelim) const;
 
@@ -101,6 +106,9 @@ private:
 	void setSensorDataMode(std::string sensorDataModeStr);
 
 public:
+
+	///@brief Default Constructor
+	KinectV2SensorData();
 
 	///@brief Constructor
 	KinectV2SensorData(std::string sensorDataModeStr);

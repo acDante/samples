@@ -1,6 +1,11 @@
 #include "KinectV2SensorData.h"
 
 
+///@brief Default Constructor
+KinectV2SensorData::KinectV2SensorData()
+{
+}
+
 ///@brief Constructor
 KinectV2SensorData::KinectV2SensorData(std::string sensorDataModeStr)
 {
@@ -45,7 +50,7 @@ std::string KinectV2SensorData::encodeSensorData(const std::string &pairsDelim, 
 	{
 		case Position:
 		{
-			ss  << position2Message     (this->rootPosition,                                    vectorDelim) << pairsDelim
+			ss  << rootPosition2Message (this->rootPosition,                  keyValueDelim, vectorDelim) << pairsDelim
 				<< jointPosition2Message(this->jointPositions[SpineBase],     keyValueDelim, vectorDelim) << pairsDelim
 				<< jointPosition2Message(this->jointPositions[SpineMid],      keyValueDelim, vectorDelim) << pairsDelim
 				<< jointPosition2Message(this->jointPositions[Neck],          keyValueDelim, vectorDelim) << pairsDelim
@@ -75,7 +80,7 @@ std::string KinectV2SensorData::encodeSensorData(const std::string &pairsDelim, 
 		}
 		case Quaternion:
 		{
-			ss  << position2Message        (this->rootPosition,                                    vectorDelim) << pairsDelim
+			ss  << rootPosition2Message    (this->rootPosition,                     keyValueDelim, vectorDelim) << pairsDelim
 				<< jointOrientation2Message(this->jointOrientations[SpineBase],     keyValueDelim, vectorDelim) << pairsDelim
 				<< jointOrientation2Message(this->jointOrientations[SpineMid],      keyValueDelim, vectorDelim) << pairsDelim
 				<< jointOrientation2Message(this->jointOrientations[Neck],          keyValueDelim, vectorDelim) << pairsDelim
@@ -115,7 +120,7 @@ bool KinectV2SensorData::setSensorData(const std::map<std::string, std::vector<s
 	std::map<std::string, std::vector<std::string> > jointMap;
 	std::vector<std::string> emptyStrings(4, "");
 
-	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type(MSG_KEY_SPBS_P,                          emptyStrings));
+	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type(MSG_KEY_ROOT_P,                          emptyStrings));
 	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type(jointType2ShortJointName(SpineBase),     emptyStrings));
 	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type(jointType2ShortJointName(SpineMid),      emptyStrings));
 	jointMap.insert(std::map<std::string, std::vector<std::string> >::value_type(jointType2ShortJointName(Neck),          emptyStrings));
@@ -150,7 +155,7 @@ bool KinectV2SensorData::setSensorData(const std::map<std::string, std::vector<s
 
 		if (jointMap.find(key) == jointMap.end()){ continue; }
 
-		if ((*it).first == MSG_KEY_SPBS_P)
+		if ((*it).first == MSG_KEY_ROOT_P)
 		{
 			Vector3 tmpPosition;
 			tmpPosition.x = (float)atof((*it).second[0].c_str());
@@ -255,98 +260,123 @@ std::string KinectV2SensorData::jointType2String(KinectV2SensorData::KinectV2Joi
 {
 	switch (e)
 	{
-		break; case SpineBase:      { return("SpineBase"); }
-		break; case SpineMid:       { return("SpineMid"); }
-		break; case Neck:           { return("Neck"); }
-		break; case Head:           { return("Head"); }
-		break; case ShoulderLeft:   { return("ShoulderLeft"); }
-		break; case ElbowLeft:      { return("ElbowLeft"); }
-		break; case WristLeft:      { return("WristLeft"); }
-		break; case HandLeft:       { return("HandLeft"); }
-		break; case ShoulderRight:  { return("ShoulderRight"); }
-		break; case ElbowRight:     { return("ElbowRight"); }
-		break; case WristRight:     { return("WristRight"); }
-		break; case HandRight:      { return("HandRight"); }
-		break; case HipLeft:        { return("HipLeft"); }
-		break; case KneeLeft:       { return("KneeLeft"); }
-		break; case AnkleLeft:      { return("AnkleLeft"); }
-		break; case FootLeft:       { return("FootLeft"); }
-		break; case HipRight:       { return("HipRight"); }
-		break; case KneeRight:      { return("KneeRight"); }
-		break; case AnkleRight:     { return("AnkleRight"); }
-		break; case FootRight:      { return("FootRight"); }
-		break; case SpineShoulder:  { return("SpineShoulder"); }
-		break; case HandTipLeft:    { return("HandTipLeft"); }
-		break; case ThumbLeft:      { return("ThumbLeft"); }
-		break; case HandTipRight:   { return("HandTipRight"); }
-		break; case ThumbRight:     { return("ThumbRight"); }
-		break; default:             { return("illegal"); }
+		case SpineBase:      { return("SpineBase");     break; }
+		case SpineMid:       { return("SpineMid");      break; }
+		case Neck:           { return("Neck");          break; }
+		case Head:           { return("Head");          break; }
+		case ShoulderLeft:   { return("ShoulderLeft");  break; }
+		case ElbowLeft:      { return("ElbowLeft");     break; }
+		case WristLeft:      { return("WristLeft");     break; }
+		case HandLeft:       { return("HandLeft");      break; }
+		case ShoulderRight:  { return("ShoulderRight"); break; }
+		case ElbowRight:     { return("ElbowRight");    break; }
+		case WristRight:     { return("WristRight");    break; }
+		case HandRight:      { return("HandRight");     break; }
+		case HipLeft:        { return("HipLeft");       break; }
+		case KneeLeft:       { return("KneeLeft");      break; }
+		case AnkleLeft:      { return("AnkleLeft");     break; }
+		case FootLeft:       { return("FootLeft");      break; }
+		case HipRight:       { return("HipRight");      break; }
+		case KneeRight:      { return("KneeRight");     break; }
+		case AnkleRight:     { return("AnkleRight");    break; }
+		case FootRight:      { return("FootRight");     break; }
+		case SpineShoulder:  { return("SpineShoulder"); break; }
+		case HandTipLeft:    { return("HandTipLeft");   break; }
+		case ThumbLeft:      { return("ThumbLeft");     break; }
+		case HandTipRight:   { return("HandTipRight");  break; }
+		case ThumbRight:     { return("ThumbRight");    break; }
+		default:             { return("illegal");       break; }
 	}
 }
 
 ///@brief Get string enum of JointType to genrate message.
 std::string KinectV2SensorData::jointType2ShortJointName(KinectV2JointType e) const
 {
+	std::string sensorDataModeType;
+
+	switch (this->sensorDataMode)
+	{
+		case Quaternion:{ sensorDataModeType = "Q"; break; }
+		case Position:  { sensorDataModeType = "P"; break; }
+	}
+
 	switch (e)
 	{
-		break; case SpineBase:      { return("SpBs_Q"); }
-		break; case SpineMid:       { return("SpMd_Q"); }
-		break; case Neck:           { return("Neck_Q"); }
-		break; case Head:           { return("Head_Q"); }
-		break; case ShoulderLeft:   { return("ShL_Q"); }
-		break; case ElbowLeft:      { return("LbL_Q"); }
-		break; case WristLeft:      { return("WrL_Q"); }
-		break; case HandLeft:       { return("HndL_Q"); }
-		break; case ShoulderRight:  { return("ShR_Q"); }
-		break; case ElbowRight:     { return("LbR_Q"); }
-		break; case WristRight:     { return("WrR_Q"); }
-		break; case HandRight:      { return("HndR_Q"); }
-		break; case HipLeft:        { return("HpL_Q"); }
-		break; case KneeLeft:       { return("NeeL_Q"); }
-		break; case AnkleLeft:      { return("AnkL_Q"); }
-		break; case FootLeft:       { return("FtL_Q"); }
-		break; case HipRight:       { return("HpR_Q"); }
-		break; case KneeRight:      { return("NeeR_Q"); }
-		break; case AnkleRight:     { return("AnkR_Q"); }
-		break; case FootRight:      { return("FtR_Q"); }
-		break; case SpineShoulder:  { return("SpSh_Q"); }
-		break; case HandTipLeft:    { return("HTL_Q"); }
-		break; case ThumbLeft:      { return("ThmL_Q"); }
-		break; case HandTipRight:   { return("HTR_Q"); }
-		break; case ThumbRight:     { return("ThmR_Q"); }
-		break; default:             { return("illegal"); }
+		case SpineBase:      { return "SpBs_" + sensorDataModeType; break; }
+		case SpineMid:       { return "SpMd_" + sensorDataModeType; break; }
+		case Neck:           { return "Neck_" + sensorDataModeType; break; }
+		case Head:           { return "Head_" + sensorDataModeType; break; }
+		case ShoulderLeft:   { return "ShL_"  + sensorDataModeType; break; }
+		case ElbowLeft:      { return "LbL_"  + sensorDataModeType; break; }
+		case WristLeft:      { return "WrL_"  + sensorDataModeType; break; }
+		case HandLeft:       { return "HndL_" + sensorDataModeType; break; }
+		case ShoulderRight:  { return "ShR_"  + sensorDataModeType; break; }
+		case ElbowRight:     { return "LbR_"  + sensorDataModeType; break; }
+		case WristRight:     { return "WrR_"  + sensorDataModeType; break; }
+		case HandRight:      { return "HndR_" + sensorDataModeType; break; }
+		case HipLeft:        { return "HpL_"  + sensorDataModeType; break; }
+		case KneeLeft:       { return "NeeL_" + sensorDataModeType; break; }
+		case AnkleLeft:      { return "AnkL_" + sensorDataModeType; break; }
+		case FootLeft:       { return "FtL_"  + sensorDataModeType; break; }
+		case HipRight:       { return "HpR_"  + sensorDataModeType; break; }
+		case KneeRight:      { return "NeeR_" + sensorDataModeType; break; }
+		case AnkleRight:     { return "AnkR_" + sensorDataModeType; break; }
+		case FootRight:      { return "FtR_"  + sensorDataModeType; break; }
+		case SpineShoulder:  { return "SpSh_" + sensorDataModeType; break; }
+		case HandTipLeft:    { return "HTL_"  + sensorDataModeType; break; }
+		case ThumbLeft:      { return "ThmL_" + sensorDataModeType; break; }
+		case HandTipRight:   { return "HTR_"  + sensorDataModeType; break; }
+		case ThumbRight:     { return "ThmR_" + sensorDataModeType; break; }
+		default:             { return "illegal";                    break; }
 	}
 }
 
 
 KinectV2SensorData::KinectV2JointType KinectV2SensorData::shortJointName2KinectV2JointType(const std::string &shortJointName) const
 {
-	if      (shortJointName == "SpBs_Q"){ return SpineBase; }
-	else if (shortJointName == "SpMd_Q"){ return SpineMid; }
-	else if (shortJointName == "Neck_Q"){ return Neck; }
-	else if (shortJointName == "Head_Q"){ return Head; }
-	else if (shortJointName == "ShL_Q") { return ShoulderLeft; }
-	else if (shortJointName == "LbL_Q") { return ElbowLeft; }
-	else if (shortJointName == "WrL_Q") { return WristLeft; }
-	else if (shortJointName == "HndL_Q"){ return HandLeft; }
-	else if (shortJointName == "ShR_Q") { return ShoulderRight; }
-	else if (shortJointName == "LbR_Q") { return ElbowRight; }
-	else if (shortJointName == "WrR_Q") { return WristRight; }
-	else if (shortJointName == "HndR_Q"){ return HandRight; }
-	else if (shortJointName == "HpL_Q") { return HipLeft; }
-	else if (shortJointName == "NeeL_Q"){ return KneeLeft; }
-	else if (shortJointName == "AnkL_Q"){ return AnkleLeft; }
-	else if (shortJointName == "FtL_Q") { return FootLeft; }
-	else if (shortJointName == "HpR_Q") { return HipRight; }
-	else if (shortJointName == "NeeR_Q"){ return KneeRight; }
-	else if (shortJointName == "AnkR_Q"){ return AnkleRight; }
-	else if (shortJointName == "FtR_Q") { return FootRight;}
-	else if (shortJointName == "SpSh_Q"){ return SpineShoulder; }
-	else if (shortJointName == "HTL_Q") { return HandTipLeft; }
-	else if (shortJointName == "ThmL_Q"){ return ThumbLeft; }
-	else if (shortJointName == "HTR_Q") { return HandTipRight; }
-	else if (shortJointName == "ThmR_Q"){ return ThumbRight; }
-	else { throw std::string(("This short joint name is invalid. : "+shortJointName).c_str()); }
+	if (shortJointName.length==0)
+	{
+		throw std::string("Short joint name is blank.");
+	}
+
+	std::string  shortJointNameForJudge = shortJointName;
+	shortJointNameForJudge.erase(--shortJointName.end());
+
+	if      (shortJointName == "SpBs_"){ return SpineBase; }
+	else if (shortJointName == "SpMd_"){ return SpineMid; }
+	else if (shortJointName == "Neck_"){ return Neck; }
+	else if (shortJointName == "Head_"){ return Head; }
+	else if (shortJointName == "ShL_") { return ShoulderLeft; }
+	else if (shortJointName == "LbL_") { return ElbowLeft; }
+	else if (shortJointName == "WrL_") { return WristLeft; }
+	else if (shortJointName == "HndL_"){ return HandLeft; }
+	else if (shortJointName == "ShR_") { return ShoulderRight; }
+	else if (shortJointName == "LbR_") { return ElbowRight; }
+	else if (shortJointName == "WrR_") { return WristRight; }
+	else if (shortJointName == "HndR_"){ return HandRight; }
+	else if (shortJointName == "HpL_") { return HipLeft; }
+	else if (shortJointName == "NeeL_"){ return KneeLeft; }
+	else if (shortJointName == "AnkL_"){ return AnkleLeft; }
+	else if (shortJointName == "FtL_") { return FootLeft; }
+	else if (shortJointName == "HpR_") { return HipRight; }
+	else if (shortJointName == "NeeR_"){ return KneeRight; }
+	else if (shortJointName == "AnkR_"){ return AnkleRight; }
+	else if (shortJointName == "FtR_") { return FootRight;}
+	else if (shortJointName == "SpSh_"){ return SpineShoulder; }
+	else if (shortJointName == "HTL_") { return HandTipLeft; }
+	else if (shortJointName == "ThmL_"){ return ThumbLeft; }
+	else if (shortJointName == "HTR_") { return HandTipRight; }
+	else if (shortJointName == "ThmR_"){ return ThumbRight; }
+	else { throw std::string(("Short joint name is invalid. : "+shortJointName).c_str()); }
+}
+
+
+///@brief root position (Root_P, x, y, z) to string.
+std::string KinectV2SensorData::rootPosition2Message(const SensorData::Vector3 &position, const std::string &keyValueDelim, const std::string &valuesDelim) const
+{
+	std::stringstream ss;
+	ss << MSG_KEY_ROOT_P << keyValueDelim << position2Message(position, valuesDelim);
+	return ss.str();
 }
 
 
@@ -366,6 +396,7 @@ std::string KinectV2SensorData::jointPosition2Message(const KinectV2JointPositio
 	ss << jointType2ShortJointName(jp.jointType) << keyValueDelim << position2Message(jp.position, valuesDelim) << valuesDelim << jp.trackingState;
 	return ss.str();
 }
+
 
 ///@brief Orientation (w, x, y, z) to string.
 std::string KinectV2SensorData::orientation2Message(const SensorData::Vector4 &orientation, const std::string &valuesDelim) const
