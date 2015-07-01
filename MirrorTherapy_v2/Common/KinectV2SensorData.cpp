@@ -114,6 +114,8 @@ std::string KinectV2SensorData::encodeSensorData(const std::string &pairsDelim, 
 }
 
 
+///@brief Set to sensor data.
+///@param Map of sensor data;
 bool KinectV2SensorData::setSensorData(const std::map<std::string, std::vector<std::string> > &sensorDataMap)
 {
 	// Generate map<string, vector<string>, which has only JointType.
