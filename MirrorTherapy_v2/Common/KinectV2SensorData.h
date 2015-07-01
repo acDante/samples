@@ -11,8 +11,6 @@
 #define ORIENTATION_PRECISION 5
 #define POSITION_PRECISION 5
 
-#define MSG_KEY_SPBS_P "SpBs_P"
-
 
 ///@brief Posture class for using kinect v2 device.
 class KinectV2SensorData : public SensorData
