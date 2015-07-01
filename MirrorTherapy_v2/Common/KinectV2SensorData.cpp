@@ -334,39 +334,39 @@ std::string KinectV2SensorData::jointType2ShortJointName(KinectV2JointType e) co
 
 KinectV2SensorData::KinectV2JointType KinectV2SensorData::shortJointName2KinectV2JointType(const std::string &shortJointName) const
 {
-	if (shortJointName.length==0)
+	if (shortJointName.length()==0)
 	{
 		throw std::string("Short joint name is blank.");
 	}
 
 	std::string  shortJointNameForJudge = shortJointName;
-	shortJointNameForJudge.erase(--shortJointName.end());
+	shortJointNameForJudge.erase(shortJointNameForJudge.length()-1);
 
-	if      (shortJointName == "SpBs_"){ return SpineBase; }
-	else if (shortJointName == "SpMd_"){ return SpineMid; }
-	else if (shortJointName == "Neck_"){ return Neck; }
-	else if (shortJointName == "Head_"){ return Head; }
-	else if (shortJointName == "ShL_") { return ShoulderLeft; }
-	else if (shortJointName == "LbL_") { return ElbowLeft; }
-	else if (shortJointName == "WrL_") { return WristLeft; }
-	else if (shortJointName == "HndL_"){ return HandLeft; }
-	else if (shortJointName == "ShR_") { return ShoulderRight; }
-	else if (shortJointName == "LbR_") { return ElbowRight; }
-	else if (shortJointName == "WrR_") { return WristRight; }
-	else if (shortJointName == "HndR_"){ return HandRight; }
-	else if (shortJointName == "HpL_") { return HipLeft; }
-	else if (shortJointName == "NeeL_"){ return KneeLeft; }
-	else if (shortJointName == "AnkL_"){ return AnkleLeft; }
-	else if (shortJointName == "FtL_") { return FootLeft; }
-	else if (shortJointName == "HpR_") { return HipRight; }
-	else if (shortJointName == "NeeR_"){ return KneeRight; }
-	else if (shortJointName == "AnkR_"){ return AnkleRight; }
-	else if (shortJointName == "FtR_") { return FootRight;}
-	else if (shortJointName == "SpSh_"){ return SpineShoulder; }
-	else if (shortJointName == "HTL_") { return HandTipLeft; }
-	else if (shortJointName == "ThmL_"){ return ThumbLeft; }
-	else if (shortJointName == "HTR_") { return HandTipRight; }
-	else if (shortJointName == "ThmR_"){ return ThumbRight; }
+	if      (shortJointNameForJudge == "SpBs_"){ return SpineBase; }
+	else if (shortJointNameForJudge == "SpMd_"){ return SpineMid; }
+	else if (shortJointNameForJudge == "Neck_"){ return Neck; }
+	else if (shortJointNameForJudge == "Head_"){ return Head; }
+	else if (shortJointNameForJudge == "ShL_") { return ShoulderLeft; }
+	else if (shortJointNameForJudge == "LbL_") { return ElbowLeft; }
+	else if (shortJointNameForJudge == "WrL_") { return WristLeft; }
+	else if (shortJointNameForJudge == "HndL_"){ return HandLeft; }
+	else if (shortJointNameForJudge == "ShR_") { return ShoulderRight; }
+	else if (shortJointNameForJudge == "LbR_") { return ElbowRight; }
+	else if (shortJointNameForJudge == "WrR_") { return WristRight; }
+	else if (shortJointNameForJudge == "HndR_"){ return HandRight; }
+	else if (shortJointNameForJudge == "HpL_") { return HipLeft; }
+	else if (shortJointNameForJudge == "NeeL_"){ return KneeLeft; }
+	else if (shortJointNameForJudge == "AnkL_"){ return AnkleLeft; }
+	else if (shortJointNameForJudge == "FtL_") { return FootLeft; }
+	else if (shortJointNameForJudge == "HpR_") { return HipRight; }
+	else if (shortJointNameForJudge == "NeeR_"){ return KneeRight; }
+	else if (shortJointNameForJudge == "AnkR_"){ return AnkleRight; }
+	else if (shortJointNameForJudge == "FtR_") { return FootRight;}
+	else if (shortJointNameForJudge == "SpSh_"){ return SpineShoulder; }
+	else if (shortJointNameForJudge == "HTL_") { return HandTipLeft; }
+	else if (shortJointNameForJudge == "ThmL_"){ return ThumbLeft; }
+	else if (shortJointNameForJudge == "HTR_") { return HandTipRight; }
+	else if (shortJointNameForJudge == "ThmR_"){ return ThumbRight; }
 	else { throw std::string(("Short joint name is invalid. : "+shortJointName).c_str()); }
 }
 
