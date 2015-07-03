@@ -32,7 +32,7 @@ protected:
 		FOOT
 	};
 
-	SigCmn::Vector3 getSigVec(int sigvec);
+	SigCmn::Vector3 getSigVec(const SigVec &sigvec);
 };
 
 #endif /* __MAN_NII_AVATAR_CONTROLLER_H__ */
