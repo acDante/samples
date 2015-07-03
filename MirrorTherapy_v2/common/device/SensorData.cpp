@@ -31,8 +31,8 @@ std::map<std::string, std::vector<std::string> > SensorData::convertMessage2Map(
 		{
 			if (items[i] == "") continue ;
 
-			//std::cout << pairs[i] << std::endl;
-			
+//			std::cout << items[i] << std::endl;
+
 			// split key and values by ":"(keyValueDelim).
 			std::vector<std::string> keyAndValues;
 			boost::split(keyAndValues, items[i], boost::is_any_of(keyValueDelim));

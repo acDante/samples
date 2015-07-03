@@ -13,31 +13,6 @@
 class SensorData
 {
 public:
-	///@brief For expression position.
-	typedef struct _Vector3
-	{
-		float x;
-		float y;
-		float z;
-	} Vector3;
-
-	///@brief For expression quaternion.
-	typedef struct _Vector4
-	{
-		float x;
-		float y;
-		float z;
-		float w;
-	} Vector4;
-
-	///@brief For expression position.
-	typedef struct
-	{
-		float yaw;
-		float pitch;
-		float roll;
-	} EulerAngleType;
-
 	SensorData() {};
 	virtual ~SensorData() {};
 

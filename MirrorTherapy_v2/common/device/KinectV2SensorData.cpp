@@ -14,13 +14,13 @@ KinectV2SensorData::KinectV2SensorData(std::string sensorDataModeStr)
 
 void KinectV2SensorData::setSensorDataMode(std::string sensorDataModeStr)
 {
-	if(sensorDataModeStr == "Quaternion")
+	if(sensorDataModeStr == "QUATERNION")
 	{
-		this->sensorDataMode = Quaternion;
+		this->sensorDataMode = QUATERNION;
 	}
-	else if (sensorDataModeStr == "Position")
+	else if (sensorDataModeStr == "POSITION")
 	{
-		this->sensorDataMode = Position; 
+		this->sensorDataMode = POSITION; 
 	}
 	else 
 	{ 
@@ -33,8 +33,8 @@ std::string KinectV2SensorData::getSensorDataModeStr()
 {
 	switch (this->sensorDataMode)
 	{
-		case Quaternion:{ return "Quaternion"; break; }
-		case Position:  { return "Position";   break; }
+		case QUATERNION:{ return "QUATERNION"; break; }
+		case POSITION:  { return "POSITION";   break; }
 		default:        { return "";           break; }
 	}
 };
@@ -48,7 +48,7 @@ std::string KinectV2SensorData::encodeSensorData(const std::string &pairsDelim, 
 
 	switch (this->sensorDataMode)
 	{
-		case Position:
+		case POSITION:
 		{
 			ss  << rootPosition2Message (this->rootPosition,                  keyValueDelim, vectorDelim) << pairsDelim
 				<< jointPosition2Message(this->jointPositions[SpineBase],     keyValueDelim, vectorDelim) << pairsDelim
@@ -78,7 +78,7 @@ std::string KinectV2SensorData::encodeSensorData(const std::string &pairsDelim, 
 				<< jointPosition2Message(this->jointPositions[ThumbRight],    keyValueDelim, vectorDelim);
 			break;
 		}
-		case Quaternion:
+		case QUATERNION:
 		{
 			ss  << rootPosition2Message    (this->rootPosition,                     keyValueDelim, vectorDelim) << pairsDelim
 				<< jointOrientation2Message(this->jointOrientations[SpineBase],     keyValueDelim, vectorDelim) << pairsDelim
@@ -159,7 +159,7 @@ bool KinectV2SensorData::setSensorData(const std::map<std::string, std::vector<s
 
 		if ((*it).first == MSG_KEY_ROOT_P)
 		{
-			Vector3 tmpPosition;
+			SigCmn::Vector3 tmpPosition;
 			tmpPosition.x = (float)atof((*it).second[0].c_str());
 			tmpPosition.y = (float)atof((*it).second[1].c_str());
 			tmpPosition.z = (float)atof((*it).second[2].c_str());
@@ -173,7 +173,7 @@ bool KinectV2SensorData::setSensorData(const std::map<std::string, std::vector<s
 			{
 				switch (this->sensorDataMode)
 				{
-					case Position:
+					case POSITION:
 					{
 
 						KinectV2JointPosition tmpJointPosition;
@@ -186,7 +186,7 @@ bool KinectV2SensorData::setSensorData(const std::map<std::string, std::vector<s
 						this->jointPositions[tmpJointPosition.jointType] = tmpJointPosition;
 						break;
 					}
-					case Quaternion:
+					case QUATERNION:
 					{
 
 						KinectV2JointOrientation tmpJointOrientation;
@@ -213,7 +213,7 @@ bool KinectV2SensorData::setSensorData(const std::map<std::string, std::vector<s
 }
 
 ///@brief Set root position.
-void KinectV2SensorData::setRootPosition(const Vector3 &position)
+void KinectV2SensorData::setRootPosition(const SigCmn::Vector3 &position)
 {
 	this->rootPosition = position;
 }
@@ -229,7 +229,7 @@ void KinectV2SensorData::setKinectV2JointPosition(KinectV2JointPosition *kinectV
 	}
 }
 
-void KinectV2SensorData::getKinectV2JointPosition(KinectV2JointPosition* destination)
+void KinectV2SensorData::getKinectV2JointPosition(KinectV2JointPosition* destination) const
 {
 	for (int i = 0; i < KinectV2JointType_Count; i++)
 	{
@@ -248,7 +248,7 @@ void KinectV2SensorData::setKinectV2JointOrientation(KinectV2JointOrientation *k
 	}
 }
 
-void KinectV2SensorData::getKinectV2JointOrientation(KinectV2JointOrientation* destination)
+void KinectV2SensorData::getKinectV2JointOrientation(KinectV2JointOrientation* destination) const
 {
 	for (int i = 0; i < KinectV2JointType_Count; i++)
 	{
@@ -298,8 +298,8 @@ std::string KinectV2SensorData::jointType2ShortJointName(KinectV2JointType e) co
 
 	switch (this->sensorDataMode)
 	{
-		case Quaternion:{ sensorDataModeType = "Q"; break; }
-		case Position:  { sensorDataModeType = "P"; break; }
+		case QUATERNION:{ sensorDataModeType = "Q"; break; }
+		case POSITION:  { sensorDataModeType = "P"; break; }
 	}
 
 	switch (e)
@@ -374,7 +374,7 @@ KinectV2SensorData::KinectV2JointType KinectV2SensorData::shortJointName2KinectV
 
 
 ///@brief root position (Root_P, x, y, z) to string.
-std::string KinectV2SensorData::rootPosition2Message(const SensorData::Vector3 &position, const std::string &keyValueDelim, const std::string &valuesDelim) const
+std::string KinectV2SensorData::rootPosition2Message(const SigCmn::Vector3 &position, const std::string &keyValueDelim, const std::string &valuesDelim) const
 {
 	std::stringstream ss;
 	ss << MSG_KEY_ROOT_P << keyValueDelim << position2Message(position, valuesDelim);
@@ -383,7 +383,7 @@ std::string KinectV2SensorData::rootPosition2Message(const SensorData::Vector3 &
 
 
 ///@brief Three dimensional position (x, y, z) to string.
-std::string KinectV2SensorData::position2Message(const SensorData::Vector3 &position, const std::string &valuesDelim) const
+std::string KinectV2SensorData::position2Message(const SigCmn::Vector3 &position, const std::string &valuesDelim) const
 {
 	std::stringstream ssPosition;
 	ssPosition << std::setprecision(KinectV2SensorData::rootPositionPrecision);
@@ -401,7 +401,7 @@ std::string KinectV2SensorData::jointPosition2Message(const KinectV2JointPositio
 
 
 ///@brief Orientation (w, x, y, z) to string.
-std::string KinectV2SensorData::orientation2Message(const SensorData::Vector4 &orientation, const std::string &valuesDelim) const
+std::string KinectV2SensorData::orientation2Message(const Quaternion &orientation, const std::string &valuesDelim) const
 {
 	std::stringstream ssOrientation;
 	ssOrientation << std::setprecision(KinectV2SensorData::orientationPrecision);

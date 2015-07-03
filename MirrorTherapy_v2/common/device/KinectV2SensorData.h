@@ -1,6 +1,8 @@
 #ifndef __KINECT_V2_SENSOR_DATA_H__
 #define __KINECT_V2_SENSOR_DATA_H__
 
+#include "Quaternion.h"
+#include "SigCmn.h"
 #include "SensorData.h"
 
 #include <string>
@@ -20,8 +22,8 @@ class KinectV2SensorData : public SensorData
 public:
 	enum SensorDataMode
 	{
-		Position,
-		Quaternion,
+		POSITION,
+		QUATERNION,
 	};
 
 	enum KinectV2JointType
@@ -57,44 +59,35 @@ public:
 	enum KinectV2TrackingState
 	{
 		NotTracked = 0,
-		Inferred = 1,
-		Tracked = 2
+		Inferred,
+		Tracked,
 	};
 
 
 	typedef struct _KinectV2JointPosition
 	{
 		KinectV2JointType     jointType;
-		SensorData::Vector3   position;
+		SigCmn::Vector3       position;
 		KinectV2TrackingState trackingState;
 	} KinectV2JointPosition;
 
 	typedef struct _KinectV2JointOrientation
 	{
-		KinectV2JointType   jointType;
-		SensorData::Vector4 orientation;
+		KinectV2JointType jointType;
+		Quaternion        orientation;
 	} KinectV2JointOrientation;
 
 private:
-	///@brief Root body position.
-	Vector3 rootPosition;
-
-	///@brief Whole body joint positions.
-	KinectV2JointPosition jointPositions[KinectV2JointType_Count];
-
-	///@brief Whole body joint orientations.
-	KinectV2JointOrientation jointOrientations[KinectV2JointType_Count];
-
 	///@brief root position (Root_P, x, y, z) to string.
-	std::string rootPosition2Message(const SensorData::Vector3 &position, const std::string &keyValueDelim, const std::string &valuesDelim) const;
+	std::string rootPosition2Message(const SigCmn::Vector3 &position, const std::string &keyValueDelim, const std::string &valuesDelim) const;
 
 	///@brief Three dimensional position (x, y, z) to string.
-	std::string position2Message(const SensorData::Vector3 &position, const std::string &valuesDelim) const;
+	std::string position2Message(const SigCmn::Vector3 &position, const std::string &valuesDelim) const;
 
 	///@brief JointPosition (jointname, x, y, z) to string.
 	std::string jointPosition2Message(const KinectV2JointPosition &jp, const std::string &keyValueDelim, const std::string &valuesDelim) const;
 
-	std::string orientation2Message(const SensorData::Vector4 &orientation, const std::string &valuesDelim) const;
+	std::string orientation2Message(const Quaternion &orientation, const std::string &valuesDelim) const;
 
 	///@brief JointOrientation (jointname, w, x, y, z) to string.
 	std::string jointOrientation2Message(const KinectV2JointOrientation &jo, const std::string &keyValueDelim, const std::string &valuesDelim) const;
@@ -107,6 +100,12 @@ private:
 
 public:
 
+	///@brief Precision of quaternion when send message.
+	static const int orientationPrecision = ORIENTATION_PRECISION;
+
+	///@brief Precision of root position when send message.
+	static const int rootPositionPrecision = POSITION_PRECISION;
+
 	///@brief Default Constructor
 	KinectV2SensorData();
 
@@ -115,12 +114,6 @@ public:
 
 	//sensor data mode.("Quaternion" or "Position")
 	SensorDataMode sensorDataMode;
-
-	///@brief Precision of quaternion when send message.
-	static const int orientationPrecision = ORIENTATION_PRECISION;
-
-	///@brief Precision of root position when send message.
-	static const int rootPositionPrecision = POSITION_PRECISION;
 
 	///@brief Convert sensor information to string.
 	///@param itemsDelim Symbol to split items.
@@ -133,24 +126,33 @@ public:
 	bool setSensorData(const std::map<std::string, std::vector<std::string> > &sensorDataMap);
 
 	///@brief Set root position.
-	void setRootPosition(const Vector3 &position);
+	void setRootPosition(const SigCmn::Vector3 &position);
 
 	///@brief Set posture from kinect joint positions.
 	void setKinectV2JointPosition(KinectV2JointPosition *kinectV2JointPositions);
 
 	///@brief Get orientations from kinect joint positions.
-	void getKinectV2JointPosition(KinectV2JointPosition *destination);
+	void getKinectV2JointPosition(KinectV2JointPosition *destination) const;
 
 	///@brief Set posture from kinect joint orientations.
 	void setKinectV2JointOrientation(KinectV2JointOrientation *kinectV2JointOrientation);
 
 	///@brief Get orientations from kinect joint orientations.
-	void getKinectV2JointOrientation(KinectV2JointOrientation *destination);
+	void getKinectV2JointOrientation(KinectV2JointOrientation *destination) const;
 
 	///@brief Set joint quaternions for man-nii avatar.
 	KinectV2JointType shortJointName2KinectV2JointType(const std::string &shortJointName) const;
 
 	std::string getSensorDataModeStr();
+
+	///@brief Root body position.
+	SigCmn::Vector3 rootPosition;
+
+	///@brief Whole body joint positions.
+	KinectV2JointPosition jointPositions[KinectV2JointType_Count];
+
+	///@brief Whole body joint orientations.
+	KinectV2JointOrientation jointOrientations[KinectV2JointType_Count];
 };
 
 #endif //__KINECT_V2_SENSOR_DATA_H__
