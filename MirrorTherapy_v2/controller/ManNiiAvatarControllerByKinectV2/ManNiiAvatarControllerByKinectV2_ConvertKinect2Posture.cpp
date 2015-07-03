@@ -514,6 +514,8 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 
 			//ManNiiAvatarPosture posture;
 			manNiiPosture.joint[ManNiiPosture::ROOT_JOINT0].quaternion  = q_waist;
+			manNiiPosture.joint[ManNiiPosture::HEAD_JOINT1].quaternion  = q_head_joint1;
+
 			manNiiPosture.joint[ManNiiPosture::WAIST_JOINT1].quaternion = q_waist_joint1;
 
 			manNiiPosture.joint[ManNiiPosture::RARM_JOINT2].quaternion = q_rarm_joint2;

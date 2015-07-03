@@ -178,6 +178,7 @@ void ManNiiAvatarControllerByKinectV2::setJointQuaternionsForKinect(SimObj *obj,
 	if(sensorDataMode==KinectV2SensorData::SensorDataMode::POSITION)
 	{
 		this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::ROOT_JOINT0]);
+		this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::HEAD_JOINT1]);
 	}
 	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::WAIST_JOINT1]);
 
