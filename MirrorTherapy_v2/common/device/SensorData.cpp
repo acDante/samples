@@ -3,7 +3,7 @@
 
 std::string SensorData::encodeSensorData(const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim) const
 {
-	return NULL;
+	throw std::exception("Please implement encodeSensorData() in inherited class.");
 }
 
 
