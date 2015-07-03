@@ -43,9 +43,6 @@ double ManNiiAvatarControllerByKinectV2::onAction(ActionEvent &evt)
 		this->kinectV2Service = NULL;
 	}
 
-	testPrint();
-	timeInfoList.clear();
-
 	return 1.0;
 }
 
@@ -59,8 +56,7 @@ void ManNiiAvatarControllerByKinectV2::onRecvMsg(RecvMsgEvent &evt)
 //		std::cout << "msg:" << allMsg << std::endl;
 
 		// Decode message to sensor data of kinect v2.
-		KinectV2SensorData sensorData;
-		sensorData.setSensorDataMode(this->sensorDataModeStr);
+		KinectV2SensorData sensorData(this->sensorDataModeStr);
 
 		std::map<std::string, std::vector<std::string> > sensorDataMap = sensorData.decodeSensorData(allMsg);
 
@@ -94,6 +90,10 @@ void ManNiiAvatarControllerByKinectV2::onRecvMsg(RecvMsgEvent &evt)
 	catch(SimObj::Exception &err)
 	{
 		LOG_MSG(("Exception: %s", err.msg()));
+	}
+	catch(...)
+	{
+		std::cout << "some error occurred." << std::endl;
 	}
 }
 

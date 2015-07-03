@@ -1,15 +1,13 @@
 /*
  * ManNiiAvatarController.cpp
  *
- *  Created on: 2015/03/12
- *      Author: Nozaki
+ *  Created on: 2015/06/29
+ *      Author: tome-yamada
+ *  Separated from ManNiiAvatarControllerByKinectV2.cpp
  */
 
 #include "../../Common/SensorData.h"
 #include "ManNiiAvatarControllerByKinectV2.h"
-//#include <boost/property_tree/ptree.hpp>
-//#include <boost/property_tree/ini_parser.hpp>
-//#include <boost/exception/diagnostic_information.hpp>
 
 
 void ManNiiAvatarControllerByKinectV2::convertKinectV2JointOrientations2ManNiiPosture(KinectV2SensorData::KinectV2JointOrientation* kinectV2Joints, ManNiiPosture &manNiiPosture)
