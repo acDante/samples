@@ -3,12 +3,14 @@ TARGET = ./ManNiiAvatarControllerByKinectV2.so
 
 # sources
 SRCS =\
+	$(COMMON)SigCmn.cpp \
 	$(COMMON)Quaternion.cpp \
 	$(COMMON_DEVICE)SensorData.cpp \
 	$(COMMON_DEVICE)KinectV2SensorData.cpp \
 	$(CONTROLLER_COMMON)Posture.cpp \
-	$(CONTROLLER_COMMON)AvatarController.cpp \
 	$(CONTROLLER_COMMON)ManNiiPosture.cpp \
+	$(CONTROLLER_COMMON)AvatarController.cpp \
+	$(CONTROLLER_COMMON)ManNiiAvatarController.cpp \
 	$(CURRENT)ManNiiAvatarControllerByKinectV2.cpp \
 	$(CURRENT)ManNiiAvatarControllerByKinectV2_ConvertKinect2Posture.cpp \
 

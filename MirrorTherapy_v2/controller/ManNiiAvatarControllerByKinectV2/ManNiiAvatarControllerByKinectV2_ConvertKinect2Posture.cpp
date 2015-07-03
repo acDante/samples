@@ -358,7 +358,7 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 
 				q_waist_joint1 = Quaternion::calcQuaternionFromVector(swaist_vec, kwaist_vec);
 
-				Quaternion rwaist = Quaternion::calcQuaternionFromVector(kwaist_vec, swaist_vec); //逆回転
+				Quaternion rwaist = Quaternion::calcQuaternionFromVector(kwaist_vec, swaist_vec);
 
 				//neck
 				SigCmn::Vector3 kneck_vec;
@@ -381,7 +381,7 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 					Quaternion::rotVec(krsh_vec, rwaist); //waist rotation
 
 					q_rarm_joint2 = Quaternion::calcQuaternionFromVector(srsh_vec, krsh_vec);
-					Quaternion rrsh = Quaternion::calcQuaternionFromVector(krsh_vec, srsh_vec); //逆回転
+					Quaternion rrsh = Quaternion::calcQuaternionFromVector(krsh_vec, srsh_vec);
 
 					//right elbow
 					SigCmn::Vector3 krel_vec;
@@ -392,7 +392,7 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 						Quaternion::rotVec(krel_vec, rrsh);
 
 						q_rarm_joint3 = Quaternion::calcQuaternionFromVector(srsh_vec, krel_vec);
-						Quaternion rrel = Quaternion::calcQuaternionFromVector(krel_vec, srsh_vec); //逆回転
+						Quaternion rrel = Quaternion::calcQuaternionFromVector(krel_vec, srsh_vec);
 
 						//right wrist
 						SigCmn::Vector3 krwrist_vec;
@@ -418,7 +418,7 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 					Quaternion::rotVec(klsh_vec, rwaist);
 
 					q_larm_joint2 = Quaternion::calcQuaternionFromVector(slsh_vec, klsh_vec);
-					Quaternion rlsh = Quaternion::calcQuaternionFromVector(klsh_vec, slsh_vec); //逆回転
+					Quaternion rlsh = Quaternion::calcQuaternionFromVector(klsh_vec, slsh_vec);
 
 					//left elbow
 					SigCmn::Vector3 klel_vec;
@@ -429,7 +429,7 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 						Quaternion::rotVec(klel_vec, rlsh);
 
 						q_larm_joint3 = Quaternion::calcQuaternionFromVector(slsh_vec, klel_vec);
-						Quaternion rlel = Quaternion::calcQuaternionFromVector(klel_vec, slsh_vec); //逆回転
+						Quaternion rlel = Quaternion::calcQuaternionFromVector(klel_vec, slsh_vec);
 
 						//left wrist
 						SigCmn::Vector3 klwrist_vec;
@@ -466,7 +466,7 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 					Quaternion::rotVec(krknee_vec, rrhp);
 
 					q_rleg_joint4 = Quaternion::calcQuaternionFromVector(sleg_vec, krknee_vec);
-					Quaternion rrknee = Quaternion::calcQuaternionFromVector(krknee_vec, sleg_vec); //逆回転
+					Quaternion rrknee = Quaternion::calcQuaternionFromVector(krknee_vec, sleg_vec);
 
 					//right ankle
 					SigCmn::Vector3 krankle_vec;
@@ -488,7 +488,7 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 				Quaternion::rotVec(klhip_vec, rrootq);
 
 				q_lleg_joint2 = Quaternion::calcQuaternionFromVector(sleg_vec, klhip_vec);
-				Quaternion rlhp = Quaternion::calcQuaternionFromVector(klhip_vec, sleg_vec); //逆回転
+				Quaternion rlhp = Quaternion::calcQuaternionFromVector(klhip_vec, sleg_vec);
 
 				//left knee
 				SigCmn::Vector3 klknee_vec;
@@ -498,7 +498,7 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 					Quaternion::rotVec(klknee_vec, rlhp);
 
 					q_lleg_joint4 = Quaternion::calcQuaternionFromVector(sleg_vec, klknee_vec);
-					Quaternion rlknee = Quaternion::calcQuaternionFromVector(klknee_vec, sleg_vec); //逆回転
+					Quaternion rlknee = Quaternion::calcQuaternionFromVector(klknee_vec, sleg_vec);
 
 					//left ankle
 					SigCmn::Vector3 klankle_vec;
