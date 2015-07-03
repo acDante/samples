@@ -1,9 +1,10 @@
 #include "SensorData.h"
-
+#include <exception>
 
 std::string SensorData::encodeSensorData(const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim) const
 {
-	throw std::exception("Please implement encodeSensorData() in inherited class.");
+	std::cout << "Please implement encodeSensorData() in inherited class." << std::endl;
+	throw std::exception();
 }
 
 
