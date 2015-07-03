@@ -1,5 +1,5 @@
 #include "OculusRiftDK1Device.h"
-#include <Common/OculusRiftDK1SensorData.h>
+#include "common/device/OculusRiftDK1SensorData.h"
 #include "../../PluginCommon/CheckRecvSIGServiceData.h"
 #include <Windows.h>
 #include <boost/thread.hpp>
@@ -24,7 +24,7 @@ OculusRiftDK1Device::OculusRiftDK1Device(int argc, char **argv)
 	else 
 	{
 		std::cout << "Please execute with SIGServer address and port number." << std::endl;
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	this->parameterFileName = PARAM_FILE_NAME_OCULUS_RIFT_DK1_INI;
 }
@@ -90,6 +90,14 @@ void OculusRiftDK1Device::run()
 
 	while (1) 
 	{
+		if (_kbhit()){
+			int key = _getch();
+			if (key == 'r'){
+				pFusionResult->Reset();
+				std::cout << "Reset Orientation." << std::endl;
+			}
+		}
+
 		float r_yaw, r_pitch, r_roll;
 
 		OVR::Quatf q = pFusionResult->GetOrientation();
@@ -98,13 +106,12 @@ void OculusRiftDK1Device::run()
 
 //		std::cout << "yaw, pitch, roll = " << r_yaw << "," << r_pitch << "," << r_roll << std::endl;
 
-		OculusRiftDK1SensorData oculusRiftDK1SensorData;
-		oculusRiftDK1SensorData.setEulerAngle(r_yaw, r_pitch, r_roll);
-		this->sensorData = &oculusRiftDK1SensorData;
+		OculusRiftDK1SensorData sensorData;
+		sensorData.setEulerAngle(r_yaw, r_pitch, r_roll);
 
 		if (this->sendMessageFlag) 
 		{
-			const std::string sensorDataMessage = this->sensorData->encodeSensorData();
+			const std::string sensorDataMessage = sensorData.encodeSensorData();
 			const std::string messageHeader = this->generateMessageHeader();
 			const std::string message = messageHeader + sensorDataMessage;
 
@@ -136,7 +143,7 @@ void OculusRiftDK1Device::readIniFile()
 		std::cout << "Not exist : " << this->parameterFileName << std::endl;
 		std::cout << "Use default parameter." << std::endl;
 
-		this->serviceName    = SERVICE_NAME_OCULUS;
+		this->serviceName    = SERVICE_NAME_OCULUS_DK1;
 		this->deviceType     = DEV_TYPE_OCULUS_DK1;
 		this->deviceUniqueID = DEV_UNIQUE_ID_0;
 	}
