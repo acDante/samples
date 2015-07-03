@@ -124,7 +124,7 @@ void ManNiiAvatarControllerByKinectV2::onRecvMsg(RecvMsgEvent &evt)
 		// Set SIGVerse quaternions and positions
 		SimObj *obj = getObj(myname());
 		this->setPosition(obj, movingDistance);
-		this->setJointQuaternionsForKinect(obj, manNiiPosture);
+		this->setJointQuaternionsForKinect(obj, manNiiPosture, sensorData.sensorDataMode);
 	}
 	catch(SimObj::NoAttributeException &err)
 	{
@@ -173,17 +173,23 @@ void ManNiiAvatarControllerByKinectV2::setJointQuaternion(SimObj *obj, const Man
 	obj->setJointQuaternion(ManNiiPosture::manNiiJointTypeStr(joint.jointType).c_str(), joint.quaternion.w, joint.quaternion.x, joint.quaternion.y, joint.quaternion.z);
 }
 
-void ManNiiAvatarControllerByKinectV2::setJointQuaternionsForKinect(SimObj *obj, const ManNiiPosture &manNiiPosture)
+void ManNiiAvatarControllerByKinectV2::setJointQuaternionsForKinect(SimObj *obj, const ManNiiPosture &manNiiPosture, KinectV2SensorData::SensorDataMode sensorDataMode)
 {
+	if(sensorDataMode==KinectV2SensorData::SensorDataMode::POSITION)
+	{
+		this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::ROOT_JOINT0]);
+	}
 	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::WAIST_JOINT1]);
+
 	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::RARM_JOINT2]);
 	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::LARM_JOINT2]);
+	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::RARM_JOINT3]);
+	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::LARM_JOINT3]);
+
 	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::RLEG_JOINT2]);
 	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::LLEG_JOINT2]);
 	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::RLEG_JOINT4]);
 	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::LLEG_JOINT4]);
-	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::RARM_JOINT3]);
-	this->setJointQuaternion(obj, manNiiPosture.joint[ManNiiPosture::LARM_JOINT3]);
 }
 
 

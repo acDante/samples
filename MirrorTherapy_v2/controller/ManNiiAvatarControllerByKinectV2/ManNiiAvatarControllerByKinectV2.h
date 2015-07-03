@@ -64,7 +64,7 @@ public:
 
 	void setPosition(SimObj *obj, const SigCmn::Vector3 &pos);
 	void setJointQuaternion(SimObj *obj, const ManNiiPosture::ManNiiJoint &jq);
-	void setJointQuaternionsForKinect(SimObj *obj, const ManNiiPosture &manNiiPosture);
+	void setJointQuaternionsForKinect(SimObj *obj, const ManNiiPosture &manNiiPosture, KinectV2SensorData::SensorDataMode sensorDataMode);
 };
 
 #endif //__MAN_NII_AVATAR_CONTROLLER_BY_KINECT_V2_H__

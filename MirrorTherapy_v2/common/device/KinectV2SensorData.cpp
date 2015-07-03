@@ -178,10 +178,10 @@ bool KinectV2SensorData::setSensorData(const std::map<std::string, std::vector<s
 
 						KinectV2JointPosition tmpJointPosition;
 						tmpJointPosition.jointType     = this->shortJointName2KinectV2JointType((*it).first);
-						tmpJointPosition.position.x    = (float)atof((*it).second[1].c_str());
-						tmpJointPosition.position.y    = (float)atof((*it).second[2].c_str());
-						tmpJointPosition.position.z    = (float)atof((*it).second[3].c_str());
-						tmpJointPosition.trackingState = (KinectV2TrackingState)atoi((*it).second[0].c_str());
+						tmpJointPosition.position.x    = (float)atof((*it).second[0].c_str());
+						tmpJointPosition.position.y    = (float)atof((*it).second[1].c_str());
+						tmpJointPosition.position.z    = (float)atof((*it).second[2].c_str());
+						tmpJointPosition.trackingState = (KinectV2TrackingState)atoi((*it).second[3].c_str());
 
 						this->jointPositions[tmpJointPosition.jointType] = tmpJointPosition;
 						break;

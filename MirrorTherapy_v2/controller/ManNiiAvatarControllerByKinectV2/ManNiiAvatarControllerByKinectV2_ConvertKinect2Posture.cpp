@@ -13,7 +13,7 @@
 
 ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointOrientations2ManNiiPosture(const KinectV2SensorData::KinectV2JointOrientation* kinectV2Joints)
 {
-	ManNiiPosture manNiiPosture;
+	ManNiiPosture manNiiPosture = ManNiiPosture();
 
 	// TODO: Calculate for Neck, both wrists and both ankles.
 	const double coef = 1.0 / sqrt(2.0);
@@ -296,7 +296,7 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointOrientations
  */
 ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2ManNiiPosture(const KinectV2SensorData::KinectV2JointPosition* positionArray)
 {
-	ManNiiPosture manNiiPosture;
+	ManNiiPosture manNiiPosture = ManNiiPosture();
 
 	Quaternion q_waist, q_waist_joint1;
 	Quaternion q_head_joint1;
@@ -307,12 +307,12 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 
 	try
 	{
-		SigCmn::Vector3 spineBase, torso, neck, head,
+		SigCmn::Vector3 spineBase, neck, head, //, torso
 			lshoul, lelb, lwrist, lhand, rshoul, relb, rwrist, rhand,
 			lhip, lknee, lankle, lfoot, rhip, rknee, rankle, rfoot;
 
 		spineBase = positionArray[KinectV2SensorData::KinectV2JointType::SpineBase].position;
-		torso     = positionArray[KinectV2SensorData::KinectV2JointType::SpineMid].position;
+//		torso     = positionArray[KinectV2SensorData::KinectV2JointType::SpineMid].position;
 		neck      = positionArray[KinectV2SensorData::KinectV2JointType::Neck].position;
 		head      = positionArray[KinectV2SensorData::KinectV2JointType::Head].position;
 
@@ -341,10 +341,9 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 
 		if (SigCmn::diffVec(khip_vec, rhip, lhip))
 		{
-			//waist quaternion is calculated from (1,0,0) and hip vector
 			q_waist = Quaternion::calcQuaternionFromVector(this->getSigVec(SigVec::HIP), khip_vec);
 
-			//rrootq quaternion is calculated from hip vector and  (1,0,0)
+			//rrootq quaternion is calculated.
 			Quaternion rrootq = Quaternion::calcQuaternionFromVector(khip_vec, this->getSigVec(SigVec::HIP));
 
 			//waist
@@ -514,7 +513,7 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 			}
 
 			//ManNiiAvatarPosture posture;
-			manNiiPosture.joint[ManNiiPosture::ROOT_JOINT0].quaternion = q_waist;
+			manNiiPosture.joint[ManNiiPosture::ROOT_JOINT0].quaternion  = q_waist;
 			manNiiPosture.joint[ManNiiPosture::WAIST_JOINT1].quaternion = q_waist_joint1;
 
 			manNiiPosture.joint[ManNiiPosture::RARM_JOINT2].quaternion = q_rarm_joint2;
