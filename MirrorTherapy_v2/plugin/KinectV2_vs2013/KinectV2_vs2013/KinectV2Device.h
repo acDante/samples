@@ -22,27 +22,38 @@ inline void SafeRelease(Interface *& pInterfaceToRelease)
 class KinectV2Device : public Device
 {
 public:
+	enum SmoothingType
+	{
+		NONE,
+		SMA,
+		WMA,
+	};
+
 	///@brief Parameter file name.
 	static const std::string parameterFileName;
 
-	//Parameter file information
+	//Parameter file info (key)
 	static const std::string paramFileKeyKinectV2SensorDataMode;
+	static const std::string paramFileKeyKinectV2SmoothingType;
+	static const std::string paramFileKeyKinectV2SmoothingSMANum;
+	static const std::string paramFileKeyKinectV2SmoothingWMAWeight;
+
+	//Parameter file info (default value)
 	static const std::string paramFileValKinectV2SensorDataModeDefault;
+	static const std::string paramFileValKinectV2SmoothingTypeDefault;
+	static const std::string paramFileValKinectV2SmoothingSMANumDefault;
+	static const std::string paramFileValKinectV2SmoothingWMAWeightDefault;
 
 private:
+	SmoothingType smoothingType;
+	int    smoothingSMANum;
+	double smoothingWMAWeight;
+
 	int colorFrameWidth;
 	int colorFrameHeight;
 
 	///@brief Read parameter file.
 	void readIniFile();
-
-public:
-	KinectV2Device();
-	KinectV2Device(int argc, char **argv);
-	~KinectV2Device();
-
-	///@brief Initialize kinect v2 device.
-	int run();
 
 	void handStateProcessing(const JointType &hand, const HandState &handState, ICoordinateMapper* &coordinateMapper, Joint* joint, cv::Mat &image);
 
@@ -55,7 +66,30 @@ public:
 	///@brief Convert JointType to KinectV2JointType.
 	KinectV2SensorData::KinectV2JointType getKinectV2JointType(const JointType jointType);
 
-	KinectV2SensorData sensorData;
+	///@brief Set smoothing information.
+	void setSmoothingInfo(std::string typeStr, std::string smaNumStr, std::string wmaWeightStr);
+
+	///@brief Only get latest sensor data (No Smoothing)
+	KinectV2SensorData getLatestSensorData(const std::vector<KinectV2SensorData> &sensorDataList);
+
+	///@brief Smoothing by Simple Moving Average.
+	KinectV2SensorData smoothingBySMA(const std::vector<KinectV2SensorData> &sensorDataList);
+
+	///@brief Smoothing by Weighted Moving Average.
+	KinectV2SensorData smoothingByWMA(const std::vector<KinectV2SensorData> &sensorDataList);
+public:
+	KinectV2Device();
+	KinectV2Device(int argc, char **argv);
+	~KinectV2Device();
+
+	///@brief Execute Kinect v2 device.
+	int run();
+
+
+	std::string sensorDataModeStr;
+
+	std::vector<KinectV2SensorData> sensorDataList;
+	unsigned int sensorDataListNum;
 
 
 #ifdef DEBUG_PRINT

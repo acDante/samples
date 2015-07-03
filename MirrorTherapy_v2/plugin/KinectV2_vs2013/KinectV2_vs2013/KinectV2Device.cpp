@@ -15,7 +15,14 @@ const std::string KinectV2Device::parameterFileName = "KinectV2.ini";
 
 //Parameter file information
 const std::string KinectV2Device::paramFileKeyKinectV2SensorDataMode        = "KinectV2.sensor_data_mode";
-const std::string KinectV2Device::paramFileValKinectV2SensorDataModeDefault = "QUATERNION";
+const std::string KinectV2Device::paramFileKeyKinectV2SmoothingType         = "KinectV2.smoothing_type";
+const std::string KinectV2Device::paramFileKeyKinectV2SmoothingSMANum       = "KinectV2.smoothing_sma_num";
+const std::string KinectV2Device::paramFileKeyKinectV2SmoothingWMAWeight    = "KinectV2.smoothing_wma_weight";
+
+const std::string KinectV2Device::paramFileValKinectV2SensorDataModeDefault     = "QUATERNION";
+const std::string KinectV2Device::paramFileValKinectV2SmoothingTypeDefault      = "NONE";
+const std::string KinectV2Device::paramFileValKinectV2SmoothingSMANumDefault    = "3";
+const std::string KinectV2Device::paramFileValKinectV2SmoothingWMAWeightDefault = "0,8";
 
 
 ///@brief Default Constructor
@@ -80,7 +87,9 @@ void KinectV2Device::debugPrint()
 }
 #endif
 
-///@brief Initialize kinect v2 device.
+
+
+///@brief Execute kinect v2 device.
 int KinectV2Device::run()
 {
 	// Refer to https://github.com/UnaNancyOwen/Kinect2Sample/blob/master/Sample/Body/Body.cpp
@@ -91,7 +100,7 @@ int KinectV2Device::run()
 	{
 		//-- Prepare to use SIGService.
 		this->readIniFile();
-//		this->setSigServiceName();
+	//	this->setSigServiceName();
 
 		sigverse::SIGService sigService(this->serviceName);
 		this->initializeSigService(sigService);
@@ -276,10 +285,13 @@ int KinectV2Device::run()
 									spPos.y = joint[JointType::JointType_SpineBase].Position.Y;
 									spPos.z = joint[JointType::JointType_SpineBase].Position.Z;
 
+									//Sensor data
+									KinectV2SensorData sensorData = KinectV2SensorData(this->sensorDataModeStr);
+
 									// Set spine base position.
 									sensorData.setRootPosition(spPos);
 
-									switch (this->sensorData.sensorDataMode)
+									switch (sensorData.sensorDataMode)
 									{
 										case KinectV2SensorData::POSITION:
 										{
@@ -290,7 +302,7 @@ int KinectV2Device::run()
 											KinectV2SensorData::KinectV2JointPosition tmpKinectV2JointPositions[KinectV2SensorData::KinectV2JointType_Count];
 											this->convertJointPositions2KinectV2JointPositions(tmpPositions, tmpKinectV2JointPositions);
 
-											this->sensorData.setKinectV2JointPosition(tmpKinectV2JointPositions);
+											sensorData.setKinectV2JointPosition(tmpKinectV2JointPositions);
 #ifdef DEBUG_PRINT
 											if (SUCCEEDED(hResult))
 											{
@@ -315,7 +327,7 @@ int KinectV2Device::run()
 											KinectV2SensorData::KinectV2JointOrientation tmpKinectV2JointOrientations[KinectV2SensorData::KinectV2JointType_Count];
 											this->convertJointOrientations2KinectV2JointOrientations(tmpOrientations, tmpKinectV2JointOrientations);
 
-											this->sensorData.setKinectV2JointOrientation(tmpKinectV2JointOrientations);
+											sensorData.setKinectV2JointOrientation(tmpKinectV2JointOrientations);
 #ifdef DEBUG_PRINT
 											if (SUCCEEDED(hResult))
 											{
@@ -332,15 +344,57 @@ int KinectV2Device::run()
 											break;
 										}
 									}
-
-									if (SUCCEEDED(hResult) && this->sendMessageFlag) 
+									if (SUCCEEDED(hResult))
 									{
-										// Send message to SigServer.
-										const std::string sensorDataMessage = this->sensorData.encodeSensorData();
-										const std::string messageHeader = this->generateMessageHeader();
-										const std::string message = messageHeader + sensorDataMessage;
-										this->sendMessage(sigService, message);
-//										std::cout << "SEND: " << message << std::endl;
+										//Add new sensor data to sensorDataList.
+										this->sensorDataList.insert(this->sensorDataList.begin(), sensorData);
+
+										//Reduce sensor data number.
+										if (this->sensorDataList.size() > this->sensorDataListNum){ this->sensorDataList.pop_back(); }
+
+										//Execute smoothing 
+										KinectV2SensorData smoothedSensorData;
+
+										switch (sensorData.sensorDataMode)
+										{
+											case KinectV2SensorData::POSITION:
+											{
+												switch (this->smoothingType)
+												{
+													case NONE:
+													{
+														smoothedSensorData = this->getLatestSensorData(this->sensorDataList);
+														break;
+													}
+													case SMA:
+													{
+														smoothedSensorData = this->smoothingBySMA(this->sensorDataList);
+														break;
+													}
+													case WMA:
+													{
+														smoothedSensorData = this->smoothingByWMA(this->sensorDataList);
+														break;
+													}
+												}
+												break;
+											}
+											case KinectV2SensorData::QUATERNION:
+											{
+												smoothedSensorData = this->getLatestSensorData(this->sensorDataList);
+												break;
+											}
+										}
+
+										if (this->sendMessageFlag)
+										{
+											// Send message to SigServer.
+											const std::string sensorDataMessage = smoothedSensorData.encodeSensorData();
+											const std::string messageHeader = this->generateMessageHeader();
+											const std::string message = messageHeader + sensorDataMessage;
+											this->sendMessage(sigService, message);
+//											std::cout << "SEND: " << message << std::endl;
+										}
 									}
 								}
 							}
@@ -390,7 +444,8 @@ int KinectV2Device::run()
 	}
 	catch (std::exception &ex) 
 	{
-		std::cout << "Initialize sigservice ERR :" << ex.what() << std::endl;
+		std::cout << "run ERR :" << ex.what() << std::endl;
+		throw ex;
 	}
 
 #ifdef DEBUG_PRINT
@@ -496,17 +551,21 @@ void KinectV2Device::readIniFile()
 {
 	std::ifstream ifs(this->parameterFileName.c_str());
 
-	std::string sensorDataModeStr = paramFileValKinectV2SensorDataModeDefault;
+	this->serviceName    = SERVICE_NAME_KINECT_V2;
+	this->deviceType     = DEV_TYPE_KINECT_V2;
+	this->deviceUniqueID = DEV_UNIQUE_ID_0;
+	
+	this->sensorDataModeStr          = paramFileValKinectV2SensorDataModeDefault;
+	std::string smoothingTypeStr     = paramFileValKinectV2SmoothingTypeDefault;
+	std::string smoothingSMANumStr   = paramFileValKinectV2SmoothingSMANumDefault;
+	std::string smoothingWMAWeightStr= paramFileValKinectV2SmoothingWMAWeightDefault;
+
 
 	// Parameter file is "not" exists.
 	if (ifs.fail()) 
 	{
 		std::cout << "Not exist : " << this->parameterFileName << std::endl;
 		std::cout << "Use default parameter." << std::endl;
-
-		this->serviceName    = SERVICE_NAME_KINECT_V2;
-		this->deviceType     = DEV_TYPE_KINECT_V2;
-		this->deviceUniqueID = DEV_UNIQUE_ID_0;
 	}
 	// Parameter file is exists.
 	else 
@@ -522,7 +581,10 @@ void KinectV2Device::readIniFile()
 			this->deviceType     = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE);
 			this->deviceUniqueID = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID);
 
-			sensorDataModeStr    = pt.get<std::string>(paramFileKeyKinectV2SensorDataMode);
+			this->sensorDataModeStr = pt.get<std::string>(paramFileKeyKinectV2SensorDataMode);
+			smoothingTypeStr        = pt.get<std::string>(paramFileKeyKinectV2SmoothingType);
+			smoothingSMANumStr      = pt.get<std::string>(paramFileKeyKinectV2SmoothingSMANum);
+			smoothingWMAWeightStr   = pt.get<std::string>(paramFileKeyKinectV2SmoothingWMAWeight);
 		}
 		catch (std::string &ex)
 		{
@@ -537,11 +599,159 @@ void KinectV2Device::readIniFile()
 	}
 
 	
-	this->sensorData = KinectV2SensorData(sensorDataModeStr);
+	std::cout << PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME     << ":" << this->serviceName       << std::endl;
+	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE      << ":" << this->deviceType        << std::endl;
+	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID << ":" << this->deviceUniqueID    << std::endl;
+	std::cout << paramFileKeyKinectV2SensorDataMode          << ":" << this->sensorDataModeStr << std::endl;
+	std::cout << paramFileKeyKinectV2SmoothingType           << ":" << smoothingTypeStr        << std::endl;
+	std::cout << paramFileKeyKinectV2SmoothingSMANum         << ":" << smoothingSMANumStr      << std::endl;
+	std::cout << paramFileKeyKinectV2SmoothingWMAWeight      << ":" << smoothingWMAWeightStr   << std::endl;
 
-	std::cout << PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME     << ":" << this->serviceName    << std::endl;
-	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE      << ":" << this->deviceType     << std::endl;
-	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID << ":" << this->deviceUniqueID << std::endl;
-	std::cout << paramFileKeyKinectV2SensorDataMode          << ":" << this->sensorData.getSensorDataModeStr() << std::endl;
+	if (this->sensorDataModeStr == "QUATERNION")
+	{
+		this->sensorDataListNum = 1;
+	}
+	else if (this->sensorDataModeStr == "POSITION")
+	{
+		this->setSmoothingInfo(smoothingTypeStr, smoothingSMANumStr, smoothingWMAWeightStr);
+	}
+	else
+	{
+		throw std::exception("illegal sensor data mode!");
+	}
 }
 
+
+/*
+ * @brief Set smoothing information.
+ */
+void KinectV2Device::setSmoothingInfo(std::string typeStr, std::string smaNumStr, std::string wmaWeightStr)
+{
+	if (typeStr == "NONE")
+	{
+		this->smoothingType     = SmoothingType::NONE;
+		this->sensorDataListNum = 1;
+	}
+	else if (typeStr == "SMA")
+	{
+		this->smoothingSMANum   = std::atoi(smaNumStr.c_str());
+
+		this->smoothingType     = SmoothingType::SMA;
+		this->sensorDataListNum = this->smoothingSMANum;
+	}
+	else if (typeStr == "WMA")
+	{
+		this->smoothingWMAWeight = std::atof(wmaWeightStr.c_str());
+
+		this->smoothingType      = SmoothingType::WMA;
+		this->sensorDataListNum  = 2;
+	}
+	else
+	{
+		throw std::exception("illegal smoothing type!");
+	}
+}
+
+
+/*
+ * Return latest posture.
+ */
+KinectV2SensorData KinectV2Device::getLatestSensorData(const std::vector<KinectV2SensorData> &sensorDataList)
+{
+	KinectV2SensorData sensorData = KinectV2SensorData();
+
+	for (int i = 0; i < JointType::JointType_Count; i++)
+	{
+		sensorData.jointPositions[i].jointType     = sensorDataList[0].jointPositions[i].jointType;
+		sensorData.jointPositions[i].position.x    = sensorDataList[0].jointPositions[i].position.x;
+		sensorData.jointPositions[i].position.y    = sensorDataList[0].jointPositions[i].position.y;
+		sensorData.jointPositions[i].position.z    = sensorDataList[0].jointPositions[i].position.z;
+		sensorData.jointPositions[i].trackingState = sensorDataList[0].jointPositions[i].trackingState;
+	}
+
+	return sensorData;
+}
+
+
+/*
+ * Calculate Posture by Simple Moving Average.
+ */
+KinectV2SensorData KinectV2Device::smoothingBySMA(const std::vector<KinectV2SensorData> &sensorDataList)
+{
+	if (sensorDataList.size() < this->sensorDataListNum)
+	{
+		return this->getLatestSensorData(sensorDataList);
+	}
+
+	std::vector<KinectV2SensorData>::const_iterator it = sensorDataList.begin();
+
+	KinectV2SensorData sensorData = KinectV2SensorData();
+
+	//initialize
+	for (int i = 0; i < JointType::JointType_Count; i++)
+	{
+		sensorData.jointPositions[i].jointType     = (KinectV2SensorData::KinectV2JointType)i;
+		sensorData.jointPositions[i].position.x    = 0.0;
+		sensorData.jointPositions[i].position.y    = 0.0;
+		sensorData.jointPositions[i].position.z    = 0.0;
+		sensorData.jointPositions[i].trackingState = KinectV2SensorData::KinectV2TrackingState::Tracked;  //Fixed TrackingState to "Tracked"
+	}
+
+	//sum
+	for(int i = 0; i < this->smoothingSMANum; i++)
+	{
+		for (int i = 0; i < JointType::JointType_Count; i++)
+		{
+			sensorData.jointPositions[i].position.x += (*it).jointPositions[i].position.x;
+			sensorData.jointPositions[i].position.y += (*it).jointPositions[i].position.y;
+			sensorData.jointPositions[i].position.z += (*it).jointPositions[i].position.z;
+
+			//if ((*it).jointPositions[i].trackingState == TrackingState::TrackingState_NotTracked)
+			//{
+			//	sensorData.jointPositions[i].trackingState = KinectV2SensorData::KinectV2TrackingState::NotTracked;
+			//}
+			//if ((*it).jointPositions[i].trackingState == TrackingState::TrackingState_Inferred)
+			//{
+			//	sensorData.jointPositions[i].trackingState = KinectV2SensorData::KinectV2TrackingState::Inferred;
+			//}
+		}
+
+		it++;
+	}
+
+	//average
+	for (int i = 0; i < JointType::JointType_Count; i++)
+	{
+		sensorData.jointPositions[i].position.x /= this->smoothingSMANum;
+		sensorData.jointPositions[i].position.y /= this->smoothingSMANum;
+		sensorData.jointPositions[i].position.z /= this->smoothingSMANum;
+	}
+
+	return sensorData;
+}
+
+
+
+/*
+ * Calculate Posture by Weighted Moving Average.
+ */
+KinectV2SensorData KinectV2Device::smoothingByWMA(const std::vector<KinectV2SensorData> &sensorDataList)
+{
+	if (sensorDataList.size() < this->sensorDataListNum)
+	{
+		return this->getLatestSensorData(sensorDataList);
+	}
+
+	KinectV2SensorData sensorData = KinectV2SensorData();
+
+	for (int i = 0; i < JointType::JointType_Count; i++)
+	{
+		sensorData.jointPositions[i].jointType     = sensorDataList[0].jointPositions[i].jointType;
+		sensorData.jointPositions[i].position.x    = (float)(this->smoothingWMAWeight*sensorDataList[0].jointPositions[i].position.x + (1.0-this->smoothingWMAWeight)*sensorDataList[1].jointPositions[i].position.x);
+		sensorData.jointPositions[i].position.y    = (float)(this->smoothingWMAWeight*sensorDataList[0].jointPositions[i].position.y + (1.0-this->smoothingWMAWeight)*sensorDataList[1].jointPositions[i].position.y);
+		sensorData.jointPositions[i].position.z    = (float)(this->smoothingWMAWeight*sensorDataList[0].jointPositions[i].position.z + (1.0-this->smoothingWMAWeight)*sensorDataList[1].jointPositions[i].position.z);
+		sensorData.jointPositions[i].trackingState = KinectV2SensorData::KinectV2TrackingState::Tracked;  //Fixed TrackingState to "Tracked"
+	}
+
+	return sensorData;
+}
