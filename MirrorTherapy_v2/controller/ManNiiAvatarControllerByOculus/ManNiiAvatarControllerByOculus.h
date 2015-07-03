@@ -1,5 +1,5 @@
 /*
- * ManNiiAvatarController.h
+ * ManNiiAvatarControllerByOculus.h
  *
  *  Created on: 2015/03/12
  *      Author: Nozaki
@@ -10,15 +10,15 @@
 #include <sigverse/Controller.h>
 #include <sigverse/ControllerEvent.h>
 
-#include "../../Common/OculusRiftDK1SensorData.h"
+#include "../../common/device/OculusRiftDK1SensorData.h"
 
-#include "../ControllerCommon/AvatarController.h"
+#include "../ControllerCommon/ManNiiAvatarController.h"
 #include "../ControllerCommon/ManNiiPosture.h"
 
 
 #define PARAM_FILE_NAME_OCULUS_RIFT_DK1_INI  "OculusRiftDK1.ini"
 
-class ManNiiAvatarControllerByOculus : public AvatarController
+class ManNiiAvatarControllerByOculus : public ManNiiAvatarController
 {
 private:
 	///@brief Parameter file name.
@@ -31,8 +31,6 @@ private:
 	std::string oculusDK1DeviceUniqueID;
 
 	dQuaternion defaultHeadJoint0Quaternion;
-
-//	double prevYaw, prevPitch, prevRoll;
 
 	ManNiiPosture posture;
 
@@ -49,7 +47,7 @@ public:
 	void onInit(InitEvent &evt);
 
 	///@brief Convert euler angle to avatar posture structure.
-	void convertEulerAngle2ManNiiPosture(const SensorData::EulerAngleType &eulerAngle);
+	void convertEulerAngle2ManNiiPosture(const SigCmn::EulerAngleType &eulerAngle);
 
 	void setJointQuaternions(SimObj *obj);
 

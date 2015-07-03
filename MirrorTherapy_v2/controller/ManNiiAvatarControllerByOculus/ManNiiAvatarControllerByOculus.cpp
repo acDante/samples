@@ -1,15 +1,16 @@
 /*
- * ManNiiAvatarController.cpp
+ * ManNiiAvatarControllerByOculus.cpp
  *
  *  Created on: 2015/03/12
  *      Author: Nozaki
  */
 
 #include "ManNiiAvatarControllerByOculus.h"
-#include "../../Common/OculusRiftDK1SensorData.h"
+#include "../../common/device/OculusRiftDK1SensorData.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/exception/diagnostic_information.hpp>
+#include <cmath>
 
 ///@brief Initialize this controller.
 void ManNiiAvatarControllerByOculus::onInit(InitEvent &evt)
@@ -63,7 +64,7 @@ void ManNiiAvatarControllerByOculus::onRecvMsg(RecvMsgEvent &evt)
 
 	sensorData.setSensorData(sensorDataMap);
 
-	SensorData::EulerAngleType eulerAngle;
+	SigCmn::EulerAngleType eulerAngle;
 	eulerAngle.yaw   = sensorData.getYaw();
 	eulerAngle.pitch = sensorData.getPitch();
 	eulerAngle.roll  = sensorData.getRoll();
@@ -83,26 +84,26 @@ void ManNiiAvatarControllerByOculus::setJointQuaternionsForOculus(SimObj *obj)
 }
 
 
-void ManNiiAvatarControllerByOculus::convertEulerAngle2ManNiiPosture(const SensorData::EulerAngleType &eulerAngle)
+void ManNiiAvatarControllerByOculus::convertEulerAngle2ManNiiPosture(const SigCmn::EulerAngleType &eulerAngle)
 {
 	dQuaternion qyaw;
 	dQuaternion qpitch;
 	dQuaternion qroll;
 
-	qyaw[0] = cos(eulerAngle.yaw/2.0);
+	qyaw[0] = std::cos(eulerAngle.yaw/2.0);
 	qyaw[1] = 0.0;
-	qyaw[2] = sin(eulerAngle.yaw/2.0);
+	qyaw[2] = std::sin(eulerAngle.yaw/2.0);
 	qyaw[3] = 0.0;
 
-	qpitch[0] = cos(-eulerAngle.pitch/2.0);
-	qpitch[1] = sin(-eulerAngle.pitch/2.0);
+	qpitch[0] = std::cos(-eulerAngle.pitch/2.0);
+	qpitch[1] = std::sin(-eulerAngle.pitch/2.0);
 	qpitch[2] = 0.0;
 	qpitch[3] = 0.0;
 
-	qroll[0] = cos(-eulerAngle.roll/2.0);
+	qroll[0] = std::cos(-eulerAngle.roll/2.0);
 	qroll[1] = 0.0;
 	qroll[2] = 0.0;
-	qroll[3] = sin(-eulerAngle.roll/2.0);
+	qroll[3] = std::sin(-eulerAngle.roll/2.0);
 	dQuaternion tmpQ1;
 	dQuaternion tmpQ2;
 

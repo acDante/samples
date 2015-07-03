@@ -3,16 +3,20 @@ TARGET = ./ManNiiAvatarControllerByOculus.so
 
 # sources
 SRCS =\
-	$(COMMON)SensorData.cpp \
-	$(COMMON)OculusRiftDK1SensorData.cpp \
+	$(COMMON)SigCmn.cpp \
+	$(COMMON)Quaternion.cpp \
+	$(COMMON_DEVICE)SensorData.cpp \
+	$(COMMON_DEVICE)OculusRiftDK1SensorData.cpp \
 	$(CONTROLLER_COMMON)Posture.cpp \
-	$(CONTROLLER_COMMON)AvatarController.cpp \
 	$(CONTROLLER_COMMON)ManNiiPosture.cpp \
+	$(CONTROLLER_COMMON)AvatarController.cpp \
+	$(CONTROLLER_COMMON)ManNiiAvatarController.cpp \
 	$(CURRENT)ManNiiAvatarControllerByOculus.cpp \
 
 # source directories
 CURRENT = ./
-COMMON = ../../Common/
+COMMON = ../../common/
+COMMON_DEVICE = ../../common/device/
 CONTROLLER_COMMON = ../ControllerCommon/
 
 # sigverse path
