@@ -3,8 +3,9 @@ TARGET = ./ManNiiAvatarControllerByKinectV2.so
 
 # sources
 SRCS =\
-	$(COMMON)SensorData.cpp \
-	$(COMMON)KinectV2SensorData.cpp \
+	$(COMMON)Quaternion.cpp \
+	$(COMMON_DEVICE)SensorData.cpp \
+	$(COMMON_DEVICE)KinectV2SensorData.cpp \
 	$(CONTROLLER_COMMON)Posture.cpp \
 	$(CONTROLLER_COMMON)AvatarController.cpp \
 	$(CONTROLLER_COMMON)ManNiiPosture.cpp \
@@ -13,7 +14,8 @@ SRCS =\
 
 # source directories
 CURRENT = ./
-COMMON = ../../Common/
+COMMON = ../../common/
+COMMON_DEVICE = ../../common/device/
 CONTROLLER_COMMON = ../ControllerCommon/
 
 # sigverse path

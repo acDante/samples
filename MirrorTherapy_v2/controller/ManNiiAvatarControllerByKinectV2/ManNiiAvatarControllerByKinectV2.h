@@ -11,22 +11,24 @@
 #include <sigverse/comm/controller/Controller.h>
 #include <sigverse/ControllerEvent.h>
 
-#include "../ControllerCommon/AvatarController.h"
+#include "../ControllerCommon/ManNiiAvatarController.h"
 #include "../ControllerCommon/ManNiiPosture.h"
-#include "../../Common/KinectV2SensorData.h"
+#include "../../common/device/KinectV2SensorData.h"
 
 
-class ManNiiAvatarControllerByKinectV2 : public AvatarController
+class ManNiiAvatarControllerByKinectV2 : public ManNiiAvatarController
 {
-public:
 private:
 	///@brief Parameter file name.
 	static const std::string parameterFileName;
 
 	//Parameter file information
 	static const std::string paramFileKeyKinectV2SensorDataMode;
-	static const KinectV2SensorData::SensorDataMode paramFileValKinectV2SensorDataModeDefault;
+	static const std::string paramFileKeyKinectV2ScaleRatio;
+	static const std::string paramFileValKinectV2SensorDataModeDefault;
+	static const double      paramFileValKinectV2ScaleRatioDefault;
 
+	static const double normalization_range;
 
 	//ManNiiAvatarPosture posture;
 	BaseService *kinectV2Service;
@@ -35,13 +37,15 @@ private:
 	std::string kinectV2DeviceUniqueID;
 
 	std::string sensorDataModeStr;
-
-	//test output file tome-yamada start
-	void testPrint();
-	std::vector<std::string> timeInfoList;
-	//test output file tome-yamada end
+	double      scaleRatio;
 
 	void readIniFile();
+
+	SigCmn::Vector3 startpos;
+	bool started = false;
+
+	SigCmn::Vector3 iniPos;
+	double yrot;
 
 public:
 	///@brief Movement of the robot.
@@ -53,12 +57,19 @@ public:
 	///@brief Initialize this controller.
 	void onInit(InitEvent &evt);
 
+//	///@brief control avatar by Positions (sensor data mode = Position)
+//	void controlAvatarByPositions(const KinectV2SensorData &sensorData);
+//
+//	///@brief control avatar by Quaternions (sensor data mode = Quaternion)
+//	void controlAvatarByQuaternions(const KinectV2SensorData &sensorData);
+
 	///@brief Convert euler angle to avatar posture structure.
-	void convertKinectV2JointOrientations2ManNiiPosture(KinectV2SensorData::KinectV2JointOrientation *kinectV2Joints, ManNiiPosture &manNiiPosture);
+	ManNiiPosture convertKinectV2JointOrientations2ManNiiPosture(const KinectV2SensorData::KinectV2JointOrientation* kinectV2Joints);
+	ManNiiPosture convertKinectV2JointPosition2ManNiiPosture(const KinectV2SensorData::KinectV2JointPosition* positionArray);
 
-	void setJointQuaternion(SimObj *obj, ManNiiPosture::ManNiiJoint &jq);
-
-	void setJointQuaternionsForKinect(SimObj *obj, ManNiiPosture &manNiiPosture);
+	void setPosition(SimObj *obj, const SigCmn::Vector3 &pos);
+	void setJointQuaternion(SimObj *obj, const ManNiiPosture::ManNiiJoint &jq);
+	void setJointQuaternionsForKinect(SimObj *obj, const ManNiiPosture &manNiiPosture);
 };
 
 #endif //__MAN_NII_AVATAR_CONTROLLER_BY_KINECT_V2_H__

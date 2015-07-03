@@ -6,301 +6,559 @@
  *  Separated from ManNiiAvatarControllerByKinectV2.cpp
  */
 
-#include "../../Common/SensorData.h"
+#include "../../common/device/SensorData.h"
+#include "../../common/device/KinectV2SensorData.h"
 #include "ManNiiAvatarControllerByKinectV2.h"
 
 
-void ManNiiAvatarControllerByKinectV2::convertKinectV2JointOrientations2ManNiiPosture(KinectV2SensorData::KinectV2JointOrientation* kinectV2Joints, ManNiiPosture &manNiiPosture)
+ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointOrientations2ManNiiPosture(const KinectV2SensorData::KinectV2JointOrientation* kinectV2Joints)
 {
+	ManNiiPosture manNiiPosture;
+
 	// TODO: Calculate for Neck, both wrists and both ankles.
 	const double coef = 1.0 / sqrt(2.0);
 
-	Quaternion q0 = Quaternion(kinectV2Joints[0].orientation);
+//	Quaternion qSB = Quaternion(kinectV2Joints[KinectV2SensorData::KinectV2JointType::SpineBase    ].orientation);
+	Quaternion qSM = Quaternion(kinectV2Joints[KinectV2SensorData::KinectV2JointType::SpineMid     ].orientation);
+	Quaternion qSS = Quaternion(kinectV2Joints[KinectV2SensorData::KinectV2JointType::SpineShoulder].orientation);
+//	Quaternion qNK = Quaternion(kinectV2Joints[KinectV2SensorData::KinectV2JointType::Neck         ].orientation);
 
-	Quaternion q1 = Quaternion(kinectV2Joints[1].orientation);
-	Quaternion q1_h = Quaternion(0.0, 0.0, 1.0, 0.0);
-	Quaternion q1_rot = Quaternion::calcCrossProduct(q1_h, q1);
-	Quaternion q2 = Quaternion(kinectV2Joints[20].orientation);
-	Quaternion q2_h = Quaternion(0.0, 0.0, -1.0, 0.0);
-	Quaternion q2_rot = Quaternion::calcCrossProduct(q2, q2_h);
+	Quaternion qRE = Quaternion(kinectV2Joints[KinectV2SensorData::KinectV2JointType::ElbowRight   ].orientation);
+	Quaternion qRW = Quaternion(kinectV2Joints[KinectV2SensorData::KinectV2JointType::WristRight   ].orientation);
+	Quaternion qRH = Quaternion(kinectV2Joints[KinectV2SensorData::KinectV2JointType::HandRight    ].orientation);
+	Quaternion qRK = Quaternion(kinectV2Joints[KinectV2SensorData::KinectV2JointType::KneeRight    ].orientation);
+	Quaternion qRA = Quaternion(kinectV2Joints[KinectV2SensorData::KinectV2JointType::AnkleRight   ].orientation);
 
-	Quaternion q3 = Quaternion(kinectV2Joints[8].orientation);
-	Quaternion q4 = Quaternion(kinectV2Joints[9].orientation);
-	Quaternion q7 = Quaternion(kinectV2Joints[5].orientation);
-	Quaternion q9 = Quaternion(kinectV2Joints[10].orientation);
-	Quaternion q13 = Quaternion(kinectV2Joints[17].orientation);
-	Quaternion q15 = Quaternion(kinectV2Joints[13].orientation);
-	Quaternion q17 = Quaternion(kinectV2Joints[18].orientation);
-	Quaternion q19 = Quaternion(kinectV2Joints[14].orientation);
-	Quaternion q20 = Quaternion(kinectV2Joints[20].orientation);
-	Quaternion q20_rot = Quaternion::calcCrossProduct(q1_h, q20);
-	Quaternion q21 = Quaternion(kinectV2Joints[6].orientation);
-	Quaternion q25 = Quaternion(kinectV2Joints[11].orientation);
-	Quaternion q26 = Quaternion(kinectV2Joints[7].orientation);
-	Quaternion q1_con = Quaternion(q20_rot.w, -q20_rot.x, -q20_rot.y, -q20_rot.z);
-	Quaternion q30_con = Quaternion(q1_rot.w, -q1_rot.x, -q1_rot.y, -q1_rot.z);
-	Quaternion q30 = Quaternion(kinectV2Joints[2].orientation);
+	Quaternion qLE = Quaternion(kinectV2Joints[KinectV2SensorData::KinectV2JointType::ElbowLeft    ].orientation);
+	Quaternion qLW = Quaternion(kinectV2Joints[KinectV2SensorData::KinectV2JointType::WristLeft    ].orientation);
+	Quaternion qLH = Quaternion(kinectV2Joints[KinectV2SensorData::KinectV2JointType::HandLeft     ].orientation);
+	Quaternion qLK = Quaternion(kinectV2Joints[KinectV2SensorData::KinectV2JointType::KneeLeft     ].orientation);
+	Quaternion qLA = Quaternion(kinectV2Joints[KinectV2SensorData::KinectV2JointType::AnkleLeft    ].orientation);
+
+	Quaternion qSM_h   = Quaternion(0.0, 0.0, +1.0, 0.0);
+	Quaternion qNK_h   = Quaternion(0.0, 0.0, -1.0, 0.0);
+
+	Quaternion qSM_rot = Quaternion::calcCrossProduct(qSM_h, qSM);
+//	Quaternion qNK_rot = Quaternion::calcCrossProduct(qSS, qNK_h);
+	Quaternion qSS_rot = Quaternion::calcCrossProduct(qSM_h, qSS);
+
+	Quaternion qSM_con = Quaternion(qSS_rot.w, -qSS_rot.x, -qSS_rot.y, -qSS_rot.z);
+//	Quaternion q30_con = Quaternion(qSM_rot.w, -qSM_rot.x, -qSM_rot.y, -qSM_rot.z);
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	/////////////////////////// Neck quaternion //////////////////////
-	q30 = Quaternion::calcCrossProduct(q1_h, q30);
-	q30 = Quaternion::calcCrossProduct(q30_con, q30);
 
-	////////////////////////////////////////////////////////////////////
+//	//////////////  Neck quaternion  ///////////////////////////////////
+//	qNK = Quaternion::calcCrossProduct(qSM_h, qNK);
+//	qNK = Quaternion::calcCrossProduct(q30_con, qNK);
+//	////////////////////////////////////////////////////////////////////
 
 
-	///////////////////////////  Right Arm quaternion //////////////////////
-	Quaternion q5;
-	Quaternion q5_x = Quaternion(coef, -coef, 0.0, 0.0);
-	Quaternion q5_z = Quaternion(coef, 0.0, 0.0, -coef);
-	Quaternion q5_y = Quaternion(coef, 0.0, -coef, 0.0);
-	Quaternion q5_rotx = Quaternion::calcCrossProduct(q5_x, q4);
-	q5.w = q5_rotx.w;
-	q5.x = q5_rotx.y;
-	q5.y = q5_rotx.z;
-	q5.z = q5_rotx.x;
-	q5 = Quaternion::calcCrossProduct(q2_h, q5);
-
-	q5 = Quaternion::calcCrossProduct(q5_y, q5);
-	//q5.w = q5.w;
-	q5.x = -q5.x;
-	q5.y = -q5.y;
-	//q5.z = q5.z;
-	q5 = Quaternion::calcCrossProduct(q1_con, q5);
+	//////////////  RARM_LINK2 quaternion  ///////////////////////////////////
+	Quaternion qRA2;
+	Quaternion qRA2_x = Quaternion(coef, -coef, 0.0, 0.0);
+//	Quaternion qRA2_z = Quaternion(coef, 0.0, 0.0, -coef);
+	Quaternion qRA2_y = Quaternion(coef, 0.0, -coef, 0.0);
+	Quaternion qRA2_rotx = Quaternion::calcCrossProduct(qRA2_x, qRE);
+	qRA2.w = qRA2_rotx.w;
+	qRA2.x = qRA2_rotx.y;
+	qRA2.y = qRA2_rotx.z;
+	qRA2.z = qRA2_rotx.x;
+	qRA2 = Quaternion::calcCrossProduct(qNK_h, qRA2);
+	qRA2 = Quaternion::calcCrossProduct(qRA2_y, qRA2);
+	qRA2.w = +qRA2.w;
+	qRA2.x = -qRA2.x;
+	qRA2.y = -qRA2.y;
+	qRA2.z = +qRA2.z;
+	qRA2 = Quaternion::calcCrossProduct(qSM_con, qRA2);
 	//////////////////////////////////////////////////////////////////////
 
-	////////////// Left Arm quaternion ///////////////////////////////////
-	Quaternion q6;
-	Quaternion q6_x = Quaternion(coef, coef, 0.0, 0.0);
-	Quaternion q6_z = Quaternion(coef, 0.0, 0.0, coef);
-	Quaternion q6_y = Quaternion(coef, 0.0, coef, 0.0);
-	Quaternion q6_rotx = Quaternion::calcCrossProduct(q6_x, q7);
-	q6.w = q6_rotx.w;
-	q6.x = q6_rotx.y;
-	q6.y = q6_rotx.z;
-	q6.z = q6_rotx.x;
-	q6 = Quaternion::calcCrossProduct(q2_h, q6);
-	q6 = Quaternion::calcCrossProduct(q6_y, q6);
-	//q6.w = q6.w;
-	//q6.x = q6.x;
-	//q6.y = q6.y;
-	//q6.z = q6.z;
-	q6 = Quaternion::calcCrossProduct(q1_con, q6);
+	//////////////  RARM_LINK4 quaternion  ///////////////////////////////////
+	Quaternion qRA2_con;
+	qRA2_con.w = +qRA2.w;
+	qRA2_con.x = -qRA2.x;
+	qRA2_con.y = -qRA2.y;
+	qRA2_con.z = -qRA2.z;
 
-	//////////////////////////////////////////////////////////////////////////
-
-	///////////////////////////  Right hipe quaternion //////////////////////
-	Quaternion q12;
-	Quaternion q12_x = Quaternion(coef, -coef, 0.0, 0.0);
-	Quaternion q12_z = Quaternion(coef, 0.0, 0.0, -coef);
-	Quaternion q12_y = Quaternion(coef, 0.0, coef, 0.0);
-	Quaternion q12_rotx = Quaternion::calcCrossProduct(q12_x, q13);
-	Quaternion q3_h = Quaternion(0.0, 0.0, 1.0, 0.0);
-	Quaternion q12_h = Quaternion(0.0, 0.0, 0.0, -1.0);
-	q12 = Quaternion::calcCrossProduct(q12_h, q13);
-	Quaternion q12_b = Quaternion::calcCrossProduct(q12_y, q12);
-	q12.w = q12_b.w;
-	q12.x = -q12_b.z;
-	q12.y = -q12_b.y;
-	q12.z = -q12_b.x;
-	//////////////////////////////////////////////////////////////////////
-
-	///////////////////////////  Right leg quaternion //////////////////////
-	Quaternion q16;
-	Quaternion q16_x = Quaternion(coef, -coef, 0.0, 0.0);
-	Quaternion q16_z = Quaternion(coef, 0.0, 0.0, -coef);
-	Quaternion q16_y = Quaternion(coef, 0.0, coef, 0.0);
-	Quaternion q16_rotx = Quaternion::calcCrossProduct(q16_x, q17);
-	Quaternion q16_h = Quaternion(0.0, 0.0, 0.0, -1.0);
-	q16 = Quaternion::calcCrossProduct(q16_h, q17);
-	Quaternion q16_b = Quaternion::calcCrossProduct(q16_y, q16);
-	q16.w = q16_b.w;
-	q16.x = -q16_b.z;
-	q16.y = -q16_b.y;
-	q16.z = -q16_b.x;
-
-	Quaternion  q12_con;
-	q12_con.w = q12.w;
-	q12_con.x = -q12.x;
-	q12_con.y = -q12.y;
-	q12_con.z = -q12.z;
-	q16 = Quaternion::calcCrossProduct(q12_con, q16);
-	//////////////////////////////////////////////////////////////////////
-
-
-	///////////////////////////  left hipe quaternion //////////////////////
-	Quaternion q14;
-	Quaternion q14_x = Quaternion(coef, -coef, 0.0, 0.0);
-	Quaternion q14_z = Quaternion(coef, 0.0, 0.0, -coef);
-	Quaternion q14_y = Quaternion(coef, 0.0, -coef, 0.0);
-	Quaternion q14_rotx = Quaternion::calcCrossProduct(q14_x, q15);
-
-	Quaternion q14_h = Quaternion(0.0, 0.0, 0.0, 1.0);
-	q14 = Quaternion::calcCrossProduct(q14_h, q15);
-	Quaternion q14_b = Quaternion::calcCrossProduct(q14_y, q14);
-	q14.w = q14_b.w;
-	q14.x = q14_b.z;
-	q14.y = -q14_b.y;
-	q14.z = q14_b.x;
-	//q14 = Quaternion::calcCrossProduct(q2_h, q14);
-	//////////////////////////////////////////////////////////////////////
-
-
-	///////////////////////////  left leg quaternion //////////////////////
-	Quaternion q18;
-	Quaternion q18_x = Quaternion(coef, -coef, 0.0, 0.0);
-	Quaternion q18_z = Quaternion(coef, 0.0, 0.0, -coef);
-	Quaternion q18_y = Quaternion(coef, 0.0, -coef, 0.0);
-	Quaternion q18_rotx = Quaternion::calcCrossProduct(q18_x, q19);
-	Quaternion q18_h = Quaternion(0.0, 0.0, 0.0, 1.0);
-	q18 = Quaternion::calcCrossProduct(q18_h, q19);
-	Quaternion q18_b = Quaternion::calcCrossProduct(q18_y, q18);
-	q18.w = q18_b.w;
-	q18.x = q18_b.z;
-	q18.y = -q18_b.y;
-	q18.z = q18_b.x;
-
-	Quaternion  q14_con;
-	q14_con.w = q14.w;
-	q14_con.x = -q14.x;
-	q14_con.y = -q14.y;
-	q14_con.z = -q14.z;
-	q18 = Quaternion::calcCrossProduct(q14_con, q18);
-	//////////////////////////////////////////////////////////////////////
-
-
-	////////////// Right for Arm  quaternion /////////////////////////////
-	Quaternion q8;
-	Quaternion q8_x = Quaternion(coef, -coef, 0.0, 0.0);
-	Quaternion q8_z = Quaternion(coef, 0.0, 0.0, coef);
-	Quaternion q8_y = Quaternion(coef, 0.0, coef, 0.0);
-	Quaternion q8_rotx = Quaternion::calcCrossProduct(q8_x, q9);
-
-	q8.w = q8_rotx.w;
-	q8.x = q8_rotx.y;
-	q8.y = q8_rotx.z;
-	q8.z = q8_rotx.x;
-	q8 = Quaternion::calcCrossProduct(q8_y, q8);
-	Quaternion q8_xx = Quaternion(0.0, 1.0, 0.0, 0.0);
-	Quaternion q8_zz = Quaternion(0.0, 0.0, 0.0, 1.0);
-	Quaternion  q8_va = Quaternion(q8.w, q8.x, q8.y, q8.z);
-
-	q8 = Quaternion::calcCrossProduct(q2_h, q8);
-	q8.w = q8_va.w;
-	q8.x = -q8_va.x;
-	q8.y = -q8_va.y;
-	q8.z = q8_va.z;
-
-	Quaternion q5_con;
-	q5_con.w = q5.w;
-	q5_con.x = -q5.x;
-	q5_con.y = -q5.y;
-	q5_con.z = -q5.z;
-	q8 = Quaternion::calcCrossProduct(q5_con, q8);
+	Quaternion qRA4;
+	Quaternion qRA4_x = Quaternion(coef, -coef, 0.0, 0.0);
+//	Quaternion qRA4_z = Quaternion(coef, 0.0, 0.0, coef);
+	Quaternion qRA4_y = Quaternion(coef, 0.0, coef, 0.0);
+	Quaternion qRA4_rotx = Quaternion::calcCrossProduct(qRA4_x, qRW);
+	qRA4.w = qRA4_rotx.w;
+	qRA4.x = qRA4_rotx.y;
+	qRA4.y = qRA4_rotx.z;
+	qRA4.z = qRA4_rotx.x;
+	qRA4 = Quaternion::calcCrossProduct(qRA4_y, qRA4);
+	Quaternion qRA4_va = Quaternion(qRA4.w, qRA4.x, qRA4.y, qRA4.z);
+	qRA4 = Quaternion::calcCrossProduct(qNK_h, qRA4);
+	qRA4.w = +qRA4_va.w;
+	qRA4.x = -qRA4_va.x;
+	qRA4.y = -qRA4_va.y;
+	qRA4.z = +qRA4_va.z;
+	qRA4 = Quaternion::calcCrossProduct(qRA2_con, qRA4);
 	////////////////////////////////////////////////////////////////////////
 
-	////////////// Left for Arm  quaternion ////////////////////////////////
-	Quaternion q22;
-	Quaternion q22_x = Quaternion(coef, -coef, 0.0, 0.0);
-	Quaternion q22_z = Quaternion(coef, 0.0, 0.0, coef);
-	Quaternion q22_y = Quaternion(coef, 0.0, -coef, 0.0);
-	Quaternion q22_rotx = Quaternion::calcCrossProduct(q22_x, q21);
+//	//////////////  RARM_LINK7 quaternion  ///////////////////////////////////
+//	Quaternion qRA4_con;
+//	qRA4_con.w = +qRA4.w;
+//	qRA4_con.x = -qRA4.x;
+//	qRA4_con.y = -qRA4.y;
+//	qRA4_con.z = -qRA4.z;
+//
+//	Quaternion qRA7;
+//	Quaternion qRA7_x = Quaternion(coef, -coef, 0.0, 0.0);
+////	Quaternion qRA7_z = Quaternion(coef, 0.0, 0.0, coef);
+//	Quaternion qRA7_y = Quaternion(coef, 0.0, -coef, 0.0);
+//	Quaternion qRA7_rotx = Quaternion::calcCrossProduct(qRA7_x, qRH);
+//	qRA7.w = qRA7_rotx.w;
+//	qRA7.x = qRA7_rotx.y;
+//	qRA7.y = qRA7_rotx.z;
+//	qRA7.z = qRA7_rotx.x;
+//	qRA7 = Quaternion::calcCrossProduct(qRA7_y, qRA7);
+//	Quaternion qRA7_va = Quaternion(qRA7.w, qRA7.x, qRA7.y, qRA7.z);
+//	qRA7 = Quaternion::calcCrossProduct(qNK_h, qRA7);
+//	qRA7.w = qRA7_va.w;
+//	qRA7.x = qRA7_va.x;
+//	qRA7.y = qRA7_va.y;
+//	qRA7.z = qRA7_va.z;
+//	qRA7 = Quaternion::calcCrossProduct(qRA4_con, qRA7);
+//	//////////////////////////////////////////////////////////////////////////
 
-	q22.w = q22_rotx.w;
-	q22.x = q22_rotx.y;
-	q22.y = q22_rotx.z;
-	q22.z = q22_rotx.x;
-	q22 = Quaternion::calcCrossProduct(q22_y, q22);
 
-	Quaternion q22_xx = Quaternion(0.0, 1.0, 0.0, 0.0);
-	Quaternion q22_zz = Quaternion(0.0, 0.0, 0.0, 1.0);
-	Quaternion  q22_va = Quaternion(q22.w, q22.x, q22.y, q22.z);
-
-	q22 = Quaternion::calcCrossProduct(q2_h, q8);
-	q22.w = q22_va.w;
-	q22.x = q22_va.x;
-	q22.y = -q22_va.y;
-	q22.z = -q22_va.z;
-
-	Quaternion q6_con;
-	q6_con.w = q6.w;
-	q6_con.x = -q6.x;
-	q6_con.y = -q6.y;
-	q6_con.z = -q6.z;
-	q22 = Quaternion::calcCrossProduct(q6_con, q22);
-
+	//////////////  LARM_LINK2 quaternion  ///////////////////////////////////
+	Quaternion qLA2;
+	Quaternion qLA2_x = Quaternion(coef, coef, 0.0, 0.0);
+//	Quaternion qLA2_z = Quaternion(coef, 0.0, 0.0, coef);
+	Quaternion qLA2_y = Quaternion(coef, 0.0, coef, 0.0);
+	Quaternion qLA2_rotx = Quaternion::calcCrossProduct(qLA2_x, qLE);
+	qLA2.w = qLA2_rotx.w;
+	qLA2.x = qLA2_rotx.y;
+	qLA2.y = qLA2_rotx.z;
+	qLA2.z = qLA2_rotx.x;
+	qLA2 = Quaternion::calcCrossProduct(qNK_h, qLA2);
+	qLA2 = Quaternion::calcCrossProduct(qLA2_y, qLA2);
+	qLA2.w = +qLA2.w;
+	qLA2.x = +qLA2.x;
+	qLA2.y = +qLA2.y;
+	qLA2.z = +qLA2.z;
+	qLA2 = Quaternion::calcCrossProduct(qSM_con, qLA2);
 	//////////////////////////////////////////////////////////////////////////
 
+	//////////////  LARM_LINK4 quaternion  ///////////////////////////////////
+	Quaternion qLA2_con;
+	qLA2_con.w = +qLA2.w;
+	qLA2_con.x = -qLA2.x;
+	qLA2_con.y = -qLA2.y;
+	qLA2_con.z = -qLA2.z;
 
-
-	////////////// Right hand  quaternion ////////////////////////////////////
-	Quaternion q27;
-	Quaternion q27_x = Quaternion(coef, -coef, 0.0, 0.0);
-	Quaternion q27_z = Quaternion(coef, 0.0, 0.0, coef);
-	Quaternion q27_y = Quaternion(coef, 0.0, -coef, 0.0);
-	Quaternion q27_rotx = Quaternion::calcCrossProduct(q27_x, q25);
-	q27.w = q27_rotx.w;
-	q27.x = q27_rotx.y;
-	q27.y = q27_rotx.z;
-	q27.z = q27_rotx.x;
-	Quaternion q27_xx = Quaternion(0.0, 1.0, 0.0, 0.0);
-	Quaternion q27_zz = Quaternion(0.0, 0.0, 0.0, 1.0);
-	Quaternion  q27_va = Quaternion(q27.w, q27.x, q27.y, q27.z);
-	q27 = Quaternion::calcCrossProduct(q2_h, q27);
-	q27.w = q27_va.w;
-	q27.x = q27_va.x;
-	q27.y = q27_va.y;
-	q27.z = q27_va.z;
-	Quaternion q8_con;
-	q8_con.w = q8.w;
-	q8_con.x = -q8.x;
-	q8_con.y = -q8.y;
-	q8_con.z = -q8.z;
-	q27 = Quaternion::calcCrossProduct(q8_con, q27);
+	Quaternion qLA4;
+	Quaternion qLA4_x = Quaternion(coef, -coef, 0.0, 0.0);
+//	Quaternion qLA4_z = Quaternion(coef, 0.0, 0.0, coef);
+	Quaternion qLA4_y = Quaternion(coef, 0.0, -coef, 0.0);
+	Quaternion qLA4_rotx = Quaternion::calcCrossProduct(qLA4_x, qLW);
+	qLA4.w = qLA4_rotx.w;
+	qLA4.x = qLA4_rotx.y;
+	qLA4.y = qLA4_rotx.z;
+	qLA4.z = qLA4_rotx.x;
+	qLA4 = Quaternion::calcCrossProduct(qLA4_y, qLA4);
+	Quaternion qLA4_va = Quaternion(qLA4.w, qLA4.x, qLA4.y, qLA4.z);
+	qLA4 = Quaternion::calcCrossProduct(qNK_h, qRA4);
+	qLA4.w = +qLA4_va.w;
+	qLA4.x = +qLA4_va.x;
+	qLA4.y = -qLA4_va.y;
+	qLA4.z = -qLA4_va.z;
+	qLA4 = Quaternion::calcCrossProduct(qLA2_con, qLA4);
 	//////////////////////////////////////////////////////////////////////////
 
+//	//////////////  LARM_LINK7 quaternion  ///////////////////////////////////
+//	Quaternion qLA4_con;
+//	qLA4_con.w = +qLA4.w;
+//	qLA4_con.x = -qLA4.x;
+//	qLA4_con.y = -qLA4.y;
+//	qLA4_con.z = -qLA4.z;
+//
+//	Quaternion qLA7;
+//	Quaternion qLA7_x = Quaternion(coef, -coef, 0.0, 0.0);
+////	Quaternion qLA7_z = Quaternion(coef, 0.0, 0.0, coef);
+//	Quaternion qLA7_y = Quaternion(coef, 0.0, -coef, 0.0);
+//	Quaternion qLA7_rotx = Quaternion::calcCrossProduct(qLA7_x, qLH);
+//	qLA7.w = qLA7_rotx.w;
+//	qLA7.x = qLA7_rotx.y;
+//	qLA7.y = qLA7_rotx.z;
+//	qLA7.z = qLA7_rotx.x;
+//	qLA7 = Quaternion::calcCrossProduct(qLA7_y, qLA7);
+//	Quaternion qLA7_va = Quaternion(qLA7.w, qLA7.x, qLA7.y, qLA7.z);
+//	qLA7 = Quaternion::calcCrossProduct(qNK_h, qLA7);
+//	qLA7.w = +qLA7_va.w;
+//	qLA7.x = +qLA7_va.x;
+//	qLA7.y = -qLA7_va.y;
+//	qLA7.z = -qLA7_va.z;
+//	qLA7 = Quaternion::calcCrossProduct(qLA4_con, qLA7);
+//	//////////////////////////////////////////////////////////////////////////
 
-	////////////// Left Hand  quaternion ///////////////////////////////////
-	Quaternion q28;
-	Quaternion q28_x = Quaternion(coef, -coef, 0.0, 0.0);
-	Quaternion q28_z = Quaternion(coef, 0.0, 0.0, coef);
-	Quaternion q28_y = Quaternion(coef, 0.0, -coef, 0.0);
-	Quaternion q28_rotx = Quaternion::calcCrossProduct(q28_x, q26);
 
-	q28.w = q28_rotx.w;
-	q28.x = q28_rotx.y;
-	q28.y = q28_rotx.z;
-	q28.z = q28_rotx.x;
-	q28 = Quaternion::calcCrossProduct(q28_y, q28);
-	Quaternion q28_xx = Quaternion(0.0, 1.0, 0.0, 0.0);
-	Quaternion q28_zz = Quaternion(0.0, 0.0, 0.0, 1.0);
-	Quaternion  q28_va = Quaternion(q28.w, q28.x, q28.y, q28.z);
-	q28 = Quaternion::calcCrossProduct(q2_h, q28);
-	q28.w = q28_va.w;
-	q28.x = q28_va.x;
-	q28.y = -q28_va.y;
-	q28.z = -q28_va.z;
-	Quaternion q22_con;
-	q22_con.w = q22.w;
-	q22_con.x = -q22.x;
-	q22_con.y = -q22.y;
-	q22_con.z = -q22.z;
-	q28 = Quaternion::calcCrossProduct(q22_con, q28);
+	//////////////  RLEG_LINK2 quaternion  ///////////////////////////////////
+	Quaternion qRL2;
+//	Quaternion qRL2_x = Quaternion(coef, -coef, 0.0, 0.0);
+//	Quaternion qRL2_z = Quaternion(coef, 0.0, 0.0, -coef);
+	Quaternion qRL2_y = Quaternion(coef, 0.0, coef, 0.0);
+	Quaternion qRL2_h = Quaternion(0.0, 0.0, 0.0, -1.0);
+	qRL2 = Quaternion::calcCrossProduct(qRL2_h, qRK);
+	Quaternion qRL2_b = Quaternion::calcCrossProduct(qRL2_y, qRL2);
+	qRL2.w = +qRL2_b.w;
+	qRL2.x = -qRL2_b.z;
+	qRL2.y = -qRL2_b.y;
+	qRL2.z = -qRL2_b.x;
+	//////////////////////////////////////////////////////////////////////
 
-	//ManNiiAvatarPosture posture;
-	manNiiPosture.joint[ManNiiPosture::WAIST_JOINT1].quaternion = q1_rot;
+	//////////////  RLEG_LINK4 quaternion  ///////////////////////////////////
+	Quaternion  qRL2_con;
+	qRL2_con.w = +qRL2.w;
+	qRL2_con.x = -qRL2.x;
+	qRL2_con.y = -qRL2.y;
+	qRL2_con.z = -qRL2.z;
+
+	Quaternion qRL4;
+//	Quaternion qRL4_x = Quaternion(coef, -coef, 0.0, 0.0);
+//	Quaternion qRL4_z = Quaternion(coef, 0.0, 0.0, -coef);
+	Quaternion qRL4_y = Quaternion(coef, 0.0, coef, 0.0);
+	Quaternion qRL4_h = Quaternion(0.0, 0.0, 0.0, -1.0);
+	qRL4 = Quaternion::calcCrossProduct(qRL4_h, qRA);
+	Quaternion qRL4_b = Quaternion::calcCrossProduct(qRL4_y, qRL4);
+	qRL4.w = +qRL4_b.w;
+	qRL4.x = -qRL4_b.z;
+	qRL4.y = -qRL4_b.y;
+	qRL4.z = -qRL4_b.x;
+	qRL4 = Quaternion::calcCrossProduct(qRL2_con, qRL4);
+	//////////////////////////////////////////////////////////////////////
+
+
+	//////////////  LLEG_LINK2 quaternion  ///////////////////////////////////
+	Quaternion qLL2;
+//	Quaternion qLL2_x = Quaternion(coef, -coef, 0.0, 0.0);
+//	Quaternion qLL2_z = Quaternion(coef, 0.0, 0.0, -coef);
+	Quaternion qLL2_y = Quaternion(coef, 0.0, -coef, 0.0);
+	Quaternion qLL2_h = Quaternion(0.0, 0.0, 0.0, 1.0);
+	qLL2 = Quaternion::calcCrossProduct(qLL2_h, qLK);
+	Quaternion qLL2_b = Quaternion::calcCrossProduct(qLL2_y, qLL2);
+	qLL2.w = +qLL2_b.w;
+	qLL2.x = +qLL2_b.z;
+	qLL2.y = -qLL2_b.y;
+	qLL2.z = +qLL2_b.x;
+	//////////////////////////////////////////////////////////////////////
+
+	//////////////  LLEG_LINK4 quaternion  ///////////////////////////////////
+	Quaternion  qLL2_con;
+	qLL2_con.w = +qLL2.w;
+	qLL2_con.x = -qLL2.x;
+	qLL2_con.y = -qLL2.y;
+	qLL2_con.z = -qLL2.z;
+
+	Quaternion qLL4;
+//	Quaternion qLL4_x = Quaternion(coef, -coef, 0.0, 0.0);
+//	Quaternion qLL4_z = Quaternion(coef, 0.0, 0.0, -coef);
+	Quaternion qLL4_y = Quaternion(coef, 0.0, -coef, 0.0);
+	Quaternion qLL4_h = Quaternion(0.0, 0.0, 0.0, 1.0);
+	qLL4 = Quaternion::calcCrossProduct(qLL4_h, qLA);
+	Quaternion qLL4_b = Quaternion::calcCrossProduct(qLL4_y, qLL4);
+	qLL4.w = +qLL4_b.w;
+	qLL4.x = +qLL4_b.z;
+	qLL4.y = -qLL4_b.y;
+	qLL4.z = +qLL4_b.x;
+	qLL4 = Quaternion::calcCrossProduct(qLL2_con, qLL4);
+	//////////////////////////////////////////////////////////////////////
+
+
+	/*
+	 * ManNiiAvatarPosture posture;
+	 */
+	manNiiPosture.joint[ManNiiPosture::WAIST_JOINT1].quaternion = qSM_rot;
 	//manNiiPosture.joint[ManNiiPosture::HEAD_JOINT0].quaternion = q30;
-	manNiiPosture.joint[ManNiiPosture::RARM_JOINT2].quaternion = q5;
-	manNiiPosture.joint[ManNiiPosture::LARM_JOINT2].quaternion = q6;
-	manNiiPosture.joint[ManNiiPosture::RLEG_JOINT2].quaternion = q12;
-	manNiiPosture.joint[ManNiiPosture::LLEG_JOINT2].quaternion = q14;
-	manNiiPosture.joint[ManNiiPosture::RLEG_JOINT4].quaternion = q16;
-	manNiiPosture.joint[ManNiiPosture::LLEG_JOINT4].quaternion = q18;
-	manNiiPosture.joint[ManNiiPosture::RARM_JOINT3].quaternion = q8;
-	manNiiPosture.joint[ManNiiPosture::LARM_JOINT3].quaternion = q22;
-//	this->posture.joint[ManNiiPosture::RARM_JOINT5].quaternion = q27;
-//	this->posture.joint[ManNiiPosture::LARM_JOINT5].quaternion = q28;
+
+	manNiiPosture.joint[ManNiiPosture::RARM_JOINT2].quaternion = qRA2;
+	manNiiPosture.joint[ManNiiPosture::LARM_JOINT2].quaternion = qLA2;
+	manNiiPosture.joint[ManNiiPosture::RARM_JOINT3].quaternion = qRA4;
+	manNiiPosture.joint[ManNiiPosture::LARM_JOINT3].quaternion = qLA4;
+	//	this->posture.joint[ManNiiPosture::RARM_JOINT5].quaternion = qRA7;
+	//	this->posture.joint[ManNiiPosture::LARM_JOINT5].quaternion = qLA7;
+
+	manNiiPosture.joint[ManNiiPosture::RLEG_JOINT2].quaternion = qRL2;
+	manNiiPosture.joint[ManNiiPosture::LLEG_JOINT2].quaternion = qLL2;
+	manNiiPosture.joint[ManNiiPosture::RLEG_JOINT4].quaternion = qRL4;
+	manNiiPosture.joint[ManNiiPosture::LLEG_JOINT4].quaternion = qLL4;
+
+	return manNiiPosture;
+}
 
 
-//	timeInfoList.push_back(tmpStr.str());
+/*
+ * SIGVerse送信用動作情報電文を作成する
+ */
+ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2ManNiiPosture(const KinectV2SensorData::KinectV2JointPosition* positionArray)
+{
+	ManNiiPosture manNiiPosture;
+
+	Quaternion q_waist, q_waist_joint1;
+	Quaternion q_head_joint1;
+	Quaternion q_rarm_joint2, q_rarm_joint3, q_rarm_joint5;
+	Quaternion q_larm_joint2, q_larm_joint3, q_larm_joint5;
+	Quaternion q_rleg_joint2, q_rleg_joint4, q_rleg_joint6;
+	Quaternion q_lleg_joint2, q_lleg_joint4, q_lleg_joint6;
+
+	try
+	{
+		SigCmn::Vector3 spineBase, torso, neck, head,
+			lshoul, lelb, lwrist, lhand, rshoul, relb, rwrist, rhand,
+			lhip, lknee, lankle, lfoot, rhip, rknee, rankle, rfoot;
+
+		spineBase = positionArray[KinectV2SensorData::KinectV2JointType::SpineBase].position;
+		torso     = positionArray[KinectV2SensorData::KinectV2JointType::SpineMid].position;
+		neck      = positionArray[KinectV2SensorData::KinectV2JointType::Neck].position;
+		head      = positionArray[KinectV2SensorData::KinectV2JointType::Head].position;
+
+		lshoul = positionArray[KinectV2SensorData::KinectV2JointType::ShoulderLeft].position;
+		lelb   = positionArray[KinectV2SensorData::KinectV2JointType::ElbowLeft].position;
+		lwrist = positionArray[KinectV2SensorData::KinectV2JointType::WristLeft].position;
+		lhand  = positionArray[KinectV2SensorData::KinectV2JointType::HandLeft].position;
+
+		rshoul = positionArray[KinectV2SensorData::KinectV2JointType::ShoulderRight].position;
+		relb   = positionArray[KinectV2SensorData::KinectV2JointType::ElbowRight].position;
+		rwrist = positionArray[KinectV2SensorData::KinectV2JointType::WristRight].position;
+		rhand  = positionArray[KinectV2SensorData::KinectV2JointType::HandRight].position;
+
+		lhip   = positionArray[KinectV2SensorData::KinectV2JointType::HipLeft].position;
+		lknee  = positionArray[KinectV2SensorData::KinectV2JointType::KneeLeft].position;
+		lankle = positionArray[KinectV2SensorData::KinectV2JointType::AnkleLeft].position;
+		lfoot  = positionArray[KinectV2SensorData::KinectV2JointType::FootLeft].position;
+
+		rhip   = positionArray[KinectV2SensorData::KinectV2JointType::HipRight].position;
+		rknee  = positionArray[KinectV2SensorData::KinectV2JointType::KneeRight].position;
+		rankle = positionArray[KinectV2SensorData::KinectV2JointType::AnkleRight].position;
+		rfoot  = positionArray[KinectV2SensorData::KinectV2JointType::FootRight].position;
+
+
+		/*
+		 * SIGVerse送信用動作情報電文を作成し、MAPに保持する
+		 */
+		//右ヒップと左ヒップの位置から体全体の回転を求める
+		SigCmn::Vector3 khip_vec;
+
+		if (SigCmn::diffVec(khip_vec, rhip, lhip))
+		{
+			q_waist = Quaternion::calcQuaternionFromVector(this->getSigVec(SigVec::HIP), khip_vec);
+			Quaternion rrootq = Quaternion::calcQuaternionFromVector(khip_vec, this->getSigVec(SigVec::HIP));
+
+			//腰
+			SigCmn::Vector3 kwaist_vec;
+
+			if (SigCmn::diffVec(kwaist_vec, spineBase, neck))
+			{
+				//体全体の回転による座標変換
+				Quaternion::rotVec(kwaist_vec, rrootq);
+
+				SigCmn::Vector3 swaist_vec = this->getSigVec(WAIST);
+
+				q_waist_joint1 = Quaternion::calcQuaternionFromVector(swaist_vec, kwaist_vec);
+
+				Quaternion rwaist = Quaternion::calcQuaternionFromVector(kwaist_vec, swaist_vec); //逆回転
+
+				//首
+				SigCmn::Vector3 kneck_vec;
+				if (SigCmn::diffVec(kneck_vec, neck, head))
+				{
+					//体全体と腰の回転による座標変換
+					Quaternion::rotVec(kneck_vec, rrootq);
+					Quaternion::rotVec(kneck_vec, rwaist);
+
+					//クォータニオン計算
+					q_head_joint1 = Quaternion::calcQuaternionFromVector(swaist_vec, kneck_vec);
+				}
+
+				//右肩
+				SigCmn::Vector3 krsh_vec;
+				if (SigCmn::diffVec(krsh_vec, rshoul, relb))
+				{
+					SigCmn::Vector3 srsh_vec = this->getSigVec(RSHOULDER);
+
+					//体全体と腰の回転による座標変換
+					Quaternion::rotVec(krsh_vec, rrootq);
+					Quaternion::rotVec(krsh_vec, rwaist);
+
+					//クォータニオン計算
+					q_rarm_joint2 = Quaternion::calcQuaternionFromVector(srsh_vec, krsh_vec);
+					Quaternion rrsh = Quaternion::calcQuaternionFromVector(krsh_vec, srsh_vec); //逆回転
+
+					//右ひじ
+					SigCmn::Vector3 krel_vec;
+					if (SigCmn::diffVec(krel_vec, relb, rwrist))
+					{
+						//体全体と腰の回転による座標変換
+						Quaternion::rotVec(krel_vec, rrootq);
+						Quaternion::rotVec(krel_vec, rwaist);
+						Quaternion::rotVec(krel_vec, rrsh);
+
+						//クォータニオン計算
+						q_rarm_joint3 = Quaternion::calcQuaternionFromVector(srsh_vec, krel_vec);
+						Quaternion rrel = Quaternion::calcQuaternionFromVector(krel_vec, srsh_vec); //逆回転
+
+						//右手首
+						SigCmn::Vector3 krwrist_vec;
+						if (SigCmn::diffVec(krwrist_vec, rwrist, rhand))
+						{
+							//体全体と腰の回転による座標変換
+							Quaternion::rotVec(krwrist_vec, rrootq);
+							Quaternion::rotVec(krwrist_vec, rwaist);
+							Quaternion::rotVec(krwrist_vec, rrsh);
+							Quaternion::rotVec(krwrist_vec, rrel);
+
+							//クォータニオン計算
+							q_rarm_joint5 = Quaternion::calcQuaternionFromVector(srsh_vec, krwrist_vec);
+						}
+					}
+				}
+
+				//左肩
+				SigCmn::Vector3 klsh_vec;
+				if (SigCmn::diffVec(klsh_vec, lshoul, lelb))
+				{
+					SigCmn::Vector3 slsh_vec = this->getSigVec(LSHOULDER);
+
+					//体全体と腰の回転による座標変換
+					Quaternion::rotVec(klsh_vec, rrootq);
+					Quaternion::rotVec(klsh_vec, rwaist);
+
+					//クォータニオン計算
+					q_larm_joint2 = Quaternion::calcQuaternionFromVector(slsh_vec, klsh_vec);
+					Quaternion rlsh = Quaternion::calcQuaternionFromVector(klsh_vec, slsh_vec); //逆回転
+
+					//左ひじ
+					SigCmn::Vector3 klel_vec;
+					if (SigCmn::diffVec(klel_vec, lelb, lwrist))
+					{
+						//体全体と腰の回転による座標変換
+						Quaternion::rotVec(klel_vec, rrootq);
+						Quaternion::rotVec(klel_vec, rwaist);
+						Quaternion::rotVec(klel_vec, rlsh);
+
+						//クォータニオン計算
+						q_larm_joint3 = Quaternion::calcQuaternionFromVector(slsh_vec, klel_vec);
+						Quaternion rlel = Quaternion::calcQuaternionFromVector(klel_vec, slsh_vec); //逆回転
+
+						//左手首
+						SigCmn::Vector3 klwrist_vec;
+						if (SigCmn::diffVec(klwrist_vec, lwrist, lhand))
+						{
+							//体全体と腰の回転による座標変換
+							Quaternion::rotVec(klwrist_vec, rrootq);
+							Quaternion::rotVec(klwrist_vec, rwaist);
+							Quaternion::rotVec(klwrist_vec, rlsh);
+							Quaternion::rotVec(klwrist_vec, rlel);
+
+							//クォータニオン計算
+							q_larm_joint5 = Quaternion::calcQuaternionFromVector(slsh_vec, klwrist_vec);
+						}
+					}
+				}
+			}
+
+			SigCmn::Vector3 sleg_vec = this->getSigVec(LEG);
+			SigCmn::Vector3 sfoot_vec = this->getSigVec(FOOT);
+
+			//右足付け根
+			SigCmn::Vector3 krhip_vec;
+			if (SigCmn::diffVec(krhip_vec, rhip, rknee))
+			{
+				//キネクトにおけるベクトルを親関節により座標変換
+				Quaternion::rotVec(krhip_vec, rrootq);
+
+				//クォータニオン計算
+				q_rleg_joint2 = Quaternion::calcQuaternionFromVector(sleg_vec, krhip_vec);
+				Quaternion rrhp = Quaternion::calcQuaternionFromVector(krhip_vec, sleg_vec);
+
+				//右ひざ
+				SigCmn::Vector3 krknee_vec;
+				if (SigCmn::diffVec(krknee_vec, rknee, rankle))
+				{
+					//キネクトにおけるベクトルを親関節により座標変換
+					Quaternion::rotVec(krknee_vec, rrootq);
+					Quaternion::rotVec(krknee_vec, rrhp);
+
+					//クォータニオン計算
+					q_rleg_joint4 = Quaternion::calcQuaternionFromVector(sleg_vec, krknee_vec);
+					Quaternion rrknee = Quaternion::calcQuaternionFromVector(krknee_vec, sleg_vec); //逆回転
+
+					//右足首
+					SigCmn::Vector3 krankle_vec;
+					if (SigCmn::diffVec(krankle_vec, rankle, rfoot))
+					{
+						//体全体と腰の回転による座標変換
+						Quaternion::rotVec(krankle_vec, rrootq);
+						Quaternion::rotVec(krankle_vec, rrhp);
+						Quaternion::rotVec(krankle_vec, rrknee);
+
+						//クォータニオン計算
+						q_rleg_joint6 = Quaternion::calcQuaternionFromVector(sfoot_vec, krankle_vec);
+					}
+				}
+			}
+
+			//左足付け根
+			SigCmn::Vector3 klhip_vec;
+			if (SigCmn::diffVec(klhip_vec, lhip, lknee))
+			{
+				//キネクトにおけるベクトルを親関節により座標変換
+				Quaternion::rotVec(klhip_vec, rrootq);
+
+				//クォータニオン計算
+				q_lleg_joint2 = Quaternion::calcQuaternionFromVector(sleg_vec, klhip_vec);
+				Quaternion rlhp = Quaternion::calcQuaternionFromVector(klhip_vec, sleg_vec); //逆回転
+
+				//左ひざ
+				SigCmn::Vector3 klknee_vec;
+				if (SigCmn::diffVec(klknee_vec, lknee, lankle))
+				{
+					//キネクトにおけるベクトルを親関節により座標変換
+					Quaternion::rotVec(klknee_vec, rrootq);
+					Quaternion::rotVec(klknee_vec, rlhp);
+
+					//クォータニオン計算
+					q_lleg_joint4 = Quaternion::calcQuaternionFromVector(sleg_vec, klknee_vec);
+					Quaternion rlknee = Quaternion::calcQuaternionFromVector(klknee_vec, sleg_vec); //逆回転
+
+					//左足首
+					SigCmn::Vector3 klankle_vec;
+					if (SigCmn::diffVec(klankle_vec, lankle, lfoot))
+					{
+						//体全体と腰の回転による座標変換
+						Quaternion::rotVec(klankle_vec, rrootq);
+						Quaternion::rotVec(klankle_vec, rlhp);
+						Quaternion::rotVec(klankle_vec, rlknee);
+
+						//クォータニオン計算
+						q_lleg_joint6 = Quaternion::calcQuaternionFromVector(sfoot_vec, klankle_vec);
+					}
+				}
+			}
+
+			//ManNiiAvatarPosture posture;
+			manNiiPosture.joint[ManNiiPosture::ROOT_JOINT0].quaternion = q_waist;
+			manNiiPosture.joint[ManNiiPosture::WAIST_JOINT1].quaternion = q_waist_joint1;
+
+			manNiiPosture.joint[ManNiiPosture::RARM_JOINT2].quaternion = q_rarm_joint2;
+			manNiiPosture.joint[ManNiiPosture::LARM_JOINT2].quaternion = q_larm_joint2;
+			manNiiPosture.joint[ManNiiPosture::RARM_JOINT3].quaternion = q_rarm_joint3;
+			manNiiPosture.joint[ManNiiPosture::LARM_JOINT3].quaternion = q_larm_joint3;
+
+			manNiiPosture.joint[ManNiiPosture::RLEG_JOINT2].quaternion = q_rleg_joint2;
+			manNiiPosture.joint[ManNiiPosture::LLEG_JOINT2].quaternion = q_lleg_joint2;
+			manNiiPosture.joint[ManNiiPosture::RLEG_JOINT4].quaternion = q_rleg_joint4;
+			manNiiPosture.joint[ManNiiPosture::LLEG_JOINT4].quaternion = q_lleg_joint4;
+		}
+	}
+	catch (std::exception& ex)
+	{
+		std::cout << ex.what() << std::endl;
+	}
+
+	return manNiiPosture;
 }
