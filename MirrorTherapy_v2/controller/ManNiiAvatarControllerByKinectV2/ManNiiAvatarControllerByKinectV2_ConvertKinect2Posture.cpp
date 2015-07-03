@@ -292,7 +292,7 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointOrientations
 
 
 /*
- * SIGVerse送信用動作情報電文を作成する
+ * Convert KinectV2 joint position data to ManNiiPosture.
  */
 ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2ManNiiPosture(const KinectV2SensorData::KinectV2JointPosition* positionArray)
 {
@@ -336,25 +336,23 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 		rankle = positionArray[KinectV2SensorData::KinectV2JointType::AnkleRight].position;
 		rfoot  = positionArray[KinectV2SensorData::KinectV2JointType::FootRight].position;
 
-
-		/*
-		 * SIGVerse送信用動作情報電文を作成し、MAPに保持する
-		 */
-		//右ヒップと左ヒップの位置から体全体の回転を求める
+		//Calculate the rotation of entire body from left hip position and right hip position.
 		SigCmn::Vector3 khip_vec;
 
 		if (SigCmn::diffVec(khip_vec, rhip, lhip))
 		{
+			//waist quaternion is calculated from (1,0,0) and hip vector
 			q_waist = Quaternion::calcQuaternionFromVector(this->getSigVec(SigVec::HIP), khip_vec);
+
+			//rrootq quaternion is calculated from hip vector and  (1,0,0)
 			Quaternion rrootq = Quaternion::calcQuaternionFromVector(khip_vec, this->getSigVec(SigVec::HIP));
 
-			//腰
+			//waist
 			SigCmn::Vector3 kwaist_vec;
 
 			if (SigCmn::diffVec(kwaist_vec, spineBase, neck))
 			{
-				//体全体の回転による座標変換
-				Quaternion::rotVec(kwaist_vec, rrootq);
+				Quaternion::rotVec(kwaist_vec, rrootq); //whole body rotation
 
 				SigCmn::Vector3 swaist_vec = this->getSigVec(WAIST);
 
@@ -362,99 +360,86 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 
 				Quaternion rwaist = Quaternion::calcQuaternionFromVector(kwaist_vec, swaist_vec); //逆回転
 
-				//首
+				//neck
 				SigCmn::Vector3 kneck_vec;
 				if (SigCmn::diffVec(kneck_vec, neck, head))
 				{
-					//体全体と腰の回転による座標変換
-					Quaternion::rotVec(kneck_vec, rrootq);
-					Quaternion::rotVec(kneck_vec, rwaist);
+					Quaternion::rotVec(kneck_vec, rrootq); //whole body rotation
+					Quaternion::rotVec(kneck_vec, rwaist); //waist rotation
 
-					//クォータニオン計算
 					q_head_joint1 = Quaternion::calcQuaternionFromVector(swaist_vec, kneck_vec);
 				}
 
-				//右肩
+				//right shoulder
 				SigCmn::Vector3 krsh_vec;
+
 				if (SigCmn::diffVec(krsh_vec, rshoul, relb))
 				{
 					SigCmn::Vector3 srsh_vec = this->getSigVec(RSHOULDER);
 
-					//体全体と腰の回転による座標変換
-					Quaternion::rotVec(krsh_vec, rrootq);
-					Quaternion::rotVec(krsh_vec, rwaist);
+					Quaternion::rotVec(krsh_vec, rrootq); //whole body rotation
+					Quaternion::rotVec(krsh_vec, rwaist); //waist rotation
 
-					//クォータニオン計算
 					q_rarm_joint2 = Quaternion::calcQuaternionFromVector(srsh_vec, krsh_vec);
 					Quaternion rrsh = Quaternion::calcQuaternionFromVector(krsh_vec, srsh_vec); //逆回転
 
-					//右ひじ
+					//right elbow
 					SigCmn::Vector3 krel_vec;
 					if (SigCmn::diffVec(krel_vec, relb, rwrist))
 					{
-						//体全体と腰の回転による座標変換
 						Quaternion::rotVec(krel_vec, rrootq);
 						Quaternion::rotVec(krel_vec, rwaist);
 						Quaternion::rotVec(krel_vec, rrsh);
 
-						//クォータニオン計算
 						q_rarm_joint3 = Quaternion::calcQuaternionFromVector(srsh_vec, krel_vec);
 						Quaternion rrel = Quaternion::calcQuaternionFromVector(krel_vec, srsh_vec); //逆回転
 
-						//右手首
+						//right wrist
 						SigCmn::Vector3 krwrist_vec;
 						if (SigCmn::diffVec(krwrist_vec, rwrist, rhand))
 						{
-							//体全体と腰の回転による座標変換
 							Quaternion::rotVec(krwrist_vec, rrootq);
 							Quaternion::rotVec(krwrist_vec, rwaist);
 							Quaternion::rotVec(krwrist_vec, rrsh);
 							Quaternion::rotVec(krwrist_vec, rrel);
 
-							//クォータニオン計算
 							q_rarm_joint5 = Quaternion::calcQuaternionFromVector(srsh_vec, krwrist_vec);
 						}
 					}
 				}
 
-				//左肩
+				//left shoulder
 				SigCmn::Vector3 klsh_vec;
 				if (SigCmn::diffVec(klsh_vec, lshoul, lelb))
 				{
 					SigCmn::Vector3 slsh_vec = this->getSigVec(LSHOULDER);
 
-					//体全体と腰の回転による座標変換
 					Quaternion::rotVec(klsh_vec, rrootq);
 					Quaternion::rotVec(klsh_vec, rwaist);
 
-					//クォータニオン計算
 					q_larm_joint2 = Quaternion::calcQuaternionFromVector(slsh_vec, klsh_vec);
 					Quaternion rlsh = Quaternion::calcQuaternionFromVector(klsh_vec, slsh_vec); //逆回転
 
-					//左ひじ
+					//left elbow
 					SigCmn::Vector3 klel_vec;
 					if (SigCmn::diffVec(klel_vec, lelb, lwrist))
 					{
-						//体全体と腰の回転による座標変換
 						Quaternion::rotVec(klel_vec, rrootq);
 						Quaternion::rotVec(klel_vec, rwaist);
 						Quaternion::rotVec(klel_vec, rlsh);
 
-						//クォータニオン計算
 						q_larm_joint3 = Quaternion::calcQuaternionFromVector(slsh_vec, klel_vec);
 						Quaternion rlel = Quaternion::calcQuaternionFromVector(klel_vec, slsh_vec); //逆回転
 
-						//左手首
+						//left wrist
 						SigCmn::Vector3 klwrist_vec;
 						if (SigCmn::diffVec(klwrist_vec, lwrist, lhand))
 						{
-							//体全体と腰の回転による座標変換
 							Quaternion::rotVec(klwrist_vec, rrootq);
 							Quaternion::rotVec(klwrist_vec, rwaist);
 							Quaternion::rotVec(klwrist_vec, rlsh);
 							Quaternion::rotVec(klwrist_vec, rlel);
 
-							//クォータニオン計算
 							q_larm_joint5 = Quaternion::calcQuaternionFromVector(slsh_vec, klwrist_vec);
 						}
 					}
@@ -464,77 +449,65 @@ ManNiiPosture ManNiiAvatarControllerByKinectV2::convertKinectV2JointPosition2Man
 			SigCmn::Vector3 sleg_vec = this->getSigVec(LEG);
 			SigCmn::Vector3 sfoot_vec = this->getSigVec(FOOT);
 
-			//右足付け根
+			//right leg root
 			SigCmn::Vector3 krhip_vec;
 			if (SigCmn::diffVec(krhip_vec, rhip, rknee))
 			{
-				//キネクトにおけるベクトルを親関節により座標変換
 				Quaternion::rotVec(krhip_vec, rrootq);
 
-				//クォータニオン計算
 				q_rleg_joint2 = Quaternion::calcQuaternionFromVector(sleg_vec, krhip_vec);
 				Quaternion rrhp = Quaternion::calcQuaternionFromVector(krhip_vec, sleg_vec);
 
-				//右ひざ
+				//right knee
 				SigCmn::Vector3 krknee_vec;
 				if (SigCmn::diffVec(krknee_vec, rknee, rankle))
 				{
-					//キネクトにおけるベクトルを親関節により座標変換
 					Quaternion::rotVec(krknee_vec, rrootq);
 					Quaternion::rotVec(krknee_vec, rrhp);
 
-					//クォータニオン計算
 					q_rleg_joint4 = Quaternion::calcQuaternionFromVector(sleg_vec, krknee_vec);
 					Quaternion rrknee = Quaternion::calcQuaternionFromVector(krknee_vec, sleg_vec); //逆回転
 
-					//右足首
+					//right ankle
 					SigCmn::Vector3 krankle_vec;
 					if (SigCmn::diffVec(krankle_vec, rankle, rfoot))
 					{
-						//体全体と腰の回転による座標変換
 						Quaternion::rotVec(krankle_vec, rrootq);
 						Quaternion::rotVec(krankle_vec, rrhp);
 						Quaternion::rotVec(krankle_vec, rrknee);
 
-						//クォータニオン計算
 						q_rleg_joint6 = Quaternion::calcQuaternionFromVector(sfoot_vec, krankle_vec);
 					}
 				}
 			}
 
-			//左足付け根
+			//left leg root
 			SigCmn::Vector3 klhip_vec;
 			if (SigCmn::diffVec(klhip_vec, lhip, lknee))
 			{
-				//キネクトにおけるベクトルを親関節により座標変換
 				Quaternion::rotVec(klhip_vec, rrootq);
 
-				//クォータニオン計算
 				q_lleg_joint2 = Quaternion::calcQuaternionFromVector(sleg_vec, klhip_vec);
 				Quaternion rlhp = Quaternion::calcQuaternionFromVector(klhip_vec, sleg_vec); //逆回転
 
-				//左ひざ
+				//left knee
 				SigCmn::Vector3 klknee_vec;
 				if (SigCmn::diffVec(klknee_vec, lknee, lankle))
 				{
-					//キネクトにおけるベクトルを親関節により座標変換
 					Quaternion::rotVec(klknee_vec, rrootq);
 					Quaternion::rotVec(klknee_vec, rlhp);
 
-					//クォータニオン計算
 					q_lleg_joint4 = Quaternion::calcQuaternionFromVector(sleg_vec, klknee_vec);
 					Quaternion rlknee = Quaternion::calcQuaternionFromVector(klknee_vec, sleg_vec); //逆回転
 
-					//左足首
+					//left ankle
 					SigCmn::Vector3 klankle_vec;
 					if (SigCmn::diffVec(klankle_vec, lankle, lfoot))
 					{
-						//体全体と腰の回転による座標変換
 						Quaternion::rotVec(klankle_vec, rrootq);
 						Quaternion::rotVec(klankle_vec, rlhp);
 						Quaternion::rotVec(klankle_vec, rlknee);
 
-						//クォータニオン計算
 						q_lleg_joint6 = Quaternion::calcQuaternionFromVector(sfoot_vec, klankle_vec);
 					}
 				}

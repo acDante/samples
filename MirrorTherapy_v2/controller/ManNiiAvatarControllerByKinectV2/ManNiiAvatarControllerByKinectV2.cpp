@@ -86,7 +86,7 @@ void ManNiiAvatarControllerByKinectV2::onRecvMsg(RecvMsgEvent &evt)
 
 		sensorData.setSensorData(sensorDataMap);
 
-		//開始時の位置情報を保持
+		//Save start position
 		if (this->started == false)
 		{
 			this->startpos.x = sensorData.rootPosition.x;
@@ -97,11 +97,11 @@ void ManNiiAvatarControllerByKinectV2::onRecvMsg(RecvMsgEvent &evt)
 			this->started = true;
 		}
 
-		//開始時の位置からの移動距離を算出
-		SigCmn::Vector3 pos;
-		pos.x = -(sensorData.rootPosition.x - this->startpos.x);
-		pos.y = +(sensorData.rootPosition.y - this->startpos.y);
-		pos.z = -(sensorData.rootPosition.z - this->startpos.z);
+		//Calculate moving distance from start position.
+		SigCmn::Vector3 movingDistance;
+		movingDistance.x = -(sensorData.rootPosition.x - this->startpos.x);
+		movingDistance.y = +(sensorData.rootPosition.y - this->startpos.y);
+		movingDistance.z = -(sensorData.rootPosition.z - this->startpos.z);
 
 
 		// Convert kinect v2 quaternions(orientations) to man-nii posture(sigverse quaternion format).
@@ -123,7 +123,7 @@ void ManNiiAvatarControllerByKinectV2::onRecvMsg(RecvMsgEvent &evt)
 
 		// Set SIGVerse quaternions and positions
 		SimObj *obj = getObj(myname());
-		this->setPosition(obj, pos);
+		this->setPosition(obj, movingDistance);
 		this->setJointQuaternionsForKinect(obj, manNiiPosture);
 	}
 	catch(SimObj::NoAttributeException &err)
@@ -144,39 +144,6 @@ void ManNiiAvatarControllerByKinectV2::onRecvMsg(RecvMsgEvent &evt)
 	}
 }
 
-/////@brief control avatar by Positions (sensor data mode = Position)
-//void ManNiiAvatarControllerByKinectV2::controlAvatarByPositions(const KinectV2SensorData &sensorData)
-//{
-////	// Get positions of kinect v2 format, from sensor data of kinect v2.
-////	KinectV2SensorData::KinectV2JointPosition tmpKinectV2JointPositions[KinectV2SensorData::KinectV2JointType_Count];
-////	sensorData.getKinectV2JointPosition(tmpKinectV2JointPositions);
-//
-//	// Convert kinect v2 quaternions(orientations) to man-nii posture(sigverse quaternion format).
-//	ManNiiPosture manNiiPosture = ManNiiPosture();
-//	manNiiPosture = this->convertKinectV2JointPosition2ManNiiPosture(sensorData.jointPositions);
-//
-//	// Set SIGVerse quaternions
-//	SimObj *obj = getObj(myname());
-//	this->setPosition(obj, sensorData.rootPosition);
-//	this->setJointQuaternionsForKinect(obj, manNiiPosture);
-//}
-//
-/////@brief control avatar by Quaternions (sensor data mode = Quaternion)
-//void ManNiiAvatarControllerByKinectV2::controlAvatarByQuaternions(const KinectV2SensorData &sensorData)
-//{
-////	// Get quaternions(orientations) of kinect v2 format, from sensor data of kinect v2.
-////	KinectV2SensorData::KinectV2JointOrientation tmpKinectV2JointOrientations[KinectV2SensorData::KinectV2JointType_Count];
-////	sensorData.getKinectV2JointOrientation(tmpKinectV2JointOrientations);
-////
-//	// Convert kinect v2 quaternions(orientations) to man-nii posture(sigverse quaternion format).
-//	ManNiiPosture manNiiPosture = ManNiiPosture();
-//	manNiiPosture = this->convertKinectV2JointOrientations2ManNiiPosture(sensorData.jointOrientations);
-//
-//	// Set SIGVerse quaternions
-//	SimObj *obj = getObj(myname());
-//	this->setPosition(obj, sensorData.rootPosition);
-//	this->setJointQuaternionsForKinect(obj, manNiiPosture);
-//}
 
 void ManNiiAvatarControllerByKinectV2::setPosition(SimObj *obj, const SigCmn::Vector3 &pos)
 {

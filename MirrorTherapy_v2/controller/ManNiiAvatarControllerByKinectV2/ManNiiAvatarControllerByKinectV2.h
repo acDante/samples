@@ -57,14 +57,9 @@ public:
 	///@brief Initialize this controller.
 	void onInit(InitEvent &evt);
 
-//	///@brief control avatar by Positions (sensor data mode = Position)
-//	void controlAvatarByPositions(const KinectV2SensorData &sensorData);
-//
-//	///@brief control avatar by Quaternions (sensor data mode = Quaternion)
-//	void controlAvatarByQuaternions(const KinectV2SensorData &sensorData);
-
-	///@brief Convert euler angle to avatar posture structure.
+	///@brief Convert Kinect V2 joint orientation to avatar posture structure.
 	ManNiiPosture convertKinectV2JointOrientations2ManNiiPosture(const KinectV2SensorData::KinectV2JointOrientation* kinectV2Joints);
+	///@brief Convert Kinect V2 joint position to avatar posture structure.
 	ManNiiPosture convertKinectV2JointPosition2ManNiiPosture(const KinectV2SensorData::KinectV2JointPosition* positionArray);
 
 	void setPosition(SimObj *obj, const SigCmn::Vector3 &pos);
