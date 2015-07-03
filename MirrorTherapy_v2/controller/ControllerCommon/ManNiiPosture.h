@@ -8,7 +8,7 @@
 #ifndef __MAN_NII_POSTURE_H__
 #define __MAN_NII_POSTURE_H__
 
-#include "../../Common/Quaternion.h"
+#include "../../common/Quaternion.h"
 #include "Posture.h"
 #include <string>
 #include <sstream>

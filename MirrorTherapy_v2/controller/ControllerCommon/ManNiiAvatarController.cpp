@@ -11,7 +11,7 @@
 #include <cmath>
 
 /*
- * SIGVerseの関節の初期ベクトルを取得する
+ * Get initial vector of avatar joints.
  */
 SigCmn::Vector3 ManNiiAvatarController::getSigVec(const int sigvec)
 {

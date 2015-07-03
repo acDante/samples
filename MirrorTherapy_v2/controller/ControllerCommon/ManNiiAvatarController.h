@@ -13,7 +13,7 @@
 #include <sstream>
 #include <string>
 #include "Posture.h"
-#include "../../Common/SigCmn.h"
+#include "../../common/SigCmn.h"
 
 class ManNiiAvatarController : public AvatarController
 {
