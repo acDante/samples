@@ -2,8 +2,8 @@
 #define __DEVICE_H__
 
 #include <SIGService.h>
-#include "../../Common/DeviceCommon.h"
-#include "../../Common/SensorData.h"
+#include "../../common/device/DeviceCommon.h"
+#include "../../common/device/SensorData.h"
 
 
 class Device

@@ -15,7 +15,13 @@ const std::string KinectV2Device::parameterFileName = "KinectV2.ini";
 
 //Parameter file information
 const std::string KinectV2Device::paramFileKeyKinectV2SensorDataMode        = "KinectV2.sensor_data_mode";
-const std::string KinectV2Device::paramFileValKinectV2SensorDataModeDefault = "Quaternion";
+const std::string KinectV2Device::paramFileValKinectV2SensorDataModeDefault = "QUATERNION";
+
+
+///@brief Default Constructor
+KinectV2Device::KinectV2Device()
+{
+}
 
 
 ///@brief Constructor
@@ -265,17 +271,17 @@ int KinectV2Device::run()
 								if (detectBodyFlag) 
 								{
 									// Get spine base position.
-									SensorData::Vector3 spPos = { 0 };
+									SigCmn::Vector3 spPos = { 0 };
 									spPos.x = joint[JointType::JointType_SpineBase].Position.X;
 									spPos.y = joint[JointType::JointType_SpineBase].Position.Y;
 									spPos.z = joint[JointType::JointType_SpineBase].Position.Z;
 
 									// Set spine base position.
-									((KinectV2SensorData*)this->sensorData)->setRootPosition(spPos);
+									sensorData.setRootPosition(spPos);
 
-									switch (((KinectV2SensorData *)this->sensorData)->sensorDataMode)
+									switch (this->sensorData.sensorDataMode)
 									{
-										case KinectV2SensorData::Position:
+										case KinectV2SensorData::POSITION:
 										{
 											// Get Joint Position.
 											Joint tmpPositions[_JointType::JointType_Count];
@@ -284,7 +290,7 @@ int KinectV2Device::run()
 											KinectV2SensorData::KinectV2JointPosition tmpKinectV2JointPositions[KinectV2SensorData::KinectV2JointType_Count];
 											this->convertJointPositions2KinectV2JointPositions(tmpPositions, tmpKinectV2JointPositions);
 
-											((KinectV2SensorData*)this->sensorData)->setKinectV2JointPosition(tmpKinectV2JointPositions);
+											this->sensorData.setKinectV2JointPosition(tmpKinectV2JointPositions);
 #ifdef DEBUG_PRINT
 											if (SUCCEEDED(hResult))
 											{
@@ -300,7 +306,7 @@ int KinectV2Device::run()
 #endif
 											break;
 										}
-										case KinectV2SensorData::Quaternion:
+										case KinectV2SensorData::QUATERNION:
 										{
 											// Get Joint Orientation.
 											JointOrientation tmpOrientations[_JointType::JointType_Count];
@@ -309,7 +315,7 @@ int KinectV2Device::run()
 											KinectV2SensorData::KinectV2JointOrientation tmpKinectV2JointOrientations[KinectV2SensorData::KinectV2JointType_Count];
 											this->convertJointOrientations2KinectV2JointOrientations(tmpOrientations, tmpKinectV2JointOrientations);
 
-											((KinectV2SensorData*)this->sensorData)->setKinectV2JointOrientation(tmpKinectV2JointOrientations);
+											this->sensorData.setKinectV2JointOrientation(tmpKinectV2JointOrientations);
 #ifdef DEBUG_PRINT
 											if (SUCCEEDED(hResult))
 											{
@@ -325,16 +331,16 @@ int KinectV2Device::run()
 #endif
 											break;
 										}
+									}
 
-										if (SUCCEEDED(hResult) && this->sendMessageFlag) 
-										{
-											// Send message to SigServer.
-											const std::string sensorDataMessage = this->sensorData->encodeSensorData();
-											const std::string messageHeader = this->generateMessageHeader();
-											const std::string message = messageHeader + sensorDataMessage;
-											this->sendMessage(sigService, message);
-											// std::cout << "SEND: " << message << std::endl;
-										}
+									if (SUCCEEDED(hResult) && this->sendMessageFlag) 
+									{
+										// Send message to SigServer.
+										const std::string sensorDataMessage = this->sensorData.encodeSensorData();
+										const std::string messageHeader = this->generateMessageHeader();
+										const std::string message = messageHeader + sensorDataMessage;
+										this->sendMessage(sigService, message);
+//										std::cout << "SEND: " << message << std::endl;
 									}
 								}
 							}
@@ -379,6 +385,8 @@ int KinectV2Device::run()
 		}
 		SafeRelease(pSensor);
 		cv::destroyAllWindows();
+
+		sigService.disconnect();
 	}
 	catch (std::exception &ex) 
 	{
@@ -454,32 +462,32 @@ KinectV2SensorData::KinectV2JointType KinectV2Device::getKinectV2JointType(const
 {
 	switch (jointType) 
 	{
-		break; case JointType_SpineBase:	{ return KinectV2SensorData::SpineBase; }
-		break; case JointType_SpineMid:		{ return KinectV2SensorData::SpineMid; }
-		break; case JointType_Neck:			{ return KinectV2SensorData::Neck; }
-		break; case JointType_Head:			{ return KinectV2SensorData::Head; }
-		break; case JointType_ShoulderLeft:	{ return KinectV2SensorData::ShoulderLeft; }
-		break; case JointType_ElbowLeft:	{ return KinectV2SensorData::ElbowLeft; }
-		break; case JointType_WristLeft:	{ return KinectV2SensorData::WristLeft; }
-		break; case JointType_HandLeft:		{ return KinectV2SensorData::HandLeft; }
-		break; case JointType_ShoulderRight:{ return KinectV2SensorData::ShoulderRight; }
-		break; case JointType_ElbowRight:	{ return KinectV2SensorData::ElbowRight; }
-		break; case JointType_WristRight:	{ return KinectV2SensorData::WristRight; }
-		break; case JointType_HandRight:	{ return KinectV2SensorData::HandRight; }
-		break; case JointType_HipLeft:		{ return KinectV2SensorData::HipLeft; }
-		break; case JointType_KneeLeft:		{ return KinectV2SensorData::KneeLeft; }
-		break; case JointType_AnkleLeft:	{ return KinectV2SensorData::AnkleLeft; }
-		break; case JointType_FootLeft:		{ return KinectV2SensorData::FootLeft; }
-		break; case JointType_HipRight:		{ return KinectV2SensorData::HipRight; }
-		break; case JointType_KneeRight:	{ return KinectV2SensorData::KneeRight; }
-		break; case JointType_AnkleRight:	{ return KinectV2SensorData::AnkleRight; }
-		break; case JointType_FootRight:	{ return KinectV2SensorData::FootRight; }
-		break; case JointType_SpineShoulder:{ return KinectV2SensorData::SpineShoulder; }
-		break; case JointType_HandTipLeft:	{ return KinectV2SensorData::HandTipLeft; }
-		break; case JointType_ThumbLeft:	{ return KinectV2SensorData::ThumbLeft; }
-		break; case JointType_HandTipRight:	{ return KinectV2SensorData::HandTipRight; }
-		break; case JointType_ThumbRight:	{ return KinectV2SensorData::ThumbRight; }
-		break; default: { throw std::string("This JointType is invalid. JointType enum number = "+jointType); }
+		case JointType_SpineBase:    { return KinectV2SensorData::SpineBase;     break; }
+		case JointType_SpineMid:     { return KinectV2SensorData::SpineMid;      break; }
+		case JointType_Neck:         { return KinectV2SensorData::Neck;          break; }
+		case JointType_Head:         { return KinectV2SensorData::Head;          break; }
+		case JointType_ShoulderLeft: { return KinectV2SensorData::ShoulderLeft;  break; }
+		case JointType_ElbowLeft:    { return KinectV2SensorData::ElbowLeft;     break; }
+		case JointType_WristLeft:    { return KinectV2SensorData::WristLeft;     break; }
+		case JointType_HandLeft:     { return KinectV2SensorData::HandLeft;      break; }
+		case JointType_ShoulderRight:{ return KinectV2SensorData::ShoulderRight; break; }
+		case JointType_ElbowRight:   { return KinectV2SensorData::ElbowRight;    break; }
+		case JointType_WristRight:   { return KinectV2SensorData::WristRight;    break; }
+		case JointType_HandRight:    { return KinectV2SensorData::HandRight;     break; }
+		case JointType_HipLeft:      { return KinectV2SensorData::HipLeft;       break; }
+		case JointType_KneeLeft:     { return KinectV2SensorData::KneeLeft;      break; }
+		case JointType_AnkleLeft:    { return KinectV2SensorData::AnkleLeft;     break; }
+		case JointType_FootLeft:     { return KinectV2SensorData::FootLeft;      break; }
+		case JointType_HipRight:     { return KinectV2SensorData::HipRight;      break; }
+		case JointType_KneeRight:    { return KinectV2SensorData::KneeRight;     break; }
+		case JointType_AnkleRight:   { return KinectV2SensorData::AnkleRight;    break; }
+		case JointType_FootRight:    { return KinectV2SensorData::FootRight;     break; }
+		case JointType_SpineShoulder:{ return KinectV2SensorData::SpineShoulder; break; }
+		case JointType_HandTipLeft:  { return KinectV2SensorData::HandTipLeft;   break; }
+		case JointType_ThumbLeft:    { return KinectV2SensorData::ThumbLeft;     break; }
+		case JointType_HandTipRight: { return KinectV2SensorData::HandTipRight;  break; }
+		case JointType_ThumbRight:   { return KinectV2SensorData::ThumbRight;    break; }
+		default: { throw std::string("This JointType is invalid. JointType enum number = "+jointType); break; }
 	}
 }
 
@@ -528,13 +536,12 @@ void KinectV2Device::readIniFile()
 		}
 	}
 
+	
+	this->sensorData = KinectV2SensorData(sensorDataModeStr);
+
 	std::cout << PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME     << ":" << this->serviceName    << std::endl;
 	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE      << ":" << this->deviceType     << std::endl;
 	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID << ":" << this->deviceUniqueID << std::endl;
-	std::cout << paramFileKeyKinectV2SensorDataMode          << ":" << ((KinectV2SensorData *)this->sensorData)->getSensorDataModeStr() << std::endl;
-
-	
-	KinectV2SensorData kinectV2SensorData(sensorDataModeStr);
-	this->sensorData = &kinectV2SensorData;
+	std::cout << paramFileKeyKinectV2SensorDataMode          << ":" << this->sensorData.getSensorDataModeStr() << std::endl;
 }
 

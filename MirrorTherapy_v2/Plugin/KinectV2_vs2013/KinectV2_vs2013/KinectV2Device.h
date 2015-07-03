@@ -1,7 +1,7 @@
 #pragma once
 #include <SIGService.h>
-#include <Common/KinectV2SensorData.h>
-#include <Plugin/PluginCommon/Device.h>
+#include "../../../common/device/KinectV2SensorData.h"
+#include "../../../plugin/PluginCommon/Device.h"
 #include <Kinect.h>
 #include <opencv2/opencv.hpp>
 
@@ -37,7 +37,7 @@ private:
 	void readIniFile();
 
 public:
-	KinectV2Device(){};
+	KinectV2Device();
 	KinectV2Device(int argc, char **argv);
 	~KinectV2Device();
 
@@ -54,6 +54,9 @@ public:
 
 	///@brief Convert JointType to KinectV2JointType.
 	KinectV2SensorData::KinectV2JointType getKinectV2JointType(const JointType jointType);
+
+	KinectV2SensorData sensorData;
+
 
 #ifdef DEBUG_PRINT
 	typedef struct TIME_INFO 

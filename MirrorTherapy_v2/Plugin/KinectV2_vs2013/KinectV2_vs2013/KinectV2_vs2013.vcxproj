@@ -58,31 +58,46 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\cpplib\SIGService_vc2013\include;C:\SIGVerse\src\EmbodiedBrain\MirrorTherapy_v2\;$(BOOST_120_LIB_DIR);$(KINECTSDK20_DIR)\inc;C:\cpplib\opencv-2.4.10\opencv\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SIGSERVICE_120_LIB_DIR)\include;$(BOOST_120_LIB_DIR);$(KINECTSDK20_DIR)\inc;$(OPENCV_LIB_DIR)\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DEBUG_PRINT;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\cpplib\SIGService_vc2013\lib;C:\cpplib\boost_1_57_0_120\stage\x86\lib;C:\cpplib\opencv-2.4.10\opencv\build\x86\vc12\lib;$(KINECTSDK20_DIR)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SIGSERVICE_120_LIB_DIR)\lib;$(BOOST_120_LIB_DIR)\stage\x86\lib;$(OPENCV_LIB_DIR)\build\x86\vc12\lib;$(KINECTSDK20_DIR)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SIGService.lib;kinect20.lib;opencv_highgui2410.lib;opencv_core2410.lib;opencv_imgproc2410.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy ".\KinectV2.ini" "..\Release"
+copy "$(OPENCV_LIB_DIR)\build\x86\vc12\bin\opencv_core2410.dll" "..\Release"
+copy "$(OPENCV_LIB_DIR)\build\x86\vc12\bin\opencv_highgui2410.dll" "..\Release"
+copy "$(OPENCV_LIB_DIR)\build\x86\vc12\bin\opencv_imgproc2410.dll" "..\Release"
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Common\DeviceCommon.h" />
-    <ClInclude Include="..\..\..\Common\KinectV2SensorData.h" />
-    <ClInclude Include="..\..\..\Common\SensorData.h" />
+    <ClInclude Include="..\..\..\common\device\DeviceCommon.h" />
+    <ClInclude Include="..\..\..\common\device\KinectV2SensorData.h" />
+    <ClInclude Include="..\..\..\common\device\SensorData.h" />
+    <ClInclude Include="..\..\..\Common\Quaternion.h" />
+    <ClInclude Include="..\..\..\Common\SigCmn.h" />
     <ClInclude Include="..\..\PluginCommon\CheckRecvSIGServiceData.h" />
     <ClInclude Include="..\..\PluginCommon\Device.h" />
     <ClInclude Include="KinectV2Device.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Common\KinectV2SensorData.cpp" />
-    <ClCompile Include="..\..\..\Common\SensorData.cpp" />
+    <ClCompile Include="..\..\..\Common\device\KinectV2SensorData.cpp" />
+    <ClCompile Include="..\..\..\Common\device\SensorData.cpp" />
+    <ClCompile Include="..\..\..\Common\Quaternion.cpp" />
+    <ClCompile Include="..\..\..\Common\SigCmn.cpp" />
     <ClCompile Include="..\..\PluginCommon\CheckRecvSIGServiceData.cpp" />
     <ClCompile Include="..\..\PluginCommon\Device.cpp" />
     <ClCompile Include="KinectV2Device.cpp" />
     <ClCompile Include="Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="KinectV2.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
