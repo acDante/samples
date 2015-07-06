@@ -36,7 +36,6 @@ private:
 	std::string kinectV2DeviceType;
 	std::string kinectV2DeviceUniqueID;
 
-	std::string sensorDataModeStr;
 	double      scaleRatio;
 
 	void readIniFile();

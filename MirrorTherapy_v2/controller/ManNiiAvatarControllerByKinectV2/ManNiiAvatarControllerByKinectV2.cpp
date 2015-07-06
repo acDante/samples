@@ -75,7 +75,7 @@ void ManNiiAvatarControllerByKinectV2::onRecvMsg(RecvMsgEvent &evt)
 //		std::cout << "msg:" << allMsg << std::endl;
 
 		// Decode message to sensor data of kinect v2.
-		KinectV2SensorData sensorData(this->sensorDataModeStr);
+		KinectV2SensorData sensorData;
 
 		std::map<std::string, std::vector<std::string> > sensorDataMap = sensorData.decodeSensorData(allMsg);
 
@@ -201,6 +201,8 @@ void ManNiiAvatarControllerByKinectV2::readIniFile()
 {
 	std::ifstream ifs(ManNiiAvatarControllerByKinectV2::parameterFileName.c_str());
 
+	std::string sensorDataModeStr;
+
 	// Parameter file is "not" exists.
 	if (ifs.fail())
 	{
@@ -211,8 +213,8 @@ void ManNiiAvatarControllerByKinectV2::readIniFile()
 		this->kinectV2DeviceType     = DEV_TYPE_KINECT_V2;
 		this->kinectV2DeviceUniqueID = DEV_UNIQUE_ID_0;
 
-		this->sensorDataModeStr      = ManNiiAvatarControllerByKinectV2::paramFileValKinectV2SensorDataModeDefault;
-		this->scaleRatio             = ManNiiAvatarControllerByKinectV2::paramFileValKinectV2ScaleRatioDefault;
+		sensorDataModeStr      = ManNiiAvatarControllerByKinectV2::paramFileValKinectV2SensorDataModeDefault;
+		this->scaleRatio       = ManNiiAvatarControllerByKinectV2::paramFileValKinectV2ScaleRatioDefault;
 	}
 	// Parameter file is exists.
 	else
@@ -227,8 +229,8 @@ void ManNiiAvatarControllerByKinectV2::readIniFile()
 			this->kinectV2DeviceType     = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE);
 			this->kinectV2DeviceUniqueID = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID);
 
-			this->sensorDataModeStr      = pt.get<std::string>(ManNiiAvatarControllerByKinectV2::paramFileKeyKinectV2SensorDataMode);
-			this->scaleRatio             = pt.get<double>     (ManNiiAvatarControllerByKinectV2::paramFileKeyKinectV2ScaleRatio);
+			sensorDataModeStr      = pt.get<std::string>(ManNiiAvatarControllerByKinectV2::paramFileKeyKinectV2SensorDataMode);
+			this->scaleRatio       = pt.get<double>     (ManNiiAvatarControllerByKinectV2::paramFileKeyKinectV2ScaleRatio);
 		}
 		catch (boost::exception &ex)
 		{
@@ -239,7 +241,10 @@ void ManNiiAvatarControllerByKinectV2::readIniFile()
 	std::cout << PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME     << ":" << this->kinectV2ServiceName    << std::endl;
 	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE      << ":" << this->kinectV2DeviceType     << std::endl;
 	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID << ":" << this->kinectV2DeviceUniqueID << std::endl;
-	std::cout << ManNiiAvatarControllerByKinectV2::paramFileKeyKinectV2SensorDataMode << ":" << this->sensorDataModeStr << std::endl;
+	std::cout << ManNiiAvatarControllerByKinectV2::paramFileKeyKinectV2SensorDataMode << ":" << sensorDataModeStr << std::endl;
+
+	// Set setnsor data mode.
+	KinectV2SensorData::setSensorDataMode(sensorDataModeStr);
 }
 
 
