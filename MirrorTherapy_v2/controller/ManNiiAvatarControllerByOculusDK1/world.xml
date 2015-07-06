@@ -14,7 +14,7 @@
 		<set-attr-value name="language" value="c++"/>
 
 		<!--Object file "kinectController.so"-->
-		<set-attr-value name="implementation" value="./ManNiiAvatarControllerByOculus.so"/>
+		<set-attr-value name="implementation" value="./ManNiiAvatarControllerByOculusDK1.so"/>
 
 		<!--Kineticsset as false-->
 		<set-attr-value name="dynamics" value="false"/>

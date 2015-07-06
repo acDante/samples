@@ -1,11 +1,11 @@
 /*
- * ManNiiAvatarControllerByOculus.h
+ * ManNiiAvatarControllerByOculusDK1.h
  *
  *  Created on: 2015/03/12
  *      Author: Nozaki
  */
-#ifndef __MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_H__
-#define __MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_H__
+#ifndef __MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_DK1_H__
+#define __MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_DK1_H__
 
 #include <sigverse/Controller.h>
 #include <sigverse/ControllerEvent.h>
@@ -16,7 +16,7 @@
 #include "../ControllerCommon/ManNiiPosture.h"
 
 
-class ManNiiAvatarControllerByOculus : public ManNiiAvatarController
+class ManNiiAvatarControllerByOculusDK1 : public ManNiiAvatarController
 {
 protected:
 	///@brief Parameter file name.
@@ -54,7 +54,7 @@ public:
 
 extern "C" Controller * createController()
 {
-	return new ManNiiAvatarControllerByOculus;
+	return new ManNiiAvatarControllerByOculusDK1;
 }
 
-#endif //__MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_H__
+#endif //__MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_DK1_H__

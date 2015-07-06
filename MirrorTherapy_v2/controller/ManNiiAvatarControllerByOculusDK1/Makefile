@@ -1,5 +1,5 @@
 # target file (.so)
-TARGET = ./ManNiiAvatarControllerByOculus.so
+TARGET = ./ManNiiAvatarControllerByOculusDK1.so
 
 # sources
 SRCS =\
@@ -11,7 +11,7 @@ SRCS =\
 	$(CONTROLLER_COMMON)ManNiiPosture.cpp \
 	$(CONTROLLER_COMMON)AvatarController.cpp \
 	$(CONTROLLER_COMMON)ManNiiAvatarController.cpp \
-	$(CURRENT)ManNiiAvatarControllerByOculus.cpp \
+	$(CURRENT)ManNiiAvatarControllerByOculusDK1.cpp \
 
 # source directories
 CURRENT = ./
@@ -26,7 +26,7 @@ SIG_SRC = $(SIGVERSE_PATH)/include
 CXX = g++
 
 # compile option
-CFLAGS = -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(SIG_SRC) -fPIC -shared
+CFLAGS = -std=c++11 -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(SIG_SRC) -fPIC -shared
 
 # generate intermediate object file from sources.
 OBJS := $(SRCS:.cpp=.o)

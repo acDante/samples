@@ -1,11 +1,11 @@
 /*
- * ManNiiAvatarControllerByOculus.cpp
+ * ManNiiAvatarControllerByOculusDK1.cpp
  *
  *  Created on: 2015/03/12
  *      Author: Nozaki
  */
 
-#include "ManNiiAvatarControllerByOculus.h"
+#include "ManNiiAvatarControllerByOculusDK1.h"
 #include "../../common/device/OculusRiftDK1SensorData.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -13,11 +13,11 @@
 #include <cmath>
 
 ///@brief Parameter file name.
-const std::string ManNiiAvatarControllerByOculus::parameterFileName = "OculusRiftDK1.ini";
+const std::string ManNiiAvatarControllerByOculusDK1::parameterFileName = "OculusRiftDK1.ini";
 
 
 ///@brief Initialize this controller.
-void ManNiiAvatarControllerByOculus::onInit(InitEvent &evt)
+void ManNiiAvatarControllerByOculusDK1::onInit(InitEvent &evt)
 {
 	readIniFile();
 
@@ -35,7 +35,7 @@ void ManNiiAvatarControllerByOculus::onInit(InitEvent &evt)
 
 
 ///@brief Movement of the robot.
-double ManNiiAvatarControllerByOculus::onAction(ActionEvent &evt)
+double ManNiiAvatarControllerByOculusDK1::onAction(ActionEvent &evt)
 {
 	bool oculusDK1Available = checkService(this->oculusDK1ServiceName);
 
@@ -51,7 +51,7 @@ double ManNiiAvatarControllerByOculus::onAction(ActionEvent &evt)
 	return 1.0;
 }
 
-void ManNiiAvatarControllerByOculus::onRecvMsg(RecvMsgEvent &evt)
+void ManNiiAvatarControllerByOculusDK1::onRecvMsg(RecvMsgEvent &evt)
 {
 	const std::string allMsg = evt.getMsg();
 
@@ -79,7 +79,7 @@ void ManNiiAvatarControllerByOculus::onRecvMsg(RecvMsgEvent &evt)
 }
 
 
-void ManNiiAvatarControllerByOculus::setJointQuaternionsForOculus(SimObj *obj)
+void ManNiiAvatarControllerByOculusDK1::setJointQuaternionsForOculus(SimObj *obj)
 {
 	ManNiiPosture::ManNiiJoint joint = this->posture.joint[ManNiiPosture::HEAD_JOINT0];
 
@@ -87,7 +87,7 @@ void ManNiiAvatarControllerByOculus::setJointQuaternionsForOculus(SimObj *obj)
 }
 
 
-void ManNiiAvatarControllerByOculus::convertEulerAngle2ManNiiPosture(const SigCmn::EulerAngleType &eulerAngle)
+void ManNiiAvatarControllerByOculusDK1::convertEulerAngle2ManNiiPosture(const SigCmn::EulerAngleType &eulerAngle)
 {
 	dQuaternion qyaw;
 	dQuaternion qpitch;
@@ -129,7 +129,7 @@ void ManNiiAvatarControllerByOculus::convertEulerAngle2ManNiiPosture(const SigCm
 
 ///@brief Read parameter file.
 ///@return When couldn't read parameter file, return false;
-void ManNiiAvatarControllerByOculus::readIniFile()
+void ManNiiAvatarControllerByOculusDK1::readIniFile()
 {
 	std::ifstream ifs(this->parameterFileName.c_str());
 
