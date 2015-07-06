@@ -1,26 +1,17 @@
 #include "KinectV2SensorData.h"
 
+KinectV2SensorData::SensorDataMode KinectV2SensorData::sensorDataMode;
 
-///@brief Default Constructor
-KinectV2SensorData::KinectV2SensorData()
-{
-}
-
-///@brief Constructor
-KinectV2SensorData::KinectV2SensorData(std::string sensorDataModeStr)
-{
-	this->setSensorDataMode(sensorDataModeStr);
-}
-
+///@brief Set sensor data mode
 void KinectV2SensorData::setSensorDataMode(std::string sensorDataModeStr)
 {
 	if(sensorDataModeStr == "QUATERNION")
 	{
-		this->sensorDataMode = QUATERNION;
+		sensorDataMode = QUATERNION;
 	}
 	else if (sensorDataModeStr == "POSITION")
 	{
-		this->sensorDataMode = POSITION; 
+		sensorDataMode = POSITION;
 	}
 	else 
 	{ 
@@ -31,7 +22,7 @@ void KinectV2SensorData::setSensorDataMode(std::string sensorDataModeStr)
 
 std::string KinectV2SensorData::getSensorDataModeStr()
 {
-	switch (this->sensorDataMode)
+	switch (sensorDataMode)
 	{
 		case QUATERNION:{ return "QUATERNION"; break; }
 		case POSITION:  { return "POSITION";   break; }
@@ -46,7 +37,7 @@ std::string KinectV2SensorData::encodeSensorData(const std::string &pairsDelim, 
 {
 	std::stringstream ss;
 
-	switch (this->sensorDataMode)
+	switch (sensorDataMode)
 	{
 		case POSITION:
 		{
@@ -171,7 +162,7 @@ bool KinectV2SensorData::setSensorData(const std::map<std::string, std::vector<s
 		{
 			try
 			{
-				switch (this->sensorDataMode)
+				switch (sensorDataMode)
 				{
 					case POSITION:
 					{
@@ -296,7 +287,7 @@ std::string KinectV2SensorData::jointType2ShortJointName(KinectV2JointType e) co
 {
 	std::string sensorDataModeType;
 
-	switch (this->sensorDataMode)
+	switch (sensorDataMode)
 	{
 		case QUATERNION:{ sensorDataModeType = "Q"; break; }
 		case POSITION:  { sensorDataModeType = "P"; break; }

@@ -77,6 +77,7 @@ public:
 		Quaternion        orientation;
 	} KinectV2JointOrientation;
 
+
 private:
 	///@brief root position (Root_P, x, y, z) to string.
 	std::string rootPosition2Message(const SigCmn::Vector3 &position, const std::string &keyValueDelim, const std::string &valuesDelim) const;
@@ -96,8 +97,6 @@ private:
 
 	std::string jointType2ShortJointName(KinectV2JointType e) const;
 
-	void setSensorDataMode(std::string sensorDataModeStr);
-
 public:
 
 	///@brief Precision of quaternion when send message.
@@ -106,14 +105,11 @@ public:
 	///@brief Precision of root position when send message.
 	static const int rootPositionPrecision = POSITION_PRECISION;
 
-	///@brief Default Constructor
-	KinectV2SensorData();
+	//sensor data mode.("Quaternion" or "Position")
+	static SensorDataMode sensorDataMode;
 
 	///@brief Constructor
-	KinectV2SensorData(std::string sensorDataModeStr);
-
-	//sensor data mode.("Quaternion" or "Position")
-	SensorDataMode sensorDataMode;
+	static void setSensorDataMode(std::string sensorDataModeStr);
 
 	///@brief Convert sensor information to string.
 	///@param itemsDelim Symbol to split items.
