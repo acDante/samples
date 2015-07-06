@@ -18,7 +18,7 @@
 
 class ManNiiAvatarControllerByKinectV2 : public ManNiiAvatarController
 {
-private:
+protected:
 	///@brief Parameter file name.
 	static const std::string parameterFileName;
 

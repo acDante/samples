@@ -12,10 +12,13 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <cmath>
 
+///@brief Parameter file name.
+const std::string ManNiiAvatarControllerByOculus::parameterFileName = "OculusRiftDK1.ini";
+
+
 ///@brief Initialize this controller.
 void ManNiiAvatarControllerByOculus::onInit(InitEvent &evt)
 {
-	this->parameterFileName = PARAM_FILE_NAME_OCULUS_RIFT_DK1_INI;
 	readIniFile();
 
 	this->oculusDK1Service = NULL;

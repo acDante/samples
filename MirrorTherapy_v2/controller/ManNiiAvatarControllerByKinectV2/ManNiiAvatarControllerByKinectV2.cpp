@@ -242,6 +242,7 @@ void ManNiiAvatarControllerByKinectV2::readIniFile()
 	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE      << ":" << this->kinectV2DeviceType     << std::endl;
 	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID << ":" << this->kinectV2DeviceUniqueID << std::endl;
 	std::cout << ManNiiAvatarControllerByKinectV2::paramFileKeyKinectV2SensorDataMode << ":" << sensorDataModeStr << std::endl;
+	std::cout << ManNiiAvatarControllerByKinectV2::paramFileKeyKinectV2ScaleRatio     << ":" << this->scaleRatio << std::endl;
 
 	// Set setnsor data mode.
 	KinectV2SensorData::setSensorDataMode(sensorDataModeStr);

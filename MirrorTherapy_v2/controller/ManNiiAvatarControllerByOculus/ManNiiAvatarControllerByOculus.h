@@ -16,13 +16,11 @@
 #include "../ControllerCommon/ManNiiPosture.h"
 
 
-#define PARAM_FILE_NAME_OCULUS_RIFT_DK1_INI  "OculusRiftDK1.ini"
-
 class ManNiiAvatarControllerByOculus : public ManNiiAvatarController
 {
-private:
+protected:
 	///@brief Parameter file name.
-	std::string parameterFileName;
+	static const std::string parameterFileName;
 
 	BaseService *oculusDK1Service;
 
