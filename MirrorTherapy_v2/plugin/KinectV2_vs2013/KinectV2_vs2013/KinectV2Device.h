@@ -72,10 +72,10 @@ private:
 	///@brief Only get latest sensor data (No Smoothing)
 	KinectV2SensorData getLatestSensorData(const std::vector<KinectV2SensorData> &sensorDataList);
 
-	///@brief Smoothing by Simple Moving Average.
+	///@brief Smoothing by Simple Moving Average. (Only for POSITION mode)
 	KinectV2SensorData smoothingBySMA(const std::vector<KinectV2SensorData> &sensorDataList);
 
-	///@brief Smoothing by Weighted Moving Average.
+	///@brief Smoothing by Weighted Moving Average. (Only for POSITION mode)
 	KinectV2SensorData smoothingByWMA(const std::vector<KinectV2SensorData> &sensorDataList);
 public:
 	KinectV2Device();
@@ -85,8 +85,6 @@ public:
 	///@brief Execute Kinect v2 device.
 	int run();
 
-
-	std::string sensorDataModeStr;
 
 	std::vector<KinectV2SensorData> sensorDataList;
 	unsigned int sensorDataListNum;

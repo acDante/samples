@@ -286,7 +286,7 @@ int KinectV2Device::run()
 									spPos.z = joint[JointType::JointType_SpineBase].Position.Z;
 
 									//Sensor data
-									KinectV2SensorData sensorData = KinectV2SensorData(this->sensorDataModeStr);
+									KinectV2SensorData sensorData;
 
 									// Set spine base position.
 									sensorData.setRootPosition(spPos);
@@ -555,7 +555,7 @@ void KinectV2Device::readIniFile()
 	this->deviceType     = DEV_TYPE_KINECT_V2;
 	this->deviceUniqueID = DEV_UNIQUE_ID_0;
 	
-	this->sensorDataModeStr          = paramFileValKinectV2SensorDataModeDefault;
+	std::string sensorDataModeStr    = paramFileValKinectV2SensorDataModeDefault;
 	std::string smoothingTypeStr     = paramFileValKinectV2SmoothingTypeDefault;
 	std::string smoothingSMANumStr   = paramFileValKinectV2SmoothingSMANumDefault;
 	std::string smoothingWMAWeightStr= paramFileValKinectV2SmoothingWMAWeightDefault;
@@ -581,7 +581,7 @@ void KinectV2Device::readIniFile()
 			this->deviceType     = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE);
 			this->deviceUniqueID = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID);
 
-			this->sensorDataModeStr = pt.get<std::string>(paramFileKeyKinectV2SensorDataMode);
+			sensorDataModeStr       = pt.get<std::string>(paramFileKeyKinectV2SensorDataMode);
 			smoothingTypeStr        = pt.get<std::string>(paramFileKeyKinectV2SmoothingType);
 			smoothingSMANumStr      = pt.get<std::string>(paramFileKeyKinectV2SmoothingSMANum);
 			smoothingWMAWeightStr   = pt.get<std::string>(paramFileKeyKinectV2SmoothingWMAWeight);
@@ -602,23 +602,14 @@ void KinectV2Device::readIniFile()
 	std::cout << PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME     << ":" << this->serviceName       << std::endl;
 	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE      << ":" << this->deviceType        << std::endl;
 	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID << ":" << this->deviceUniqueID    << std::endl;
-	std::cout << paramFileKeyKinectV2SensorDataMode          << ":" << this->sensorDataModeStr << std::endl;
+	std::cout << paramFileKeyKinectV2SensorDataMode          << ":" << sensorDataModeStr       << std::endl;
 	std::cout << paramFileKeyKinectV2SmoothingType           << ":" << smoothingTypeStr        << std::endl;
 	std::cout << paramFileKeyKinectV2SmoothingSMANum         << ":" << smoothingSMANumStr      << std::endl;
 	std::cout << paramFileKeyKinectV2SmoothingWMAWeight      << ":" << smoothingWMAWeightStr   << std::endl;
 
-	if (this->sensorDataModeStr == "QUATERNION")
-	{
-		this->sensorDataListNum = 1;
-	}
-	else if (this->sensorDataModeStr == "POSITION")
-	{
-		this->setSmoothingInfo(smoothingTypeStr, smoothingSMANumStr, smoothingWMAWeightStr);
-	}
-	else
-	{
-		throw std::exception("illegal sensor data mode!");
-	}
+	KinectV2SensorData::setSensorDataMode(sensorDataModeStr);
+
+	this->setSmoothingInfo(smoothingTypeStr, smoothingSMANumStr, smoothingWMAWeightStr);
 }
 
 
@@ -627,38 +618,50 @@ void KinectV2Device::readIniFile()
  */
 void KinectV2Device::setSmoothingInfo(std::string typeStr, std::string smaNumStr, std::string wmaWeightStr)
 {
-	if (typeStr == "NONE")
+	if (KinectV2SensorData::sensorDataMode == KinectV2SensorData::SensorDataMode::QUATERNION)
 	{
-		this->smoothingType     = SmoothingType::NONE;
+		this->smoothingType = SmoothingType::NONE;
 		this->sensorDataListNum = 1;
 	}
-	else if (typeStr == "SMA")
+	else if (KinectV2SensorData::sensorDataMode == KinectV2SensorData::SensorDataMode::POSITION)
 	{
-		this->smoothingSMANum   = std::atoi(smaNumStr.c_str());
+		if (typeStr == "NONE")
+		{
+			this->smoothingType = SmoothingType::NONE;
+			this->sensorDataListNum = 1;
+		}
+		else if (typeStr == "SMA")
+		{
+			this->smoothingSMANum = std::atoi(smaNumStr.c_str());
 
-		this->smoothingType     = SmoothingType::SMA;
-		this->sensorDataListNum = this->smoothingSMANum;
-	}
-	else if (typeStr == "WMA")
-	{
-		this->smoothingWMAWeight = std::atof(wmaWeightStr.c_str());
+			this->smoothingType = SmoothingType::SMA;
+			this->sensorDataListNum = this->smoothingSMANum;
+		}
+		else if (typeStr == "WMA")
+		{
+			this->smoothingWMAWeight = std::atof(wmaWeightStr.c_str());
 
-		this->smoothingType      = SmoothingType::WMA;
-		this->sensorDataListNum  = 2;
-	}
-	else
-	{
-		throw std::exception("illegal smoothing type!");
+			this->smoothingType = SmoothingType::WMA;
+			this->sensorDataListNum = 2;
+		}
+		else
+		{
+			throw std::exception("illegal smoothing type!");
+		}
 	}
 }
 
 
 /*
- * Return latest posture.
+ * @brief Only get latest sensor data (No Smoothing)
  */
 KinectV2SensorData KinectV2Device::getLatestSensorData(const std::vector<KinectV2SensorData> &sensorDataList)
 {
-	KinectV2SensorData sensorData = KinectV2SensorData();
+	KinectV2SensorData sensorData;
+
+	sensorData.rootPosition.x = sensorDataList[0].rootPosition.x;
+	sensorData.rootPosition.y = sensorDataList[0].rootPosition.y;
+	sensorData.rootPosition.z = sensorDataList[0].rootPosition.z;
 
 	for (int i = 0; i < JointType::JointType_Count; i++)
 	{
@@ -667,6 +670,12 @@ KinectV2SensorData KinectV2Device::getLatestSensorData(const std::vector<KinectV
 		sensorData.jointPositions[i].position.y    = sensorDataList[0].jointPositions[i].position.y;
 		sensorData.jointPositions[i].position.z    = sensorDataList[0].jointPositions[i].position.z;
 		sensorData.jointPositions[i].trackingState = sensorDataList[0].jointPositions[i].trackingState;
+
+		sensorData.jointOrientations[i].jointType     = sensorDataList[0].jointOrientations[i].jointType;
+		sensorData.jointOrientations[i].orientation.w    = sensorDataList[0].jointOrientations[i].orientation.w;
+		sensorData.jointOrientations[i].orientation.x    = sensorDataList[0].jointOrientations[i].orientation.x;
+		sensorData.jointOrientations[i].orientation.y    = sensorDataList[0].jointOrientations[i].orientation.y;
+		sensorData.jointOrientations[i].orientation.z    = sensorDataList[0].jointOrientations[i].orientation.z;
 	}
 
 	return sensorData;
@@ -674,7 +683,7 @@ KinectV2SensorData KinectV2Device::getLatestSensorData(const std::vector<KinectV
 
 
 /*
- * Calculate Posture by Simple Moving Average.
+ * @brief Smoothing by Simple Moving Average. (Only for POSITION mode)
  */
 KinectV2SensorData KinectV2Device::smoothingBySMA(const std::vector<KinectV2SensorData> &sensorDataList)
 {
@@ -685,9 +694,13 @@ KinectV2SensorData KinectV2Device::smoothingBySMA(const std::vector<KinectV2Sens
 
 	std::vector<KinectV2SensorData>::const_iterator it = sensorDataList.begin();
 
-	KinectV2SensorData sensorData = KinectV2SensorData();
+	KinectV2SensorData sensorData;
 
 	//initialize
+	sensorData.rootPosition.x = 0.0;
+	sensorData.rootPosition.y = 0.0;
+	sensorData.rootPosition.z = 0.0;
+
 	for (int i = 0; i < JointType::JointType_Count; i++)
 	{
 		sensorData.jointPositions[i].jointType     = (KinectV2SensorData::KinectV2JointType)i;
@@ -700,6 +713,10 @@ KinectV2SensorData KinectV2Device::smoothingBySMA(const std::vector<KinectV2Sens
 	//sum
 	for(int i = 0; i < this->smoothingSMANum; i++)
 	{
+		sensorData.rootPosition.x += (*it).rootPosition.x;
+		sensorData.rootPosition.y += (*it).rootPosition.y;
+		sensorData.rootPosition.z += (*it).rootPosition.z;
+
 		for (int i = 0; i < JointType::JointType_Count; i++)
 		{
 			sensorData.jointPositions[i].position.x += (*it).jointPositions[i].position.x;
@@ -720,6 +737,10 @@ KinectV2SensorData KinectV2Device::smoothingBySMA(const std::vector<KinectV2Sens
 	}
 
 	//average
+	sensorData.rootPosition.x /= this->smoothingSMANum;
+	sensorData.rootPosition.y /= this->smoothingSMANum;
+	sensorData.rootPosition.z /= this->smoothingSMANum;
+
 	for (int i = 0; i < JointType::JointType_Count; i++)
 	{
 		sensorData.jointPositions[i].position.x /= this->smoothingSMANum;
@@ -733,7 +754,7 @@ KinectV2SensorData KinectV2Device::smoothingBySMA(const std::vector<KinectV2Sens
 
 
 /*
- * Calculate Posture by Weighted Moving Average.
+ * @brief Smoothing by Weighted Moving Average. (Only for POSITION mode)
  */
 KinectV2SensorData KinectV2Device::smoothingByWMA(const std::vector<KinectV2SensorData> &sensorDataList)
 {
@@ -742,7 +763,11 @@ KinectV2SensorData KinectV2Device::smoothingByWMA(const std::vector<KinectV2Sens
 		return this->getLatestSensorData(sensorDataList);
 	}
 
-	KinectV2SensorData sensorData = KinectV2SensorData();
+	KinectV2SensorData sensorData;
+
+	sensorData.rootPosition.x = (float)(this->smoothingWMAWeight*sensorDataList[0].rootPosition.x + (1.0-this->smoothingWMAWeight)*sensorDataList[1].rootPosition.x);
+	sensorData.rootPosition.y = (float)(this->smoothingWMAWeight*sensorDataList[0].rootPosition.y + (1.0-this->smoothingWMAWeight)*sensorDataList[1].rootPosition.y);
+	sensorData.rootPosition.z = (float)(this->smoothingWMAWeight*sensorDataList[0].rootPosition.z + (1.0-this->smoothingWMAWeight)*sensorDataList[1].rootPosition.z);
 
 	for (int i = 0; i < JointType::JointType_Count; i++)
 	{
