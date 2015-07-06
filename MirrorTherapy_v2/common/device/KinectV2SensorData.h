@@ -139,8 +139,6 @@ public:
 	///@brief Set joint quaternions for man-nii avatar.
 	KinectV2JointType shortJointName2KinectV2JointType(const std::string &shortJointName) const;
 
-	std::string getSensorDataModeStr();
-
 	///@brief Root body position.
 	SigCmn::Vector3 rootPosition;
 

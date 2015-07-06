@@ -20,18 +20,6 @@ void KinectV2SensorData::setSensorDataMode(std::string sensorDataModeStr)
 }
 
 
-std::string KinectV2SensorData::getSensorDataModeStr()
-{
-	switch (sensorDataMode)
-	{
-		case QUATERNION:{ return "QUATERNION"; break; }
-		case POSITION:  { return "POSITION";   break; }
-		default:        { return "";           break; }
-	}
-};
-
-
-
 ///@brief Generate message by posture.
 std::string KinectV2SensorData::encodeSensorData(const std::string &pairsDelim, const std::string &keyValueDelim, const std::string &vectorDelim) const
 {
