@@ -27,7 +27,7 @@ SIG_SRC = $(SIGVERSE_PATH)/include
 CXX = g++
 
 # compile option
-CFLAGS =  -std=c++11 -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(SIG_SRC) -fPIC -shared
+CFLAGS = -std=c++11 -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(SIG_SRC) -fPIC -shared
 
 # generate intermediate object file from sources.
 OBJS := $(SRCS:.cpp=.o)
