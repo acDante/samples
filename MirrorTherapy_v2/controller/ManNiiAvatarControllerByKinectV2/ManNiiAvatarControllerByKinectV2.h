@@ -18,7 +18,7 @@
 
 class ManNiiAvatarControllerByKinectV2 : public ManNiiAvatarController
 {
-protected:
+public:
 	///@brief Parameter file name.
 	static const std::string parameterFileName;
 
@@ -46,7 +46,6 @@ protected:
 	SigCmn::Vector3 iniPos;
 	double yrot;
 
-public:
 	///@brief Movement of the robot.
 	double onAction(ActionEvent &evt);
 
