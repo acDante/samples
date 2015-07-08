@@ -8,8 +8,8 @@
 #ifndef __MAN_NII_POSTURE_H__
 #define __MAN_NII_POSTURE_H__
 
-#include "../../common/Quaternion.h"
-#include "Posture.h"
+#include <sigverse/common/Quaternion.h>
+#include <sigverse/controller/common/Posture.h>
 #include <string>
 #include <sstream>
 
@@ -97,6 +97,20 @@ public:
 		}
 	}
 
+	//Avatar joints
+	enum SigVec
+	{
+		HIP = 0,
+		HTOTOR,
+		WAIST,
+		RSHOULDER,
+		LSHOULDER,
+		RELBOW,
+		LELBOW,
+		LEG,
+		FOOT
+	};
+
 	typedef struct _ManNiiJoint
 	{
 		ManNiiJointType jointType;
@@ -104,10 +118,13 @@ public:
 		bool isValid;
 	} ManNiiJoint;
 
-	ManNiiJoint joint[ManNiiJointType_Count];
+
+	static SigCmn::Vector3 getSigVec(const SigVec &sigvec);
 
 	ManNiiPosture();
 	void clearJointValidFlag();
+
+	ManNiiJoint joint[ManNiiJointType_Count];
 };
 
 #endif /* __MAN_NII_POSTURE_H__ */

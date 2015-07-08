@@ -9,7 +9,8 @@
 #define __AVATAR_CONTROLLER_H__
 
 #include <sigverse/Controller.h>
-#include "Posture.h"
+
+#include <sigverse/controller/common/Posture.h>
 
 class AvatarController : public Controller
 {

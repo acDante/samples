@@ -8,31 +8,16 @@
 #ifndef __MAN_NII_AVATAR_CONTROLLER_H__
 #define __MAN_NII_AVATAR_CONTROLLER_H__
 
-#include "AvatarController.h"
+#include <sigverse/common/SigCmn.h>
+#include <sigverse/controller/common/Posture.h>
+#include <sigverse/controller/common/AvatarController.h>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include "Posture.h"
-#include "../../common/SigCmn.h"
 
 class ManNiiAvatarController : public AvatarController
 {
 protected:
-	//Avatar joints
-	enum SigVec
-	{
-		HIP = 0,
-		HTOTOR,
-		WAIST,
-		RSHOULDER,
-		LSHOULDER,
-		RELBOW,
-		LELBOW,
-		LEG,
-		FOOT
-	};
-
-	SigCmn::Vector3 getSigVec(const SigVec &sigvec);
 };
 
 #endif /* __MAN_NII_AVATAR_CONTROLLER_H__ */
