@@ -10,31 +10,19 @@
 #include <sigverse/Controller.h>
 #include <sigverse/ControllerEvent.h>
 
-#include "../../common/device/OculusRiftDK1SensorData.h"
+#include <sigverse/common/device/OculusRiftDK1SensorData.h>
 
-#include "../ControllerCommon/ManNiiAvatarController.h"
-#include "../ControllerCommon/ManNiiPosture.h"
+#include <sigverse/controller/common/device/OculusDK1DeviceManager.h>
+#include <sigverse/controller/common/ManNiiPosture.h>
+#include <sigverse/controller/common/ManNiiAvatarController.h>
 
 
 class ManNiiAvatarControllerByOculusDK1 : public ManNiiAvatarController
 {
-protected:
+public:
 	///@brief Parameter file name.
 	static const std::string parameterFileName;
 
-	BaseService *oculusDK1Service;
-
-	std::string oculusDK1ServiceName;
-	std::string oculusDK1DeviceType;
-	std::string oculusDK1DeviceUniqueID;
-
-	dQuaternion defaultHeadJoint0Quaternion;
-
-	ManNiiPosture posture;
-
-	void readIniFile();
-
-public:
 	///@brief Movement of the robot.
 	double onAction(ActionEvent &evt);
 
@@ -44,17 +32,11 @@ public:
 	///@brief Initialize this controller.
 	void onInit(InitEvent &evt);
 
-	///@brief Convert euler angle to avatar posture structure.
-	void convertEulerAngle2ManNiiPosture(const SigCmn::EulerAngleType &eulerAngle);
+	void readIniFileAndInitialize();
 
-	void setJointQuaternions(SimObj *obj);
+	OculusDK1DeviceManager oculusDK1Service;
 
-	void setJointQuaternionsForOculus(SimObj *obj);
+	ManNiiPosture posture;
 };
-
-extern "C" Controller * createController()
-{
-	return new ManNiiAvatarControllerByOculusDK1;
-}
 
 #endif //__MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_DK1_H__
