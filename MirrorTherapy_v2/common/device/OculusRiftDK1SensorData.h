@@ -27,19 +27,8 @@ public:
 	///@brief Set sensor data.
 	void setEulerAngle(const float &yaw, const float &pitch, const float &roll);
 
-	///@brief Get sensor data.
-	float getYaw()
-	{
-		return this->eulerAngle.yaw;
-	}
-	float getPitch()
-	{
-		return this->eulerAngle.pitch;
-	}
-	float getRoll()
-	{
-		return this->eulerAngle.roll;
-	}
+	///@brief Get sensor data
+	SigCmn::EulerAngleType getEulerAngle() const;
 };
 
 

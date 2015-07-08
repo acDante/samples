@@ -8,10 +8,10 @@ std::string SensorData::encodeSensorData(const std::string &itemsDelim, const st
 }
 
 
-std::map<std::string, std::vector<std::string> > SensorData::decodeSensorData(const std::string &message, const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim) const
+std::map<std::string, std::vector<std::string> > SensorData::decodeSensorData(const std::string &message, const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim)
 {
 	// Generate map<string, vector<string> from message. Just split message by ";" and ":".
-	return this->convertMessage2Map(message, itemsDelim, keyValueDelim, valuesDelim);
+	return SensorData::convertMessage2Map(message, itemsDelim, keyValueDelim, valuesDelim);
 }
 
 

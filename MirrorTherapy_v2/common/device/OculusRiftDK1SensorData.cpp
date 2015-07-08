@@ -5,7 +5,6 @@
 ///@brief generate message by posture.
 std::string OculusRiftDK1SensorData::encodeSensorData(const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim) const
 {
-
 	std::vector<std::string> vec;
 
 	std::stringstream ssValue;
@@ -62,4 +61,10 @@ void OculusRiftDK1SensorData::setEulerAngle(const float &yaw, const float &pitch
 	this->eulerAngle.yaw   = yaw;
 	this->eulerAngle.pitch = pitch;
 	this->eulerAngle.roll  = roll;
+}
+
+///@brief Get sensor data
+SigCmn::EulerAngleType OculusRiftDK1SensorData::getEulerAngle() const
+{
+	return this->eulerAngle;
 }

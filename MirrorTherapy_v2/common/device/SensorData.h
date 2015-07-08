@@ -27,7 +27,7 @@ public:
 	///@param itemsDelim Symbol to split items.
 	///@param keyValueDelim Symbol to split KEY and VALUE.
 	///@param valuesDelim Symbol to split each componet of VALUE. When VALUE is multidimensional data, you use this symbol.
-	virtual std::map<std::string, std::vector<std::string> > decodeSensorData(const std::string &message, const std::string &itemsDelim = ITEMS_DELIMITER, const std::string &keyValueDelim = KEY_AND_VALUE_DELIMITER, const std::string &valuesDelim = VALUES_DELIMITER) const;
+	static std::map<std::string, std::vector<std::string> > decodeSensorData(const std::string &message, const std::string &itemsDelim = ITEMS_DELIMITER, const std::string &keyValueDelim = KEY_AND_VALUE_DELIMITER, const std::string &valuesDelim = VALUES_DELIMITER);
 
 	///@brief Set to sensor data.
 	///@param Map of sensor data;
