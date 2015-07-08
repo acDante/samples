@@ -3,22 +3,16 @@ TARGET = ./ManNiiAvatarControllerByKinectV2.so
 
 # sources
 SRCS =\
-	$(COMMON)SigCmn.cpp \
-	$(COMMON)Quaternion.cpp \
-	$(COMMON_DEVICE)SensorData.cpp \
-	$(COMMON_DEVICE)KinectV2SensorData.cpp \
-	$(CONTROLLER_COMMON)Posture.cpp \
-	$(CONTROLLER_COMMON)ManNiiPosture.cpp \
-	$(CONTROLLER_COMMON)AvatarController.cpp \
-	$(CONTROLLER_COMMON)ManNiiAvatarController.cpp \
-	$(CURRENT)ManNiiAvatarControllerByKinectV2.cpp \
-	$(CURRENT)ManNiiAvatarControllerByKinectV2_ConvertKinect2Posture.cpp \
-
-# source directories
-CURRENT = ./
-COMMON = ../../common/
-COMMON_DEVICE = ../../common/device/
-CONTROLLER_COMMON = ../ControllerCommon/
+	$(SIGVERSE_BUILD_PATH)/sigverse/common/SigCmn.cpp \
+	$(SIGVERSE_BUILD_PATH)/sigverse/common/Quaternion.cpp \
+	$(SIGVERSE_BUILD_PATH)/sigverse/common/device/SensorData.cpp \
+	$(SIGVERSE_BUILD_PATH)/sigverse/common/device/KinectV2SensorData.cpp \
+	$(SIGVERSE_BUILD_PATH)/sigverse/controller/common/Posture.cpp \
+	$(SIGVERSE_BUILD_PATH)/sigverse/controller/common/ManNiiPosture.cpp \
+	$(SIGVERSE_BUILD_PATH)/sigverse/controller/common/AvatarController.cpp \
+	$(SIGVERSE_BUILD_PATH)/sigverse/controller/common/ManNiiAvatarController.cpp \
+	$(SIGVERSE_BUILD_PATH)/sigverse/controller/common/device/KinectV2DeviceManager.cpp \
+	$(SIGVERSE_BUILD_PATH)/sigverse/controller/ManNiiAvatarControllerByKinectV2/ManNiiAvatarControllerByKinectV2.cpp \
 
 # sigverse path
 SIG_SRC = $(SIGVERSE_PATH)/include
@@ -27,7 +21,7 @@ SIG_SRC = $(SIGVERSE_PATH)/include
 CXX = g++
 
 # compile option
-CFLAGS = -std=c++11 -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(SIG_SRC) -fPIC -shared
+CFLAGS = -std=c++11 -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(SIG_SRC) -I$(SIGVERSE_BUILD_PATH) -fPIC -shared
 
 # generate intermediate object file from sources.
 OBJS := $(SRCS:.cpp=.o)

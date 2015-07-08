@@ -8,12 +8,12 @@
 #define __MAN_NII_AVATAR_CONTROLLER_BY_KINECT_V2_H__
 
 #include <sigverse/Controller.h>
-#include <sigverse/comm/controller/Controller.h>
 #include <sigverse/ControllerEvent.h>
 
-#include "../ControllerCommon/ManNiiAvatarController.h"
-#include "../ControllerCommon/ManNiiPosture.h"
-#include "../../common/device/KinectV2SensorData.h"
+#include <sigverse/common/device/KinectV2SensorData.h>
+#include <sigverse/controller/common/ManNiiAvatarController.h>
+#include <sigverse/controller/common/ManNiiPosture.h>
+#include <sigverse/controller/common/device/KinectV2DeviceManager.h>
 
 
 class ManNiiAvatarControllerByKinectV2 : public ManNiiAvatarController
@@ -28,24 +28,6 @@ public:
 	static const std::string paramFileValKinectV2SensorDataModeDefault;
 	static const double      paramFileValKinectV2ScaleRatioDefault;
 
-	static const double normalization_range;
-
-	//ManNiiAvatarPosture posture;
-	BaseService *kinectV2Service;
-	std::string kinectV2ServiceName;
-	std::string kinectV2DeviceType;
-	std::string kinectV2DeviceUniqueID;
-
-	double      scaleRatio;
-
-	void readIniFile();
-
-	SigCmn::Vector3 startpos;
-	bool started = false;
-
-	SigCmn::Vector3 iniPos;
-	double yrot;
-
 	///@brief Movement of the robot.
 	double onAction(ActionEvent &evt);
 
@@ -55,14 +37,9 @@ public:
 	///@brief Initialize this controller.
 	void onInit(InitEvent &evt);
 
-	///@brief Convert Kinect V2 joint orientation to avatar posture structure.
-	ManNiiPosture convertKinectV2JointOrientations2ManNiiPosture(const KinectV2SensorData::KinectV2JointOrientation* kinectV2Joints);
-	///@brief Convert Kinect V2 joint position to avatar posture structure.
-	ManNiiPosture convertKinectV2JointPosition2ManNiiPosture(const KinectV2SensorData::KinectV2JointPosition* positionArray);
+	void readIniFileAndInitialize();
 
-	void setPosition(SimObj *obj, const SigCmn::Vector3 &pos);
-	void setJointQuaternion(SimObj *obj, const ManNiiPosture::ManNiiJoint &jq);
-	void setJointQuaternionsForKinect(SimObj *obj, const ManNiiPosture &manNiiPosture, KinectV2SensorData::SensorDataMode sensorDataMode);
+	KinectV2DeviceManager kinectV2Service;
 };
 
 #endif //__MAN_NII_AVATAR_CONTROLLER_BY_KINECT_V2_H__
