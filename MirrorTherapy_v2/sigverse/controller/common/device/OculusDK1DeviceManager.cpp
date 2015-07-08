@@ -24,6 +24,14 @@ OculusDK1DeviceManager::OculusDK1DeviceManager()
 	this->deviceUniqueID = "";
 }
 
+OculusDK1DeviceManager::OculusDK1DeviceManager(std::string &name, std::string &deviceType, std::string &deviceUniqueID)
+{
+	this->service        = NULL;
+	this->serviceName    = name;
+	this->deviceType     = deviceType;
+	this->deviceUniqueID = deviceUniqueID;
+}
+
 void OculusDK1DeviceManager::setJointQuaternions2ManNii(SimObj *obj, const ManNiiPosture &posture)
 {
 	ManNiiPosture::ManNiiJoint joint = posture.joint[ManNiiPosture::HEAD_JOINT0];

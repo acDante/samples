@@ -30,22 +30,22 @@ void ManNiiAvatarControllerByKinectV2::onInit(InitEvent &evt)
 
 	SimObj *myself = getObj(myname());
 
-	this->kinectV2Service.initPositionAndRotation(myself);
+	this->kinectV2DeviceManager.initPositionAndRotation(myself);
 }
 
 
 ///@brief Movement of the robot.
 double ManNiiAvatarControllerByKinectV2::onAction(ActionEvent &evt)
 {
-	bool kinectV2Available = checkService(this->kinectV2Service.serviceName);
+	bool kinectV2Available = checkService(this->kinectV2DeviceManager.serviceName);
 
-	if (kinectV2Available && this->kinectV2Service.service == NULL)
+	if (kinectV2Available && this->kinectV2DeviceManager.service == NULL)
 	{
-		this->kinectV2Service.service = connectToService(this->kinectV2Service.serviceName);
+		this->kinectV2DeviceManager.service = connectToService(this->kinectV2DeviceManager.serviceName);
 	}
-	else if (!kinectV2Available && this->kinectV2Service.service != NULL)
+	else if (!kinectV2Available && this->kinectV2DeviceManager.service != NULL)
 	{
-		this->kinectV2Service.service = NULL;
+		this->kinectV2DeviceManager.service = NULL;
 	}
 
 	return 1.0;
@@ -63,8 +63,8 @@ void ManNiiAvatarControllerByKinectV2::onRecvMsg(RecvMsgEvent &evt)
 		std::map<std::string, std::vector<std::string> > sensorDataMap = KinectV2SensorData::decodeSensorData(allMsg);
 
 		if (sensorDataMap.find(MSG_KEY_DEV_TYPE) == sensorDataMap.end()){ return; }
-		if(sensorDataMap[MSG_KEY_DEV_TYPE][0]     !=this->kinectV2Service.deviceType    ){ return; }
-		if(sensorDataMap[MSG_KEY_DEV_UNIQUE_ID][0]!=this->kinectV2Service.deviceUniqueID){ return; }
+		if(sensorDataMap[MSG_KEY_DEV_TYPE][0]     !=this->kinectV2DeviceManager.deviceType    ){ return; }
+		if(sensorDataMap[MSG_KEY_DEV_UNIQUE_ID][0]!=this->kinectV2DeviceManager.deviceUniqueID){ return; }
 
 		KinectV2SensorData sensorData;
 		sensorData.setSensorData(sensorDataMap);
@@ -73,8 +73,8 @@ void ManNiiAvatarControllerByKinectV2::onRecvMsg(RecvMsgEvent &evt)
 
 		// Set SIGVerse quaternions and positions
 		SimObj *obj = getObj(myname());
-		this->kinectV2Service.setRootPosition(obj, sensorData.rootPosition);
-		this->kinectV2Service.setJointQuaternions2ManNii(obj, manNiiPosture, sensorData);
+		this->kinectV2DeviceManager.setRootPosition(obj, sensorData.rootPosition);
+		this->kinectV2DeviceManager.setJointQuaternions2ManNii(obj, manNiiPosture, sensorData);
 	}
 	catch(SimObj::NoAttributeException &err)
 	{
@@ -148,7 +148,7 @@ void ManNiiAvatarControllerByKinectV2::readIniFileAndInitialize()
 	std::cout << ManNiiAvatarControllerByKinectV2::paramFileKeyKinectV2SensorDataMode << ":" << sensorDataModeStr << std::endl;
 	std::cout << ManNiiAvatarControllerByKinectV2::paramFileKeyKinectV2ScaleRatio     << ":" << scaleRatio << std::endl;
 
-	this->kinectV2Service = KinectV2DeviceManager(kinectV2ServiceName, kinectV2DeviceType, kinectV2DeviceUniqueID, scaleRatio);
+	this->kinectV2DeviceManager = KinectV2DeviceManager(kinectV2ServiceName, kinectV2DeviceType, kinectV2DeviceUniqueID, scaleRatio);
 
 	// Set setnsor data mode.
 	KinectV2SensorData::setSensorDataMode(sensorDataModeStr);

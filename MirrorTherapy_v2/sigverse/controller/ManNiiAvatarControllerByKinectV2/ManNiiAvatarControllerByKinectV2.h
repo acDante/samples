@@ -39,7 +39,7 @@ public:
 
 	void readIniFileAndInitialize();
 
-	KinectV2DeviceManager kinectV2Service;
+	KinectV2DeviceManager kinectV2DeviceManager;
 };
 
 #endif //__MAN_NII_AVATAR_CONTROLLER_BY_KINECT_V2_H__

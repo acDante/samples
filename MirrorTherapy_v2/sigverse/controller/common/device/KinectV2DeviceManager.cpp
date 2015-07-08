@@ -28,9 +28,9 @@ KinectV2DeviceManager::KinectV2DeviceManager()
 	this->started = false;
 }
 
-KinectV2DeviceManager::KinectV2DeviceManager(std::string name, std::string deviceType, std::string deviceUniqueID, double scaleRatio)
+KinectV2DeviceManager::KinectV2DeviceManager(std::string &name, std::string &deviceType, std::string &deviceUniqueID, double scaleRatio)
 {
-	this->service = NULL;
+	this->service        = NULL;
 	this->serviceName    = name;
 	this->deviceType     = deviceType;
 	this->deviceUniqueID = deviceUniqueID;

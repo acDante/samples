@@ -72,15 +72,19 @@ void ManNiiAvatarControllerByOculusDK1::readIniFileAndInitialize()
 {
 	std::ifstream ifs(this->parameterFileName.c_str());
 
+	std::string oculusDK1ServiceName;
+	std::string oculusDK1DeviceType;
+	std::string oculusDK1DeviceUniqueID;
+
 	// Parameter file is "not" exists.
 	if (ifs.fail())
 	{
 		std::cout << "Not exist : " << this->parameterFileName << std::endl;
 		std::cout << "Use default parameter." << std::endl;
 
-		this->oculusDK1Service.serviceName    = SERVICE_NAME_OCULUS_DK1;
-		this->oculusDK1Service.deviceType     = DEV_TYPE_OCULUS_DK1;
-		this->oculusDK1Service.deviceUniqueID = DEV_UNIQUE_ID_0;
+		oculusDK1ServiceName    = SERVICE_NAME_OCULUS_DK1;
+		oculusDK1DeviceType     = DEV_TYPE_OCULUS_DK1;
+		oculusDK1DeviceUniqueID = DEV_UNIQUE_ID_0;
 	}
 	// Parameter file is exists.
 	else
@@ -91,9 +95,9 @@ void ManNiiAvatarControllerByOculusDK1::readIniFileAndInitialize()
 			boost::property_tree::ptree pt;
 			boost::property_tree::read_ini(this->parameterFileName, pt);
 
-			this->oculusDK1Service.serviceName    = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME);
-			this->oculusDK1Service.deviceType     = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE);
-			this->oculusDK1Service.deviceUniqueID = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID);
+			oculusDK1ServiceName    = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME);
+			oculusDK1DeviceType     = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE);
+			oculusDK1DeviceUniqueID = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID);
 		}
 		catch (boost::exception &ex)
 		{
@@ -101,9 +105,11 @@ void ManNiiAvatarControllerByOculusDK1::readIniFileAndInitialize()
 		}
 	}
 
-	std::cout << PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME     << ":" << this->oculusDK1Service.serviceName    << std::endl;
-	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE      << ":" << this->oculusDK1Service.deviceType     << std::endl;
-	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID << ":" << this->oculusDK1Service.deviceUniqueID << std::endl;
+	std::cout << PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME     << ":" << oculusDK1ServiceName    << std::endl;
+	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE      << ":" << oculusDK1DeviceType     << std::endl;
+	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID << ":" << oculusDK1DeviceUniqueID << std::endl;
+
+	this->oculusDK1Service = OculusDK1DeviceManager(oculusDK1ServiceName, oculusDK1DeviceType, oculusDK1DeviceUniqueID);
 }
 
 

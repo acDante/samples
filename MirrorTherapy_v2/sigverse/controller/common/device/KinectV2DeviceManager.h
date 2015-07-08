@@ -20,7 +20,7 @@ public:
 	static const double normalization_range;
 
 	KinectV2DeviceManager();
-	KinectV2DeviceManager(std::string name, std::string deviceType, std::string deviceUniqueID, double scaleRatio);
+	KinectV2DeviceManager(std::string &name, std::string &deviceType, std::string &deviceUniqueID, double scaleRatio);
 
 	void initPositionAndRotation(SimObj *myself);
 

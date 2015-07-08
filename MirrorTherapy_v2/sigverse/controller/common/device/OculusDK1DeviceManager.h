@@ -25,6 +25,7 @@ public:
 	std::string deviceUniqueID;
 
 	OculusDK1DeviceManager();
+	OculusDK1DeviceManager(std::string &name, std::string &deviceType, std::string &deviceUniqueID);
 
 	///@brief Convert euler angle to avatar posture structure.
 	static ManNiiPosture convertEulerAngle2ManNiiPosture(const SigCmn::EulerAngleType &eulerAngle);
