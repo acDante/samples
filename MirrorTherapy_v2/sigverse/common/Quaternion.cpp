@@ -5,7 +5,7 @@
  *      Author: tome-yamada
  */
 
-#include "Quaternion.h"
+#include <sigverse/common/Quaternion.h>
 #include <sstream>
 #include <cmath>
 
@@ -40,7 +40,7 @@ Quaternion::Quaternion(const Quaternion &v)
 };
 
 
-void Quaternion::getQuaternion(double &w, double &x, double &y, double &z)
+void Quaternion::getQuaternion(double &w, double &x, double &y, double &z) const
 {
 	w = this->w;
 	x = this->x;
@@ -59,7 +59,7 @@ void Quaternion::setQuaternion(const double w, const double x, const double y, c
 ///@param[in] q Input quaternion.
 ///@param[in] r Input quaternion.
 ///@return Cross product of two input quaternions.
-Quaternion Quaternion::calcCrossProduct(const Quaternion &q, const Quaternion &r)
+const Quaternion Quaternion::calcCrossProduct(const Quaternion &q, const Quaternion &r)
 {
 	Quaternion tmp;
 	tmp.w = q.w * r.w - q.x * r.x - q.y * r.y - q.z * r.z;
@@ -73,7 +73,7 @@ Quaternion Quaternion::calcCrossProduct(const Quaternion &q, const Quaternion &r
 /*
  * Calculate Quaternion from 2 Vectors
  */
-Quaternion Quaternion::calcQuaternionFromVector(const SigCmn::Vector3 &kvec, const SigCmn::Vector3 &svec)
+const Quaternion Quaternion::calcQuaternionFromVector(const SigCmn::Vector3 &kvec, const SigCmn::Vector3 &svec)
 {
 	Quaternion q;
 

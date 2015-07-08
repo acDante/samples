@@ -1,4 +1,4 @@
-#include "KinectV2SensorData.h"
+#include <sigverse/common/device/KinectV2SensorData.h>
 
 KinectV2SensorData::SensorDataMode KinectV2SensorData::sensorDataMode;
 

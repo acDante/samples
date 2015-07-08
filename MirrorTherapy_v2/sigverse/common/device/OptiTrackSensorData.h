@@ -1,16 +1,17 @@
 #ifndef __OPTITRACK_SENSOR_DATA_H__
 #define __OPTITRACK_SENSOR_DATA_H__
 
-#include "SensorData.h"
+#include <sigverse/common/device/SensorData.h>
+
 //can't include NatNetTypes.h, because NatNetTypes.h is only for Windows.
 //#include <NatNetTypes.h>
 
 #include <string>
 
-
+#define NUM_TO_STR(num)         #num
 #define MSG_KEY_N_RIGID_BODIES  "N_RIGID_BODIES"
 #define MSG_KEY_RIGID_STR       "RIGID"
-#define MSG_KEY_RIGID(x)        MSG_KEY_RIGID_STR+x   //e.g. RIGID1, RIGID2, ... , RIGID100
+//#define MSG_KEY_RIGID(x)        MSG_KEY_RIGID_STR + x   //e.g. RIGID1, RIGID2, ... , RIGID100
 
 
 //from NatNetTypes.h(version 2.7.0.0).

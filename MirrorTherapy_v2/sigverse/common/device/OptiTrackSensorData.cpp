@@ -1,4 +1,4 @@
-#include "OptiTrackSensorData.h"
+#include <sigverse/common/device/OptiTrackSensorData.h>
 
 #include <sstream>
 
@@ -33,7 +33,10 @@ void OptiTrackSensorData::addRigidBody(std::map<std::string, std::vector<std::st
 	std::stringstream ssKey;
 
 	//e.g. RIGID1, RIGID2, ... , RIGID100
-	ssKey << MSG_KEY_RIGID(rigidBody.ID);
+//	ssKey << MSG_KEY_RIGID(NUM_TO_STR(rigidBody.ID));
+	ssKey << MSG_KEY_RIGID_STR << rigidBody.ID;
+
+//	std::cout << "ssKey:" << ssKey.str() << std::endl;
 
 	std::stringstream ssValue;
 

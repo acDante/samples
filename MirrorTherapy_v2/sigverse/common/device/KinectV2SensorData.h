@@ -1,9 +1,9 @@
 #ifndef __KINECT_V2_SENSOR_DATA_H__
 #define __KINECT_V2_SENSOR_DATA_H__
 
-#include "../Quaternion.h"
-#include "../SigCmn.h"
-#include "SensorData.h"
+#include <sigverse/common/Quaternion.h>
+#include <sigverse/common/SigCmn.h>
+#include <sigverse/common/device/SensorData.h>
 
 #include <string>
 #include <sstream>

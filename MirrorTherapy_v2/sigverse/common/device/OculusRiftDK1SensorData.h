@@ -1,8 +1,8 @@
 #ifndef __OCULUS_RIFT_DK1_SENSOR_DATA_H__
 #define __OCULUS_RIFT_DK1_SENSOR_DATA_H__
 
-#include "../SigCmn.h"
-#include "SensorData.h"
+#include <sigverse/common/SigCmn.h>
+#include <sigverse/common/device/SensorData.h>
 
 #define MSG_KEY_EULER "EULER"
 

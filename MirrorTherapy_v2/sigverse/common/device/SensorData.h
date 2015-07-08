@@ -8,7 +8,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "DeviceCommon.h"
+#include <sigverse/common/device/DeviceCommon.h>
 
 class SensorData
 {

@@ -8,7 +8,7 @@
 #ifndef __QUATERNION_H__
 #define __QUATERNION_H__
 
-#include "SigCmn.h"
+#include <sigverse/common/SigCmn.h>
 #include <string>
 
 
@@ -28,15 +28,15 @@ public:
 
 	Quaternion(const Quaternion &v);
 
-	void getQuaternion(double &w, double &x, double &y, double &z);
+	void getQuaternion(double &w, double &x, double &y, double &z) const;
 	void setQuaternion(const double w, const double x, const double y, const double z);
 
 	///@param[in] q Input quaternion.
 	///@param[in] r Input quaternion.
 	///@return Cross product of two input quaternions.
-	static Quaternion calcCrossProduct(const Quaternion &q, const Quaternion &r);
+	static const Quaternion calcCrossProduct(const Quaternion &q, const Quaternion &r);
 
-	static Quaternion calcQuaternionFromVector(const SigCmn::Vector3 &kvec, const SigCmn::Vector3 &svec);
+	static const Quaternion calcQuaternionFromVector(const SigCmn::Vector3 &kvec, const SigCmn::Vector3 &svec);
 	static void rotVec(SigCmn::Vector3 &v, const Quaternion &q);
 };
 

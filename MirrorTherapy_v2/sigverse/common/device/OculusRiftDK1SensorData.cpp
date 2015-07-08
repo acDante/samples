@@ -1,4 +1,4 @@
-#include "OculusRiftDK1SensorData.h"
+#include <sigverse/common/device/OculusRiftDK1SensorData.h>
 #include <sstream>
 
 

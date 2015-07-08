@@ -5,7 +5,7 @@
  *      Author: tome-yamada
  */
 
-#include "SigCmn.h"
+#include <sigverse/common/SigCmn.h>
 #include <cmath>
 
 /*

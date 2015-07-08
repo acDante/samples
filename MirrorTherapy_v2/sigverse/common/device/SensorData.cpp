@@ -1,4 +1,4 @@
-#include "SensorData.h"
+#include <sigverse/common/device/SensorData.h>
 #include <exception>
 
 std::string SensorData::encodeSensorData(const std::string &itemsDelim, const std::string &keyValueDelim, const std::string &valuesDelim) const
