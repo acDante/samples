@@ -28,15 +28,15 @@ void ManNiiAvatarControllerByOculusDK1::onInit(InitEvent &evt)
 ///@brief Movement of the robot.
 double ManNiiAvatarControllerByOculusDK1::onAction(ActionEvent &evt)
 {
-	bool oculusDK1Available = checkService(this->oculusDK1Service.serviceName);
+	bool oculusDK1Available = checkService(this->oculusDK1DeviceManager.serviceName);
 
-	if (oculusDK1Available && this->oculusDK1Service.service == NULL)
+	if (oculusDK1Available && this->oculusDK1DeviceManager.service == NULL)
 	{
-		this->oculusDK1Service.service = connectToService(this->oculusDK1Service.serviceName);
+		this->oculusDK1DeviceManager.service = connectToService(this->oculusDK1DeviceManager.serviceName);
 	}
-	else if (!oculusDK1Available && this->oculusDK1Service.service != NULL)
+	else if (!oculusDK1Available && this->oculusDK1DeviceManager.service != NULL)
 	{
-		this->oculusDK1Service.service = NULL;
+		this->oculusDK1DeviceManager.service = NULL;
 	}
 
 	return 1.0;
@@ -52,16 +52,16 @@ void ManNiiAvatarControllerByOculusDK1::onRecvMsg(RecvMsgEvent &evt)
 
 	if (sensorDataMap.find(MSG_KEY_DEV_TYPE) == sensorDataMap.end()){ return; }
 
-	if(sensorDataMap[MSG_KEY_DEV_TYPE][0]     !=this->oculusDK1Service.deviceType    ){ return; }
-	if(sensorDataMap[MSG_KEY_DEV_UNIQUE_ID][0]!=this->oculusDK1Service.deviceUniqueID){ return; }
+	if(sensorDataMap[MSG_KEY_DEV_TYPE][0]     !=this->oculusDK1DeviceManager.deviceType    ){ return; }
+	if(sensorDataMap[MSG_KEY_DEV_UNIQUE_ID][0]!=this->oculusDK1DeviceManager.deviceUniqueID){ return; }
 
 	OculusRiftDK1SensorData sensorData;
 	sensorData.setSensorData(sensorDataMap);
 
-	ManNiiPosture manNiiPosture = this->oculusDK1Service.convertEulerAngle2ManNiiPosture(sensorData.getEulerAngle());
+	ManNiiPosture manNiiPosture = this->oculusDK1DeviceManager.convertEulerAngle2ManNiiPosture(sensorData.getEulerAngle());
 
 	SimObj *obj = getObj(myname());
-	this->oculusDK1Service.setJointQuaternions2ManNii(obj, manNiiPosture);
+	this->oculusDK1DeviceManager.setJointQuaternions2ManNii(obj, manNiiPosture);
 }
 
 
@@ -109,7 +109,7 @@ void ManNiiAvatarControllerByOculusDK1::readIniFileAndInitialize()
 	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE      << ":" << oculusDK1DeviceType     << std::endl;
 	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID << ":" << oculusDK1DeviceUniqueID << std::endl;
 
-	this->oculusDK1Service = OculusDK1DeviceManager(oculusDK1ServiceName, oculusDK1DeviceType, oculusDK1DeviceUniqueID);
+	this->oculusDK1DeviceManager = OculusDK1DeviceManager(oculusDK1ServiceName, oculusDK1DeviceType, oculusDK1DeviceUniqueID);
 }
 
 

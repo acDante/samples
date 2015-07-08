@@ -34,7 +34,7 @@ public:
 
 	void readIniFileAndInitialize();
 
-	OculusDK1DeviceManager oculusDK1Service;
+	OculusDK1DeviceManager oculusDK1DeviceManager;
 
 	ManNiiPosture posture;
 };
