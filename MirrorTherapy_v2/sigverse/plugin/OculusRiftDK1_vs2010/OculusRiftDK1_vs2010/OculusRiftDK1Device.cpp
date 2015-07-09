@@ -1,6 +1,7 @@
-#include "OculusRiftDK1Device.h"
-#include "common/device/OculusRiftDK1SensorData.h"
-#include "../../PluginCommon/CheckRecvSIGServiceData.h"
+#include <sigverse/common/device/OculusRiftDK1SensorData.h>
+#include <sigverse/plugin/common/CheckRecvSIGServiceData.h>
+#include <sigverse/plugin/OculusRiftDK1_vs2010/OculusRiftDK1_vs2010/OculusRiftDK1Device.h>
+
 #include <Windows.h>
 #include <boost/thread.hpp>
 #include <boost/thread/thread.hpp>

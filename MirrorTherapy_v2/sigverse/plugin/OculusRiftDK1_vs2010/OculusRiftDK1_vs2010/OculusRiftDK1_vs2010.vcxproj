@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -19,12 +19,14 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -61,21 +63,21 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>C:\SIGVerse\src\boost_1_55_0;C:\SIGVerse\src\OculusSDK\LibOVR\Include;C:\SIGVerse\GitHub\Client\SIGService\Windows\SIGService;C:\SIGVerse\src\EmbodiedBrain\MirrorTherapy_v2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOOST_1_55_0_LIB_DIR);$(OCULUS_SDK_LIB_DIR)\Include;$(SIGSERVICE_100_LIB_DIR)\include;$(SIGVERSE_BUILD_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\SIGVerse\src\boost_1_55_0\lib32-msvc-10.0;C:\SIGVerse\src\OculusSDK\LibOVR\Lib\Win32;C:\SIGVerse\GitHub\Client\SIGService\Windows\Release_2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BOOST_1_55_0_LIB_DIR)\lib32-msvc-10.0;$(OCULUS_SDK_LIB_DIR)\Lib\Win32;$(SIGSERVICE_100_LIB_DIR)\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libovr.lib;winmm.lib;SIGService.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\common\device\OculusRiftDK1SensorData.cpp" />
     <ClCompile Include="..\..\..\common\device\SensorData.cpp" />
-    <ClCompile Include="..\..\PluginCommon\CheckRecvSIGServiceData.cpp" />
-    <ClCompile Include="..\..\PluginCommon\Device.cpp" />
+    <ClCompile Include="..\..\common\CheckRecvSIGServiceData.cpp" />
+    <ClCompile Include="..\..\common\Device.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="OculusRiftDK1Device.cpp" />
   </ItemGroup>
@@ -83,8 +85,8 @@
     <ClInclude Include="..\..\..\common\device\DeviceCommon.h" />
     <ClInclude Include="..\..\..\common\device\OculusRiftDK1SensorData.h" />
     <ClInclude Include="..\..\..\common\device\SensorData.h" />
-    <ClInclude Include="..\..\PluginCommon\CheckRecvSIGServiceData.h" />
-    <ClInclude Include="..\..\PluginCommon\Device.h" />
+    <ClInclude Include="..\..\common\CheckRecvSIGServiceData.h" />
+    <ClInclude Include="..\..\common\Device.h" />
     <ClInclude Include="OculusRiftDK1Device.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
