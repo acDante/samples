@@ -1,11 +1,11 @@
 /*
- * OculusDK1Service.h
+ * OculusDK1DeviceManager.h
  *
- *  Created on: 2015/03/12
- *      Author: Nozaki
+ *  Created on: 2015/07/09
+ *      Author: tome-yamada
  */
-#ifndef __OCULUS_DK1_SERVICE_H__
-#define __OCULUS_DK1_SERVICE_H__
+#ifndef SIGVERSE_OCULUS_DK1_DEVICE_MANAGER_H
+#define SIGVERSE_OCULUS_DK1_DEVICE_MANAGER_H
 
 #include <sigverse/SimObj.h>
 #include <sigverse/ControllerImpl.h>
@@ -30,7 +30,7 @@ public:
 	///@brief Convert euler angle to avatar posture structure.
 	static ManNiiPosture convertEulerAngle2ManNiiPosture(const SigCmn::EulerAngleType &eulerAngle);
 
-	void setJointQuaternions2ManNii(SimObj *obj, const ManNiiPosture &posture);
+	static void setJointQuaternions2ManNii(SimObj *obj, const ManNiiPosture &posture);
 };
 
-#endif //__OCULUS_DK1_SERVICE_H__
+#endif //SIGVERSE_OCULUS_DK1_DEVICE_MANAGER_H

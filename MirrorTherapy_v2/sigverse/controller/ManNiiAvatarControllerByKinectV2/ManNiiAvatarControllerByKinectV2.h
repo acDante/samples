@@ -4,8 +4,8 @@
  *  Created on: 2015/03/12
  *      Author: Nozaki
  */
-#ifndef __MAN_NII_AVATAR_CONTROLLER_BY_KINECT_V2_H__
-#define __MAN_NII_AVATAR_CONTROLLER_BY_KINECT_V2_H__
+#ifndef SIGVERSE_MAN_NII_AVATAR_CONTROLLER_BY_KINECT_V2_H
+#define SIGVERSE_MAN_NII_AVATAR_CONTROLLER_BY_KINECT_V2_H
 
 #include <sigverse/Controller.h>
 #include <sigverse/ControllerEvent.h>
@@ -42,4 +42,4 @@ public:
 	KinectV2DeviceManager kinectV2DeviceManager;
 };
 
-#endif //__MAN_NII_AVATAR_CONTROLLER_BY_KINECT_V2_H__
+#endif //__MAN_NII_AVATAR_CONTROLLER_BY_KINECT_V2_H

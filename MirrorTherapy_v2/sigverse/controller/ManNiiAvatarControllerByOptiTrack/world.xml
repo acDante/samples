@@ -16,8 +16,8 @@
 		<set-attr-value name="language" value="c++"/>
 		<set-attr-value name="implementation" value="./ManNiiAvatarControllerByOptiTrack.so"/>
 		<camera id="1" link="HEAD_LINK" direction="0 -1 1" aspectRatio="1.5" fov="45" position="0.0 0.0 5.0"/>
-		
 	</instanciate>
+
 	<!-- Set a chair to be sit on-->
 	<instanciate class="seChair_B_c02.xml">
 		<set-attr-value name="name" value="Chair"/>

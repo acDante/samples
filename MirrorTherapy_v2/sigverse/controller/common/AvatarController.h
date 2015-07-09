@@ -5,8 +5,8 @@
  *      Author: Nozaki
  */
 
-#ifndef __AVATAR_CONTROLLER_H__
-#define __AVATAR_CONTROLLER_H__
+#ifndef SIGVERSE_AVATAR_CONTROLLER_H
+#define SIGVERSE_AVATAR_CONTROLLER_H
 
 #include <sigverse/Controller.h>
 
@@ -21,4 +21,4 @@ protected:
 //	Posture *avatarPosture;
 };
 
-#endif /* __AVATAR_CONTROLLER_H__ */
+#endif /* SIGVERSE_AVATAR_CONTROLLER_H */

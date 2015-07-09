@@ -5,8 +5,8 @@
  *      Author: tome-yamada
  */
 
-#ifndef __SIG_CMN_H__
-#define __SIG_CMN_H__
+#ifndef SIGVERSE_SIG_CMN_H
+#define SIGVERSE_SIG_CMN_H
 
 #include <string>
 #include <sstream>
@@ -49,4 +49,4 @@ public:
 	static const double deg2rad(const double deg);
 };
 
-#endif /* __SIG_CMN_H__ */
+#endif /* SIGVERSE_SIG_CMN_H */

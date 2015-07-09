@@ -1,8 +1,8 @@
 /*
- * ManNiiAvatarController.cpp
+ * KinectV2DeviceManager.cpp
  *
- *  Created on: 2015/03/12
- *      Author: Nozaki
+ *  Created on: 2015/07/09
+ *      Author: tome-yamada
  */
 
 #include <sigverse/controller/common/device/KinectV2DeviceManager.h>
@@ -98,7 +98,7 @@ void KinectV2DeviceManager::setJointQuaternion2ManNii(SimObj *obj, const ManNiiP
 		double vy = joint.quaternion.y/tmp;
 		double vz = joint.quaternion.z/tmp;
 		double len = sqrt(vx*vx + vy*vy + vz*vz);
-		if (len < (1.0-this->normalization_range) || (1+this->normalization_range) < len){ return; }
+		if (len < (1.0-normalization_range) || (1+normalization_range) < len){ return; }
 	}
 
 	obj->setJointQuaternion(ManNiiPosture::manNiiJointTypeStr(joint.jointType).c_str(), joint.quaternion.w, joint.quaternion.x, joint.quaternion.y, joint.quaternion.z);
@@ -109,26 +109,26 @@ void KinectV2DeviceManager::setJointQuaternions2ManNii(SimObj *obj, const ManNii
 {
 	if(sensorData.sensorDataMode==KinectV2SensorData::SensorDataMode::POSITION)
 	{
-		this->setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::ROOT_JOINT0]);
-		this->setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::HEAD_JOINT1]);
+		setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::ROOT_JOINT0]);
+		setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::HEAD_JOINT1]);
 	}
 
-	this->setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::WAIST_JOINT1]);
+	setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::WAIST_JOINT1]);
 
-	this->setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::RARM_JOINT2]);
-	this->setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::LARM_JOINT2]);
-	this->setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::RARM_JOINT3]);
-	this->setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::LARM_JOINT3]);
+	setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::RARM_JOINT2]);
+	setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::LARM_JOINT2]);
+	setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::RARM_JOINT3]);
+	setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::LARM_JOINT3]);
 
-	this->setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::RLEG_JOINT2]);
-	this->setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::LLEG_JOINT2]);
-	this->setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::RLEG_JOINT4]);
-	this->setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::LLEG_JOINT4]);
+	setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::RLEG_JOINT2]);
+	setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::LLEG_JOINT2]);
+	setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::RLEG_JOINT4]);
+	setJointQuaternion2ManNii(obj, manNiiPosture.joint[ManNiiPosture::LLEG_JOINT4]);
 }
 
 
 // for ManNiiAvatar
-ManNiiPosture KinectV2DeviceManager::convertKinectData2ManNiiPosture(const KinectV2SensorData &sensorData)
+ManNiiPosture KinectV2DeviceManager::convertSensorData2ManNiiPosture(const KinectV2SensorData &sensorData)
 {
 	ManNiiPosture manNiiPosture;
 

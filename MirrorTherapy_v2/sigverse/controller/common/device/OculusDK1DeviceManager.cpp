@@ -1,8 +1,8 @@
 /*
- * OculusDK1Service.cpp
+ * OculusDK1DeviceManager.cpp
  *
- *  Created on: 2015/03/12
- *      Author: Nozaki
+ *  Created on: 2015/07/09
+ *      Author: tome-yamada
  */
 
 #include <sigverse/controller/common/device/OculusDK1DeviceManager.h>

@@ -5,8 +5,8 @@
  *      Author: Nozaki
  */
 
-#ifndef __MAN_NII_POSTURE_H__
-#define __MAN_NII_POSTURE_H__
+#ifndef SIGVERSE_MAN_NII_POSTURE_H
+#define SIGVERSE_MAN_NII_POSTURE_H
 
 #include <sigverse/common/Quaternion.h>
 #include <sigverse/controller/common/Posture.h>
@@ -127,4 +127,4 @@ public:
 	ManNiiJoint joint[ManNiiJointType_Count];
 };
 
-#endif /* __MAN_NII_POSTURE_H__ */
+#endif /* SIGVERSE_MAN_NII_POSTURE_H */

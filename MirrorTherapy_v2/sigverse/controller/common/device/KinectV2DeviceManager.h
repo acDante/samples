@@ -1,11 +1,11 @@
 /*
- * ManNiiAvatarController.h
+ * KinectV2DeviceManager.h
  *
- *  Created on: 2015/03/12
- *      Author: Nozaki
+ *  Created on: 2015/07/09
+ *      Author: tome-yamada
  */
-#ifndef __KINECT_V2_SERVICE_H__
-#define __KINECT_V2_SERVICE_H__
+#ifndef SIGVERSE_KINECT_V2_DEVICE_MANAGER_H
+#define SIGVERSE_KINECT_V2_DEVICE_MANAGER_H
 
 #include <sigverse/SimObj.h>
 #include <sigverse/ControllerImpl.h>
@@ -24,15 +24,17 @@ public:
 
 	void initPositionAndRotation(SimObj *myself);
 
-	static ManNiiPosture convertKinectData2ManNiiPosture(const KinectV2SensorData &sensorData);
+	static ManNiiPosture convertSensorData2ManNiiPosture(const KinectV2SensorData &sensorData);
 	///@brief Convert Kinect V2 joint orientation to avatar posture structure.
 	static ManNiiPosture convertKinectV2JointOrientations2ManNiiPosture(const KinectV2SensorData::KinectV2JointOrientation* kinectV2Joints);
 	///@brief Convert Kinect V2 joint position to avatar posture structure.
 	static ManNiiPosture convertKinectV2JointPosition2ManNiiPosture(const KinectV2SensorData::KinectV2JointPosition* positionArray);
 
+	static void setJointQuaternion2ManNii(SimObj *obj, const ManNiiPosture::ManNiiJoint &joint);
+	static void setJointQuaternions2ManNii(SimObj *obj, const ManNiiPosture &manNiiPosture, const KinectV2SensorData &sensorData);
+
 	void setRootPosition(SimObj *obj, const SigCmn::Vector3 &pos);
-	void setJointQuaternion2ManNii(SimObj *obj, const ManNiiPosture::ManNiiJoint &joint);
-	void setJointQuaternions2ManNii(SimObj *obj, const ManNiiPosture &manNiiPosture, const KinectV2SensorData &sensorData);
+
 
 	BaseService *service;
 	std::string serviceName;
@@ -49,4 +51,4 @@ private:
 	bool started;
 };
 
-#endif //__KINECT_V2_SERVICE_H__
+#endif //SIGVERSE_KINECT_V2_DEVICE_MANAGER_H

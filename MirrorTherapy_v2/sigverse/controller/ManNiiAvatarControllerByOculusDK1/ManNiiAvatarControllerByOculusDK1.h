@@ -4,8 +4,8 @@
  *  Created on: 2015/03/12
  *      Author: Nozaki
  */
-#ifndef __MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_DK1_H__
-#define __MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_DK1_H__
+#ifndef SIGVERSE_MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_DK1_H
+#define SIGVERSE_MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_DK1_H
 
 #include <sigverse/Controller.h>
 #include <sigverse/ControllerEvent.h>
@@ -39,4 +39,4 @@ public:
 	ManNiiPosture posture;
 };
 
-#endif //__MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_DK1_H__
+#endif // SIGVERSE_MAN_NII_AVATAR_CONTROLLER_BY_OCULUS_DK1_H

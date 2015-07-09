@@ -5,35 +5,35 @@
  *      Author: Nozaki
  */
 
-#include "ManNiiAvatarControllerByOptiTrack.h"
+#include <sigverse/common/SigCmn.h>
+#include <sigverse/controller/ManNiiAvatarControllerByOptiTrack/ManNiiAvatarControllerByOptiTrack.h>
 #include <math.h>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 
 
+///@brief Parameter file name.
+const std::string ManNiiAvatarControllerByOptiTrack::parameterFileName = "OptiTrack.ini";
+
+
 ///@brief Initialize this controller.
 void ManNiiAvatarControllerByOptiTrack::onInit(InitEvent &evt)
 {
-	this->parameterFileName = PARAM_FILE_NAME_OPTITRACK_INI;
-	readIniFile();
-
-	this->optiTrackService = NULL;
+	this->readIniFileAndInitialize();
 
 	SimObj *myself = getObj(myname());
 
 	/* Adjustment of knee angles to sit on the chair */
-	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::RARM_JOINT0).c_str(), DEG2RAD(+90));
-	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::LARM_JOINT0).c_str(), DEG2RAD(-90));
+	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::RARM_JOINT0).c_str(), SigCmn::deg2rad(+90));
+	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::LARM_JOINT0).c_str(), SigCmn::deg2rad(+90));
 
 	/* Root of both legs */
-	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::RLEG_JOINT2).c_str(), DEG2RAD(-90));
-	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::LLEG_JOINT2).c_str(), DEG2RAD(-90));
+	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::RLEG_JOINT2).c_str(), SigCmn::deg2rad(-90));
+	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::LLEG_JOINT2).c_str(), SigCmn::deg2rad(-90));
 	/* Both knee */
-	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::RLEG_JOINT4).c_str(), DEG2RAD(+90));
-	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::LLEG_JOINT4).c_str(), DEG2RAD(+90));
-
-	this->handsType = RIGHT_HAND;
+	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::RLEG_JOINT4).c_str(), SigCmn::deg2rad(+90));
+	myself->setJointAngle(ManNiiPosture::manNiiJointTypeStr(ManNiiPosture::LLEG_JOINT4).c_str(), SigCmn::deg2rad(+90));
 
 	this->posture = ManNiiPosture();
 }
@@ -42,15 +42,15 @@ void ManNiiAvatarControllerByOptiTrack::onInit(InitEvent &evt)
 ///@brief Movement of the robot.
 double ManNiiAvatarControllerByOptiTrack::onAction(ActionEvent &evt)
 {
-	bool optiTrackAvailable = checkService(this->optiTrackServiceName);
+	bool optiTrackAvailable = checkService(this->optiTrackDeviceManager.serviceName);
 
-	if (optiTrackAvailable && this->optiTrackService == NULL)
+	if (optiTrackAvailable && this->optiTrackDeviceManager.service == NULL)
 	{
-		this->optiTrackService = connectToService(this->optiTrackServiceName);
+		this->optiTrackDeviceManager.service = connectToService(this->optiTrackDeviceManager.serviceName);
 	}
-	else if (!optiTrackAvailable && this->optiTrackService != NULL)
+	else if (!optiTrackAvailable && this->optiTrackDeviceManager.service != NULL)
 	{
-		this->optiTrackService = NULL;
+		this->optiTrackDeviceManager.service = NULL;
 	}
 
 	return 1.0;
@@ -62,33 +62,26 @@ void ManNiiAvatarControllerByOptiTrack::onRecvMsg(RecvMsgEvent &evt)
 	{
 		const std::string msg = evt.getMsg();
 
-		if(msg==handsType2Str(RIGHT_HAND))
-		{
-			this->handsType = RIGHT_HAND;
-			std::cout << "change HandsType to [" << handsType2Str(RIGHT_HAND) << "]" << std::endl;
-		}
-		else if(msg==handsType2Str(LEFT_HAND))
-		{
-			this->handsType = LEFT_HAND;
-			std::cout << "change HandsType to [" << handsType2Str(LEFT_HAND) << "]" << std::endl;
-		}
-		else
-		{
-			OptiTrackSensorData sensorData;
-			std::map<std::string, std::vector<std::string> > sensorDataMap = sensorData.decodeSensorData(msg);
+//		std::cout << "msg:" << msg << std::endl;
 
-			if (sensorDataMap.find(MSG_KEY_DEV_TYPE) == sensorDataMap.end()){ return; }
+		bool handsTypeChanged = this->optiTrackDeviceManager.changeHandsType(msg);
 
-			if(sensorDataMap[MSG_KEY_DEV_TYPE][0]     !=this->optiTrackDeviceType    ){ return; }
-			if(sensorDataMap[MSG_KEY_DEV_UNIQUE_ID][0]!=this->optiTrackDeviceUniqueID){ return; }
+		if(handsTypeChanged){ return; }
 
-			sensorData.setSensorData(sensorDataMap);
+		OptiTrackSensorData sensorData;
+		std::map<std::string, std::vector<std::string> > sensorDataMap = sensorData.decodeSensorData(msg);
 
-			this->setPosture(sensorData);
+		if (sensorDataMap.find(MSG_KEY_DEV_TYPE) == sensorDataMap.end()){ return; }
 
-			SimObj *obj = getObj(myname());
-			this->setJointQuaternionForOptiTrack(obj);
-		}
+		if(sensorDataMap[MSG_KEY_DEV_TYPE][0]     !=this->optiTrackDeviceManager.deviceType    ){ return; }
+		if(sensorDataMap[MSG_KEY_DEV_UNIQUE_ID][0]!=this->optiTrackDeviceManager.deviceUniqueID){ return; }
+
+		sensorData.setSensorData(sensorDataMap);
+
+		this->optiTrackDeviceManager.setSensorData2ManNiiPosture(this->posture, sensorData);
+
+		SimObj *obj = getObj(myname());
+		OptiTrackDeviceManager::setJointQuaternions2ManNii(obj, this->posture);
 	}
 	catch (...)
 	{
@@ -97,104 +90,54 @@ void ManNiiAvatarControllerByOptiTrack::onRecvMsg(RecvMsgEvent &evt)
 }
 
 
-void ManNiiAvatarControllerByOptiTrack::setJointQuaternionForOptiTrack(SimObj *obj)
-{
-	for(int i=0; i<ManNiiPosture::ManNiiJointType_Count; i++)
-	{
-		ManNiiPosture::ManNiiJoint joint = posture.joint[i];
-
-		if(joint.isValid)
-		{
-			obj->setJointQuaternion(ManNiiPosture::manNiiJointTypeStr(joint.jointType).c_str(), joint.quaternion.w, joint.quaternion.x, joint.quaternion.y, joint.quaternion.z);
-		}
-	}
-}
-
-void ManNiiAvatarControllerByOptiTrack::setRigidBody2ManNiiJoint(ManNiiPosture::ManNiiJoint &manNiiJoint, const OptiTrackSensorData::sRigidBodyDataSgv &rigidBodySgv)
-{
-	manNiiJoint.quaternion.w = rigidBodySgv.qw;
-	manNiiJoint.quaternion.x = rigidBodySgv.qx;
-	manNiiJoint.quaternion.y = rigidBodySgv.qy;
-	manNiiJoint.quaternion.z = rigidBodySgv.qz;
-	manNiiJoint.isValid      = rigidBodySgv.params;
-}
-
-
-void ManNiiAvatarControllerByOptiTrack::setPosture(const OptiTrackSensorData &sensorData)
-{
-	this->posture.clearJointValidFlag();
-
-	for(int i=0; i<sensorData.getNRigidBodies(); i++)
-	{
-		short params = sensorData.getSRigidBodyDataSgv(i).params;
-
-		if(this->handsType==RIGHT_HAND)
-		{
-			switch(sensorData.getSRigidBodyDataSgv(i).ID)
-			{
-				//RIGID1->RARM_JOINT1
-				case 1:{ setRigidBody2ManNiiJoint(this->posture.joint[ManNiiPosture::RARM_JOINT1], sensorData.getSRigidBodyDataSgv(i)); break; }
-				//RIGID2->RARM_JOINT4
-				case 2:{ setRigidBody2ManNiiJoint(this->posture.joint[ManNiiPosture::RARM_JOINT4], sensorData.getSRigidBodyDataSgv(i)); break; }
-				//RIGID3->RARM_JOINT6
-				case 3:{ setRigidBody2ManNiiJoint(this->posture.joint[ManNiiPosture::RARM_JOINT6], sensorData.getSRigidBodyDataSgv(i)); break; }
-				default:{ break; }
-			}
-		}
-		if(this->handsType==LEFT_HAND)
-		{
-			switch(sensorData.getSRigidBodyDataSgv(i).ID)
-			{
-				//RIGID1->LARM_JOINT1
-				case 1:{ setRigidBody2ManNiiJoint(this->posture.joint[ManNiiPosture::LARM_JOINT1], sensorData.getSRigidBodyDataSgv(i)); break; }
-				//RIGID2->LARM_JOINT4
-				case 2:{ setRigidBody2ManNiiJoint(this->posture.joint[ManNiiPosture::LARM_JOINT4], sensorData.getSRigidBodyDataSgv(i)); break; }
-				//RIGID3->LARM_JOINT6
-				case 3:{ setRigidBody2ManNiiJoint(this->posture.joint[ManNiiPosture::LARM_JOINT6], sensorData.getSRigidBodyDataSgv(i)); break; }
-				default:{ break; }
-			}
-		}
-	}
-}
-
-
 ///@brief Read parameter file.
 ///@return When couldn't read parameter file, return false;
-void ManNiiAvatarControllerByOptiTrack::readIniFile()
+void ManNiiAvatarControllerByOptiTrack::readIniFileAndInitialize()
 {
-	std::ifstream ifs(this->parameterFileName.c_str());
+	std::ifstream ifs(parameterFileName.c_str());
+
+	std::string serviceName;
+	std::string deviceType;
+	std::string deviceUniqueID;
 
 	// Parameter file is "not" exists.
 	if (ifs.fail())
 	{
-		std::cout << "Not exist : " << this->parameterFileName << std::endl;
+		std::cout << "Not exist : " << parameterFileName << std::endl;
 		std::cout << "Use default parameter." << std::endl;
 
-		this->optiTrackServiceName    = SERVICE_NAME_OPTITRACK;
-		this->optiTrackDeviceType     = DEV_TYPE_OPTITRACK;
-		this->optiTrackDeviceUniqueID = DEV_UNIQUE_ID_0;
+		serviceName    = SERVICE_NAME_OPTITRACK;
+		deviceType     = DEV_TYPE_OPTITRACK;
+		deviceUniqueID = DEV_UNIQUE_ID_0;
 	}
 	// Parameter file is exists.
 	else
 	{
 		try
 		{
-			std::cout << "Read " << this->parameterFileName << std::endl;
+			std::cout << "Read " << parameterFileName << std::endl;
 			boost::property_tree::ptree pt;
-			boost::property_tree::read_ini(this->parameterFileName, pt);
+			boost::property_tree::read_ini(parameterFileName, pt);
 
-			this->optiTrackServiceName    = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME);
-			this->optiTrackDeviceType     = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE);
-			this->optiTrackDeviceUniqueID = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID);
+			serviceName    = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME);
+			deviceType     = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE);
+			deviceUniqueID = pt.get<std::string>(PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID);
 		}
 		catch (boost::exception &ex)
 		{
-			std::cout << this->parameterFileName << " ERR :" << *boost::diagnostic_information_what(ex) << std::endl;
+			std::cout << parameterFileName << " ERR :" << *boost::diagnostic_information_what(ex) << std::endl;
 		}
 	}
 
-	std::cout << PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME     << ":" << this->optiTrackServiceName    << std::endl;
-	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE      << ":" << this->optiTrackDeviceType     << std::endl;
-	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID << ":" << this->optiTrackDeviceUniqueID << std::endl;
+	std::cout << PARAMETER_FILE_KEY_GENERAL_SERVICE_NAME     << ":" << serviceName    << std::endl;
+	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_TYPE      << ":" << deviceType     << std::endl;
+	std::cout << PARAMETER_FILE_KEY_GENERAL_DEVICE_UNIQUE_ID << ":" << deviceUniqueID << std::endl;
+
+	this->optiTrackDeviceManager = OptiTrackDeviceManager(serviceName, deviceType, deviceUniqueID);
 }
 
+
+extern "C" Controller * createController()
+{
+	return new ManNiiAvatarControllerByOptiTrack;
+}

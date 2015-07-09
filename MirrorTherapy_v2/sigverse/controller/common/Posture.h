@@ -5,11 +5,11 @@
  *      Author: Nozaki
  */
 
-#ifndef __POSTURE_H__
-#define __POSTURE_H__
+#ifndef SIGVERSE_POSTURE_H
+#define SIGVERSE_POSTURE_H
 
 class Posture
 {
 };
 
-#endif /* __POSTURE_H__ */
+#endif /* SIGVERSE_POSTURE_H */

@@ -5,8 +5,8 @@
  *      Author: tome-yamada
  */
 
-#ifndef __MAN_NII_AVATAR_CONTROLLER_H__
-#define __MAN_NII_AVATAR_CONTROLLER_H__
+#ifndef SIGVERSE_MAN_NII_AVATAR_CONTROLLER_H
+#define SIGVERSE_MAN_NII_AVATAR_CONTROLLER_H
 
 #include <sigverse/common/SigCmn.h>
 #include <sigverse/controller/common/Posture.h>
@@ -20,5 +20,5 @@ class ManNiiAvatarController : public AvatarController
 protected:
 };
 
-#endif /* __MAN_NII_AVATAR_CONTROLLER_H__ */
+#endif /* SIGVERSE_MAN_NII_AVATAR_CONTROLLER_H */
 

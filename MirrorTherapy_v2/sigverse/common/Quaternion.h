@@ -5,8 +5,8 @@
  *      Author: tome-yamada
  */
 
-#ifndef __QUATERNION_H__
-#define __QUATERNION_H__
+#ifndef SIGVERSE_QUATERNION_H
+#define SIGVERSE_QUATERNION_H
 
 #include <sigverse/common/SigCmn.h>
 #include <string>
@@ -40,4 +40,4 @@ public:
 	static void rotVec(SigCmn::Vector3 &v, const Quaternion &q);
 };
 
-#endif /* __QUATERNION_H__ */
+#endif /* SIGVERSE_QUATERNION_H */
