@@ -1,7 +1,7 @@
 #pragma once
 #include <SIGService.h>
-#include "../../../common/device/KinectV2SensorData.h"
-#include "../../../plugin/PluginCommon/Device.h"
+#include <sigverse/common/device/KinectV2SensorData.h>
+#include <sigverse/plugin/common/Device.h>
 #include <Kinect.h>
 #include <opencv2/opencv.hpp>
 

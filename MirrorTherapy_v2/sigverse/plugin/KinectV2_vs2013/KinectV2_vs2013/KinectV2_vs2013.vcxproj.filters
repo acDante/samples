@@ -18,10 +18,10 @@
     <ClInclude Include="KinectV2Device.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\PluginCommon\Device.h">
+    <ClInclude Include="..\..\common\Device.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\PluginCommon\CheckRecvSIGServiceData.h">
+    <ClInclude Include="..\..\common\CheckRecvSIGServiceData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\common\device\DeviceCommon.h">
@@ -44,13 +44,13 @@
     <ClCompile Include="KinectV2Device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\PluginCommon\Device.cpp">
+    <ClCompile Include="..\..\common\Device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\PluginCommon\CheckRecvSIGServiceData.cpp">
+    <ClCompile Include="..\..\common\CheckRecvSIGServiceData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\common\device\KinectV2SensorData.cpp">

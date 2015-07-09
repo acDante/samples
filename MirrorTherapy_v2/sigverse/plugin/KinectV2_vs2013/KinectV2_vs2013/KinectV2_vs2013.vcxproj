@@ -58,7 +58,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SIGSERVICE_120_LIB_DIR)\include;$(BOOST_120_LIB_DIR);$(KINECTSDK20_DIR)\inc;$(OPENCV_LIB_DIR)\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SIGSERVICE_120_LIB_DIR)\include;$(BOOST_120_LIB_DIR);$(KINECTSDK20_DIR)\inc;$(OPENCV_LIB_DIR)\build\include;$(SIGVERSE_BUILD_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DEBUG_PRINT;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -82,8 +82,8 @@ copy "$(OPENCV_LIB_DIR)\build\x86\vc12\bin\opencv_imgproc2410.dll" "..\Release"
     <ClInclude Include="..\..\..\common\device\SensorData.h" />
     <ClInclude Include="..\..\..\Common\Quaternion.h" />
     <ClInclude Include="..\..\..\Common\SigCmn.h" />
-    <ClInclude Include="..\..\PluginCommon\CheckRecvSIGServiceData.h" />
-    <ClInclude Include="..\..\PluginCommon\Device.h" />
+    <ClInclude Include="..\..\common\CheckRecvSIGServiceData.h" />
+    <ClInclude Include="..\..\common\Device.h" />
     <ClInclude Include="KinectV2Device.h" />
   </ItemGroup>
   <ItemGroup>
@@ -91,8 +91,8 @@ copy "$(OPENCV_LIB_DIR)\build\x86\vc12\bin\opencv_imgproc2410.dll" "..\Release"
     <ClCompile Include="..\..\..\Common\device\SensorData.cpp" />
     <ClCompile Include="..\..\..\Common\Quaternion.cpp" />
     <ClCompile Include="..\..\..\Common\SigCmn.cpp" />
-    <ClCompile Include="..\..\PluginCommon\CheckRecvSIGServiceData.cpp" />
-    <ClCompile Include="..\..\PluginCommon\Device.cpp" />
+    <ClCompile Include="..\..\common\CheckRecvSIGServiceData.cpp" />
+    <ClCompile Include="..\..\common\Device.cpp" />
     <ClCompile Include="KinectV2Device.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>

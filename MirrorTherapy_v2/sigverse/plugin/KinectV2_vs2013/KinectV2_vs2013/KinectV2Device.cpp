@@ -1,5 +1,6 @@
-#include "KinectV2Device.h"
-#include "../../PluginCommon/CheckRecvSIGServiceData.h"
+#include <sigverse/plugin/KinectV2_vs2013/KinectV2_vs2013/KinectV2Device.h>
+#include <sigverse/plugin/common/CheckRecvSIGServiceData.h>
+
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <fstream>

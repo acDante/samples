@@ -1,8 +1,8 @@
 /*
  * checking received SIGService data class
  */
-#include "SIGService.h"
-#include "CheckRecvSIGServiceData.h"
+#include <SIGService.h>
+#include <sigverse/plugin/common/CheckRecvSIGServiceData.h>
 
 /**
  * @brief checking received SIGService data at regular intervals.

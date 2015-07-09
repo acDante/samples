@@ -1,5 +1,5 @@
 #include <iostream>
-#include "KinectV2Device.h"
+#include <sigverse/plugin/KinectV2_vs2013/KinectV2_vs2013/KinectV2Device.h>
 
 int main(int argc, char **argv)
 {

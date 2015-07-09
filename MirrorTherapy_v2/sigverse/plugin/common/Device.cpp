@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include "Device.h"
+
+#include <sigverse/plugin/common/Device.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
