@@ -63,13 +63,13 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(BOOST_1_55_0_LIB_DIR);$(OCULUS_SDK_LIB_DIR)\Include;$(SIGSERVICE_100_LIB_DIR)\include;$(SIGVERSE_BUILD_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(BOOST_1_55_0_LIB_DIR);$(OCULUS_SDK_LIB_DIR)\Include;$(SIGSERVICE_100_LIB_DIR)\SIGService;$(SIGVERSE_BUILD_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(BOOST_1_55_0_LIB_DIR)\lib32-msvc-10.0;$(OCULUS_SDK_LIB_DIR)\Lib\Win32;$(SIGSERVICE_100_LIB_DIR)\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BOOST_1_55_0_LIB_DIR)\lib32-msvc-10.0;$(OCULUS_SDK_LIB_DIR)\Lib\Win32;$(SIGSERVICE_100_LIB_DIR)\Release_2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libovr.lib;winmm.lib;SIGService.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

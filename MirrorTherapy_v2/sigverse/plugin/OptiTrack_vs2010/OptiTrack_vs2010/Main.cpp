@@ -3,7 +3,8 @@
 	Based by NatNet_SDK_2.7\NatNetSDK\Samples\SampleClient\SampleClient.cpp
   ==================================================================*/
 
-#include "OptiTrackDevice.h"
+#include <sigverse/plugin/OptiTrack_vs2010/OptiTrack_vs2010/OptiTrackDevice.h>
+
 
 int main(int argc, char **argv) 
 {

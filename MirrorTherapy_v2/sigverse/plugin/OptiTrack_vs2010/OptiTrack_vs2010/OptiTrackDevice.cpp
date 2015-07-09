@@ -1,6 +1,7 @@
-#include "OptiTrackDevice.h"
-#include "../../../Common/OptiTrackSensorData.h"
-#include "../../PluginCommon/CheckRecvSIGServiceData.h"
+#include <sigverse/common/device/OptiTrackSensorData.h>
+#include <sigverse/plugin/common/CheckRecvSIGServiceData.h>
+#include <sigverse/plugin/OptiTrack_vs2010/OptiTrack_vs2010/OptiTrackDevice.h>
+
 #include <sstream>
 
 #include <boost/thread.hpp>

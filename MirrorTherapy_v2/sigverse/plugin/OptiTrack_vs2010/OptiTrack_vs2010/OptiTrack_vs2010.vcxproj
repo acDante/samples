@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -19,12 +19,14 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -61,30 +63,30 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>C:\SIGVerse\GitHub\Client\SIGService\Windows\SIGService;C:\SIGVerse\src\boost_1_55_0;C:\SIGVerse\src\EmbodiedBrain\MirrorTherapy_v2;C:\SIGVerse\src\NatNet_SDK_2.7\NatNetSDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SIGSERVICE_100_LIB_DIR)\SIGService;$(BOOST_1_55_0_LIB_DIR);$(SIGVERSE_BUILD_PATH);$(NATNET_SDK_LIB_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\SIGVerse\src\NatNet_SDK_2.7\NatNetSDK\lib;C:\SIGVerse\GitHub\Client\SIGService\Windows\Release_2010;C:\SIGVerse\src\boost_1_55_0\lib32-msvc-10.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(NATNET_SDK_LIB_DIR)\lib;$(SIGSERVICE_100_LIB_DIR)\Release_2010;$(BOOST_1_55_0_LIB_DIR)\lib32-msvc-10.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ws2_32.lib;NatNetLibStatic.lib;SIGService.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Common\OptiTrackSensorData.cpp" />
-    <ClCompile Include="..\..\..\Common\SensorData.cpp" />
-    <ClCompile Include="..\..\PluginCommon\CheckRecvSIGServiceData.cpp" />
-    <ClCompile Include="..\..\PluginCommon\Device.cpp" />
+    <ClCompile Include="..\..\..\common\device\OptiTrackSensorData.cpp" />
+    <ClCompile Include="..\..\..\common\device\SensorData.cpp" />
+    <ClCompile Include="..\..\common\CheckRecvSIGServiceData.cpp" />
+    <ClCompile Include="..\..\common\Device.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="OptiTrackDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Common\DeviceCommon.h" />
-    <ClInclude Include="..\..\..\Common\OptiTrackSensorData.h" />
-    <ClInclude Include="..\..\..\Common\SensorData.h" />
-    <ClInclude Include="..\..\PluginCommon\CheckRecvSIGServiceData.h" />
-    <ClInclude Include="..\..\PluginCommon\Device.h" />
+    <ClInclude Include="..\..\..\common\device\DeviceCommon.h" />
+    <ClInclude Include="..\..\..\common\device\OptiTrackSensorData.h" />
+    <ClInclude Include="..\..\..\common\device\SensorData.h" />
+    <ClInclude Include="..\..\common\CheckRecvSIGServiceData.h" />
+    <ClInclude Include="..\..\common\Device.h" />
     <ClInclude Include="OptiTrackDevice.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

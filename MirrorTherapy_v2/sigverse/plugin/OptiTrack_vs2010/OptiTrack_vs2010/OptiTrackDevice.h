@@ -1,7 +1,7 @@
 #ifndef __OPTITRACK_DEVICE_H__
 #define __OPTITRACK_DEVICE_H__
 
-#include "../../PluginCommon/Device.h"
+#include <sigverse/plugin/common/Device.h>
 
 #include <conio.h>
 #include <winsock2.h>
