@@ -13,12 +13,6 @@
 #include <cmath>
 
 
-/*!
- * @brief Translate degree to radian.
- */
-#define DEG2RAD(DEG) ( std::M_PI * (DEG) / 180.0 )
-
-
 class SigCmn
 {
 public:
@@ -48,10 +42,11 @@ public:
 		float roll;
 	} EulerAngleType;
 
-	/*
-	 * Calculate Vector from 2 position.
-	 */
+	///@brief Calculate Vector from 2 position.
 	static bool diffVec(SigCmn::Vector3 &rvec, const SigCmn::Vector3 &jvec, const SigCmn::Vector3 &kvec);
+
+	///@brief Translate degree to radian.
+	static const double deg2rad(const double deg);
 };
 
 #endif /* __SIG_CMN_H__ */

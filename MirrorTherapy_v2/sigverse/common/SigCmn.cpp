@@ -8,8 +8,8 @@
 #include <sigverse/common/SigCmn.h>
 #include <cmath>
 
-/*
- * Calculate Vector from 2 position.
+/*!
+ * @brief Calculate Vector from 2 position.
  */
 bool SigCmn::diffVec(SigCmn::Vector3 &rvec, const SigCmn::Vector3 &jvec, const SigCmn::Vector3 &kvec)
 {
@@ -24,4 +24,13 @@ bool SigCmn::diffVec(SigCmn::Vector3 &rvec, const SigCmn::Vector3 &jvec, const S
 	rvec.z = (float)(rvec.z / length);
 
 	return true;
+}
+
+
+/*!
+ * @brief Translate degree to radian.
+ */
+const double SigCmn::deg2rad(const double deg)
+{
+	return (M_PI * deg / 180.0);
 }
