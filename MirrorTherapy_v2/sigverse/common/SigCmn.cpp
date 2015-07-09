@@ -5,6 +5,7 @@
  *      Author: tome-yamada
  */
 
+#define _USE_MATH_DEFINES
 #include <sigverse/common/SigCmn.h>
 #include <cmath>
 
