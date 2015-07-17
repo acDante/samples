@@ -83,6 +83,8 @@ void KinectV2DeviceManager::setRootPosition(SimObj *obj, const SigCmn::Vector3 &
 	double gx = std::cos(this->yrot)*x - std::sin(this->yrot)*z;
 	double gz = std::sin(this->yrot)*x + std::cos(this->yrot)*z;
 
+	this->rootPos = rootPos;
+
 	obj->setPosition(this->iniPos.x+gx,this->iniPos.y+y,this->iniPos.z+gz);
 }
 

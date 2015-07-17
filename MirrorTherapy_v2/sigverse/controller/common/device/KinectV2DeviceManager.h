@@ -41,6 +41,8 @@ public:
 	std::string deviceType;
 	std::string deviceUniqueID;
 
+	SigCmn::Vector3 rootPos;
+
 	double scaleRatio;
 
 	SigCmn::Vector3 iniPos;
