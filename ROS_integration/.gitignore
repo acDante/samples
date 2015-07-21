@@ -1,0 +1,15 @@
+*.log
+*.exe
+*.obj
+*.ncb
+*.suo
+*.user
+*.ipch
+*.bin
+*.ilk
+*.pdb
+*~
+/Release/
+/Debug/
+Output-Build.txt
+UpgradeLog.XML
