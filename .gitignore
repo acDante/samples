@@ -9,6 +9,7 @@
 .project
 
 *.dat
+*.bak
 
 
 
