@@ -23,15 +23,15 @@
 	</instanciate>
 	
 	
-	<!--Agent right_arm_robot_man -->
-	<instanciate class="RightArm_robot.xml">
-		<set-attr-value name="name" value="right_arm_robot_man"/>
+	<!--Agent mirror_therapy_man -->
+	<instanciate class="Man-nii.xml">
+		<set-attr-value name="name" value="mirror_therapy_man"/>
 		<set-attr-value name="language" value="c++"/>
 		<set-attr-value name="implementation" value="./OpenHouse2015Controller.so"/>
 		<set-attr-value name="dynamics" value="false"/>
 		<set-attr-value name="x" value="0.0"/>
 		<set-attr-value name="y" value="60.0"/>
-		<set-attr-value name="z" value="1000.0"/>
+		<set-attr-value name="z" value="0.0"/>
 	</instanciate>
 	
 	
@@ -43,7 +43,7 @@
 		<set-attr-value name="dynamics" value="false"/>
 		<set-attr-value name="x" value="0.0"/>
 		<set-attr-value name="y" value="60.0"/>
-		<set-attr-value name="z" value="2000.0"/>
+		<set-attr-value name="z" value="1000.0"/>
 	</instanciate>
 
 	<!--Agent right_arm_short_man -->
@@ -54,18 +54,18 @@
 		<set-attr-value name="dynamics" value="false"/>
 		<set-attr-value name="x" value="0.0"/>
 		<set-attr-value name="y" value="60.0"/>
-		<set-attr-value name="z" value="3000.0"/>
+		<set-attr-value name="z" value="1000.0"/>
 	</instanciate>
 	
-	<!--Agent mirror_therapy_man -->
-	<instanciate class="Man-nii.xml">
-		<set-attr-value name="name" value="mirror_therapy_man"/>
+	<!--Agent right_arm_robot_man -->
+	<instanciate class="RightArm_robot.xml">
+		<set-attr-value name="name" value="right_arm_robot_man"/>
 		<set-attr-value name="language" value="c++"/>
 		<set-attr-value name="implementation" value="./OpenHouse2015Controller.so"/>
 		<set-attr-value name="dynamics" value="false"/>
 		<set-attr-value name="x" value="0.0"/>
 		<set-attr-value name="y" value="60.0"/>
-		<set-attr-value name="z" value="4000.0"/>
+		<set-attr-value name="z" value="1000.0"/>
 	</instanciate>
 	
 	
