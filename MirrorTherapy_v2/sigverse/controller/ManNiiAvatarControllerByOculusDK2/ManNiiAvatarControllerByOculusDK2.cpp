@@ -20,8 +20,9 @@ const std::string ManNiiAvatarControllerByOculusDK2::parameterFileName = "Oculus
 void ManNiiAvatarControllerByOculusDK2::onInit(InitEvent &evt)
 {
 	readIniFileAndInitialize();
-//
-//	SimObj *my = getObj(myname());
+	
+	//For initialize.
+	getObj(myname());
 }
 
 
