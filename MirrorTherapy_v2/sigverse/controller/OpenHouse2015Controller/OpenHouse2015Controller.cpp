@@ -143,11 +143,11 @@ void OpenHouse2015Controller::onRecvMsg(RecvMsgEvent &evt)
 		{
 			if(this->isHead)
 			{
-//				sendMsg(this->mirrorTherapyManName, allMsg);
-//				sendMsg(this->longArmManName,       allMsg);
-//				sendMsg(this->shortArmManName,      allMsg);
-//				sendMsg(this->robotArmManName,      allMsg);
-				sendMsg(this->bodyAvatarName, allMsg);
+				sendMsg(this->mirrorTherapyManName, allMsg);
+				sendMsg(this->longArmManName,       allMsg);
+				sendMsg(this->shortArmManName,      allMsg);
+				sendMsg(this->robotArmManName,      allMsg);
+//				sendMsg(this->bodyAvatarName, allMsg);
 			}
 
 			std::string deviceTypeValue = sensorDataMap[MSG_KEY_DEV_TYPE][0];

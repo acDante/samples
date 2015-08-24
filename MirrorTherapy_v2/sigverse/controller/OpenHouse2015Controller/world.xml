@@ -68,6 +68,16 @@
 		<set-attr-value name="z" value="1000.0"/>
 	</instanciate>
 	
+	<!-- Rubber Hand Illusion ball -->
+	<instanciate class="seToy_D.xml">
+		<set-attr-value name="name" value="rhi_ball"/>
+		<set-attr-value name="language" value="c++"/>
+		<set-attr-value name="implementation" value="./RHIBallController.so"/>
+		<set-attr-value name="dynamics" value="false"/>
+		<set-attr-value name="x" value="0.0"/>
+		<set-attr-value name="y" value="60.0"/>
+		<set-attr-value name="z" value="1000.0"/>
+	</instanciate>
 	
 	<!-- 
 	  Set house, situation is in the house 0
