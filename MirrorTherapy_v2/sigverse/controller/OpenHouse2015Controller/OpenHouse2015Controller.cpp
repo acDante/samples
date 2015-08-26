@@ -76,6 +76,8 @@ void OpenHouse2015Controller::onInit(InitEvent &evt)
 	}
 	//Set default avatar
 	this->bodyAvatarName = this->mirrorTherapyManName;
+
+	this->guiService = NULL;
 }
 
 ///@brief Movement of the robot.
