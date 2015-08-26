@@ -92,16 +92,13 @@ void KinectV2DeviceManager::setRootPosition(SimObj *obj, const SigCmn::Vector3 &
 // for ManNiiAvatar
 void KinectV2DeviceManager::setJointQuaternion2ManNii(SimObj *obj, const ManNiiPosture::ManNiiJoint &joint)
 {
-	if(joint.jointType != ManNiiPosture::ManNiiJointType::ROOT_JOINT0)
-	{
-		double angle = acos(joint.quaternion.w)*2.0;
-		double tmp = sin(angle/2.0);
-		double vx = joint.quaternion.x/tmp;
-		double vy = joint.quaternion.y/tmp;
-		double vz = joint.quaternion.z/tmp;
-		double len = sqrt(vx*vx + vy*vy + vz*vz);
-		if (len < (1.0-normalization_range) || (1+normalization_range) < len){ return; }
-	}
+	double angle = acos(joint.quaternion.w)*2.0;
+	double tmp = sin(angle/2.0);
+	double vx = joint.quaternion.x/tmp;
+	double vy = joint.quaternion.y/tmp;
+	double vz = joint.quaternion.z/tmp;
+	double len = sqrt(vx*vx + vy*vy + vz*vz);
+	if (len < (1.0-normalization_range) || (1+normalization_range) < len){ return; }
 
 	obj->setJointQuaternion(ManNiiPosture::manNiiJointTypeStr(joint.jointType).c_str(), joint.quaternion.w, joint.quaternion.x, joint.quaternion.y, joint.quaternion.z);
 }
