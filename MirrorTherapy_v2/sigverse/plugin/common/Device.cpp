@@ -22,11 +22,13 @@ void Device::initializeSigService(sigverse::SIGService &sigService)
 			{
 				std::cout << "Success to connect to SIGServer(IP: " << this->serverAddress << ", port: " << this->portNumber << " )." << std::endl;
 				
-				//if (sigService.connectToViewer()) 
-				//{
-				//	std::cout << "Success to connect to SIGViewer." << std::endl;
-				//	//sigService.setAutoExitLoop(true);
-				//}
+				//The following commands are for automatically shutdown at QuitSimulation.
+				if (sigService.connectToViewer()) 
+				{
+					std::cout << "Success to connect to SIGViewer." << std::endl;
+					sigService.setAutoExitProc(true);
+					sigService.setAutoExitLoop(true);
+				}
 			}
 		}
 		catch (std::exception &ex) 
