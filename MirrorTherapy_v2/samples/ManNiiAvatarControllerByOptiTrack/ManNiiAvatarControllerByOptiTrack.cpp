@@ -6,7 +6,7 @@
  */
 
 #include <sigverse/common/SigCmn.h>
-#include <sigverse/controller/ManNiiAvatarControllerByOptiTrack/ManNiiAvatarControllerByOptiTrack.h>
+#include "ManNiiAvatarControllerByOptiTrack.h"
 #include <math.h>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
