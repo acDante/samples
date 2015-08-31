@@ -6,7 +6,7 @@
  */
 
 #include <sigverse/common/device/SensorData.h>
-#include <sigverse/controller/ManNiiAvatarControllerByKinectV2/ManNiiAvatarControllerByKinectV2.h>
+#include "ManNiiAvatarControllerByKinectV2.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>

@@ -12,7 +12,7 @@ SRCS =\
 	$(SIGVERSE_BUILD_PATH)/sigverse/controller/common/AvatarController.cpp \
 	$(SIGVERSE_BUILD_PATH)/sigverse/controller/common/ManNiiAvatarController.cpp \
 	$(SIGVERSE_BUILD_PATH)/sigverse/controller/common/device/KinectV2DeviceManager.cpp \
-	$(SIGVERSE_BUILD_PATH)/sigverse/controller/ManNiiAvatarControllerByKinectV2/ManNiiAvatarControllerByKinectV2.cpp \
+	ManNiiAvatarControllerByKinectV2.cpp \
 
 # sigverse path
 SIG_SRC = $(SIGVERSE_PATH)/include
