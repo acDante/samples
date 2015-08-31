@@ -6,7 +6,7 @@
  */
 
 #include <sigverse/common/device/OculusRiftDK2SensorData.h>
-#include <sigverse/controller/ManNiiAvatarControllerByOculusDK2/ManNiiAvatarControllerByOculusDK2.h>
+#include "ManNiiAvatarControllerByOculusDK2.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/exception/diagnostic_information.hpp>
