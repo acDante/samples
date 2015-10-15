@@ -6,7 +6,7 @@
     <set-attr-value name="name" value="man_000"/>
     <set-attr-value name="dynamics" value="false"/>
     <set-attr-value name="x" value="0.0"/>
-    <set-attr-value name="y" value="65.0"/>
+    <set-attr-value name="y" value="60.0"/>
     <set-attr-value name="z" value="130.0"/>
     <set-attr-value name="qw" value="0"/>
     <set-attr-value name="qy" value="-3"/>
@@ -18,9 +18,6 @@
     <set-attr-value name="implementation" value="./cleanUpUser2.so"/>
   </instanciate>
 
-
-
-<!--
   <instanciate class="WheelRobot-nii-v1.xml" type="Robot">
     <set-attr-value name="name" value="robot_000"/>
     <set-attr-value name="language" value="c++"/>
@@ -31,22 +28,22 @@
     <set-attr-value name="y" value="30.0"/>
     <set-attr-value name="z" value="-100.0"/>
     <set-attr-value name="collision" value="true"/>
-
+    <!--stereo camera right-->
     <camera id="1"
             link="REYE_LINK"
             direction="0.0 -1.0 1.0"
             position="0.0 0.0 3.0"/>
-
+    <!--stereo camera left-->
     <camera id="2"
             link="LEYE_LINK"
             direction="0.0 -1.0 1.0"
             position="0.0 0.0 3.0"/>
-
+    <!--distance sensor-->
     <camera id="3"
             link="WAIST_LINK0"
             direction="0.0 0.0 1.0"
             position="0.0 -5.0 20.0"/>
-
+    <!--monitoring camera-->
     <camera id="4"
             link="WAIST_LINK2"
             direction="0 0 1"
@@ -54,37 +51,11 @@
             position="0.0 40.0 120.0"/>
   </instanciate>
 
--->
-
-
-
-  <instanciate class="iCub1.xml" type="Robot">
-    <set-attr-value name="name" value="robot_000"/>
-    <set-attr-value name="language" value="c++"/>
-    <set-attr-value name="implementation"
-                    value="./cleanUpRobot2.so"/>
-    <set-attr-value name="dynamics" value="false"/>
-    <set-attr-value name="x" value="100.0"/>
-    <set-attr-value name="y" value="60.0"/>
-    <set-attr-value name="z" value="-100.0"/>
-    <set-attr-value name="collision" value="true"/>
-    <set-attr-value name="graspable" value="false"/>
-    <camera id="1"
-            link="NECK_LINK0"
-            direction="0 0 1"
-            position="0.0 0.0 5.0"/>
-
-
-  </instanciate>
-
-
-
-
   <instanciate class="A1_room.xml">
     <set-attr-value name="name" value="room"/>
     <set-attr-value name="dynamics" value="false"/>
     <set-attr-value name="x" value="-200.0"/>
-    <set-attr-value name="y" value="217.0"/>
+    <set-attr-value name="y" value="212.0"/>
     <set-attr-value name="z" value="-40.0"/>
     <set-attr-value name="scalex" value="1.0"/>
     <set-attr-value name="scaley" value="1.0"/>
@@ -115,7 +86,7 @@
     <set-attr-value name="z" value="50.0"/>
     <set-attr-value name="collision" value=""/>
   </instanciate>
-<!--
+
   <instanciate class="seMugcup_c01.xml">
     <set-attr-value name="name" value="mugcup"/>
     <set-attr-value name="dynamics" value="false"/>
@@ -123,7 +94,7 @@
     <set-attr-value name="y" value="51.99"/>
     <set-attr-value name="z" value="50.0"/>
     <set-attr-value name="collision" value="true"/>
-  </instanciate> -->
+  </instanciate>
 
   <instanciate class="seCannedjuice_350ml_c01.xml">
     <set-attr-value name="name" value="can"/>
@@ -271,102 +242,58 @@
     <set-attr-value name="collision" value="true"/>
   </instanciate>
 -->
-
- <instanciate class="seCamera.xml">
-    <set-attr-value name="name" value="Camera"/>
-    <set-attr-value name="dynamics" value="false"/>
-    <set-attr-value name="x" value="-50.0"/>
-    <set-attr-value name="y" value="250.0"/>
-    <set-attr-value name="z" value="250.0"/>
-    <set-attr-value name="qx" value="0"/>
-    <set-attr-value name="qy" value="1"/>
-    <!--ny*sin(theta/2)-->
-    <set-attr-value name="qz" value="0"/>
-    <set-attr-value name="qw" value="0"/>
-    <!--cos(theta/2)-->
-    <set-attr-value name="language" value="c++"/>
-    <set-attr-value name="implementation"
-                    value="./Camera.so"/>
-    <set-attr-value name="collision" value="false"/>
-    <set-attr-value name="graspable" value="false"/>
-    <camera id="1"
-            aspectRatio="1.77"
-            direction="0 -0.7 1"
-            position="0.0 0.0 0.0"/>
-  </instanciate>
-
-
-
   <instanciate class="seSideTable_c01.xml">
     <set-attr-value name="name" value="table_0"/>
     <set-attr-value name="dynamics" value="false"/>
     <set-attr-value name="x" value="0.0"/>
-    <set-attr-value name="y" value="29.0"/>
+    <set-attr-value name="y" value="24.0"/>
     <set-attr-value name="z" value="70.0"/>
     <set-attr-value name="scalex" value="1.5"/>
-    <set-attr-value name="scaley" value="1.2"/>
+    <set-attr-value name="scaley" value="1.5"/>
     <set-attr-value name="scalez" value="1.5"/>
     <set-attr-value name="collision" value="false"/>
-      <set-attr-value name="graspable" value="false"/>
-  </instanciate>
-
-
-
-  <instanciate class="seModerator.xml">
-    <set-attr-value name="name" value="moderator_0"/>
-    <set-attr-value name="dynamics" value="false"/>
-    <set-attr-value name="x" value="140.0"/>
-    <set-attr-value name="y" value="41.35"/>
-    <set-attr-value name="z" value="-180.0"/>
     <set-attr-value name="language" value="c++"/>
     <set-attr-value name="implementation"
-                    value="./moderator.so"/>
-    <set-attr-value name="collision" value="false"/>
+                    value="./Table.so"/>
     <set-attr-value name="graspable" value="false"/>
-
-
   </instanciate>
-
-
 
   <instanciate class="seTrashbox_c01.xml">
     <set-attr-value name="name" value="recycle"/>
     <set-attr-value name="dynamics" value="false"/>
     <set-attr-value name="x" value="260.0"/>
-    <set-attr-value name="y" value="41.35"/>  
+    <set-attr-value name="y" value="36.35"/>  
     <set-attr-value name="z" value="-180.0"/>
     <set-attr-value name="collision" value="true"/>
-<!--    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="language" value="c++"/>
     <set-attr-value name="implementation"
-                    value="./TrashBox.so"/> -->
+                    value="./TrashBox.so"/>
     <set-attr-value name="graspable" value="false"/>
   </instanciate>
   <instanciate class="seTrashbox_c02.xml">
     <set-attr-value name="name" value="burnable"/>
     <set-attr-value name="dynamics" value="false"/>
     <set-attr-value name="x" value="140.0"/>
-    <set-attr-value name="y" value="41.35"/>  
+    <set-attr-value name="y" value="36.35"/>  
     <set-attr-value name="z" value="-180.0"/>
     <set-attr-value name="collision" value="true"/>
-<!--    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="language" value="c++"/>
     <set-attr-value name="implementation"
-                    value="./TrashBox.so"/>-->
+                    value="./TrashBox.so"/>
     <set-attr-value name="graspable" value="false"/>
   </instanciate>
   <instanciate class="seTrashbox_c03.xml">
     <set-attr-value name="name" value="unburnable"/>
     <set-attr-value name="dynamics" value="false"/>
     <set-attr-value name="x" value="20.0"/>
-    <set-attr-value name="y" value="41.35"/>  
+    <set-attr-value name="y" value="36.35"/>  
     <set-attr-value name="z" value="-180.0"/>
     <set-attr-value name="collision" value="true"/>
-<!--    <set-attr-value name="language" value="c++"/>
-     <set-attr-value name="implementation"
-                    value="./TrashBox.so"/>-->
+    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="implementation"
+                    value="./TrashBox.so"/>
     <set-attr-value name="graspable" value="false"/>
   </instanciate>
-
-<!--
   <instanciate class="seWagon_c02.xml">
     <set-attr-value name="name" value="wagon"/>
     <set-attr-value name="dynamics" value="false"/>
@@ -381,7 +308,7 @@
     <set-attr-value name="scaley" value="0.7"/>
     <set-attr-value name="scalez" value="0.7"/>
     <set-attr-value name="graspable" value="false"/>
-  </instanciate> --> 
+  </instanciate>
 <!--
   <instanciate class="seTrashbox_c01.xml">
     <set-attr-value name="name" value="recycle"/>

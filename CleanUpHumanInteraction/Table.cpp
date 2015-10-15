@@ -37,10 +37,10 @@ void MyController::onInit(InitEvent &evt) {
   colState = false;
 
   // ワゴン
-  tboxSize_x  = 100.6;
-  tboxSize_z  = 124.6; 
+  tboxSize_x  = 150.6;
+  tboxSize_z  = 100.0; 
   tboxMin_y    = 40.8;
-  tboxMax_y    = 1000.0;
+  tboxMax_y    = 70.0;
 }  
   
 double MyController::onAction(ActionEvent &evt) 
@@ -58,6 +58,11 @@ double MyController::onAction(ActionEvent &evt)
   }  
  */
   // 自分の位置取得
+   Vector3d  m_BottleReset = Vector3d(40.0, 59.15, 50.0);
+  Vector3d  m_MuccupReset = Vector3d(0.0, 52.15, 50.0);
+  Vector3d  m_CanReset = Vector3d(-40.0, 54.250, 50.0);
+  Rotation rot;
+  rot.setQuaternion(1, 0, 0, 0);
   Vector3d myPos;
   m_my->getPosition(myPos);
 
@@ -103,9 +108,9 @@ double MyController::onAction(ActionEvent &evt)
 	bool success = false;
 	// 台の上に置く(成功)
 	if(strcmp(ent->name(), "mayonaise_0") == 0 && tpos.y() != 57.85) {tpos.y(57.85); success = true;}
-	//else if(strcmp(ent->name(), "chigarette") == 0 && tpos.y() != 54.04){ tpos.y(54.04); success = true;}
+//	else if(strcmp(ent->name(), "chigarette") == 0 && tpos.y() != 54.04){ tpos.y(54.04); success = true;}
 	//else if(strcmp(ent->name(), "chocolate") == 0 && tpos.y() != 51.15){ tpos.y(51.15); success = true;}
-	else if(strcmp(ent->name(), "mugcup") == 0 && tpos.y() != 51.99){ tpos.y(51.99); success = true; tpos.x(myPos.x()+5);}
+	else if(strcmp(ent->name(), "mugcup") == 0 && tpos.y() != 51.99){ tpos.y(m_MuccupReset.y());tpos.x(m_MuccupReset.x()); tpos.z(m_MuccupReset.z()); SimObj *target = this->getObj("petbottle"); target->setRotation(rot);}
 	//else if(strcmp(ent->name(), "banana") == 0 && tpos.y() != 51.69){ tpos.y(51.69); success = true;}
 	//else if(strcmp(ent->name(), "petbottle_0") == 0 && tpos.y() != 67.45){ tpos.y(67.45); success = true;}
 	//else if(strcmp(ent->name(), "petbottle_3") == 0 && tpos.y() != 61.95){ tpos.y(61.95); success = true;}
@@ -113,23 +118,23 @@ double MyController::onAction(ActionEvent &evt)
 	//else if(strcmp(ent->name(), "clock") == 0 && tpos.y() != 56.150){ tpos.y(56.150); success = true;}
 	//else if(strcmp(ent->name(), "kettle") == 0 && tpos.y() != 60.650){ tpos.y(60.650); success = true;}
 	// 台の上に置く(失敗)
-	else if(strcmp(ent->name(), "petbottle") == 0 && tpos.y() != 67.45){ tpos.y(67.45);tpos.x(myPos.x()+10);}
+	else if(strcmp(ent->name(), "petbottle") == 0 && tpos.y() != 59.15){ tpos.y(m_BottleReset.y());tpos.x(m_BottleReset.x());tpos.z(m_BottleReset.z()); SimObj *target = this->getObj("petbottle"); target->setRotation(rot);}
 	//else if(strcmp(ent->name(), "petbottle_2") == 0 && tpos.y() != 67.45){ tpos.y(67.45);}
 	//else if(strcmp(ent->name(), "petbottle_4") == 0 && tpos.y() != 61.95){ tpos.y(61.95);}
-	else if(strcmp(ent->name(), "mayonaise_1") == 0 && tpos.y() != 57.85){ tpos.y(57.85);}
+	//else if(strcmp(ent->name(), "mayonaise_1") == 0 && tpos.y() != 57.85){ tpos.y(57.85);}
 	//else if(strcmp(ent->name(), "can_0") == 0 && tpos.y() != 55.335){ tpos.y(55.335);}
 	//else if(strcmp(ent->name(), "can_1") == 0 && tpos.y() != 55.335){ tpos.y(55.335);}
-	else if(strcmp(ent->name(), "can") == 0 && tpos.y() != 57.050){ tpos.y(54.250);tpos.z(myPos.z()+10);}
+	else if(strcmp(ent->name(), "can") == 0 && tpos.y() != 54.250){ tpos.y(m_CanReset.y());tpos.x(m_CanReset.x());tpos.z(m_CanReset.z()); SimObj *target = this->getObj("petbottle"); target->setRotation(rot);}
 	//else if(strcmp(ent->name(), "can_3") == 0 && tpos.y() != 57.050){ tpos.y(57.050);}
 	else{continue;}
 
 	ent->setAxisAndAngle(1.0, 0.0, 0.0, 0.0);
 	ent->setPosition(tpos);
 	if(success){
-	  msg = "RobocupReferee/Clean up succeeded" "/1000";
+	//  msg = "RobocupReferee/Clean up succeeded" "/1000";
 	}
 	else{
-	  msg = "RobocupReferee/Clean up failed" "/-600";
+//  msg = "RobocupReferee/Clean up failed" "/-600";
 	}
 	
 	if(m_ref != NULL) {
