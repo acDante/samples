@@ -33,15 +33,15 @@ void MyController::onInit(InitEvent &evt) {
   m_my = getObj(myname());
   getAllEntities(m_entities);
   m_ref = NULL;
-  retValue = 0.5;
+  retValue = 0.1;
   roboName = "robot_000";
 
   colState = false;
 
   // ゴミ箱
-  tboxSize_x  = 20.0;
-  tboxSize_z  = 40.5; 
-  tboxMin_y    = 40.0;
+  tboxSize_x  = 120.0;
+  tboxSize_z  = 90.5; 
+  tboxMin_y    = 30.0;
   tboxMax_y    = 1000.0;
 }  
   
@@ -76,9 +76,9 @@ double MyController::onAction(ActionEvent &evt)
 
     // ロボットまたはゴミ箱の場合は除く
     if(m_entities[i] == "robot_000"  ||
-       m_entities[i] == "bluetrashbox" ||
-       m_entities[i] == "greentrashbox" ||
-       m_entities[i] == "redtrashbox"){
+       m_entities[i] == "recycle" ||
+       m_entities[i] == "burnable" ||
+       m_entities[i] == "unburnable"){
       continue;
     }
     // エンティティ取得
@@ -118,11 +118,11 @@ double MyController::onAction(ActionEvent &evt)
 	std::string msg;
 	// ゴミが所定のゴミ箱に捨てられているかチェック
 	// リサイクル
-	if(strcmp(myname(), "trashbox_0") == 0){
+	if(strcmp(myname(), "recycle") == 0){
 	  // 空のペットボトルのみ点が入る
-	  if(strcmp(ent->name(), "petbottle_1") == 0 ||
+	  if(strcmp(ent->name(), "petbottle") == 0 ||
 	     strcmp(ent->name(), "petbottle_2") == 0 ||
-	     strcmp(ent->name(), "petbottle") == 0 ||
+	     strcmp(ent->name(), "petbottle_4") == 0 ||
 	     strcmp(ent->name(), "mayonaise_1") == 0 ) {
 	    msg = "RobocupReferee/Clean up succeeded" "/1000";
 	  }
@@ -131,12 +131,12 @@ double MyController::onAction(ActionEvent &evt)
 	  }
 	}
 	// 燃えるゴミ
-	else if(strcmp(myname(), "trashbox_1") == 0){
+	else if(strcmp(myname(), "burnable") == 0){
 	  // 燃えるゴミに入れるべきものは無い
 	  msg = "RobocupReferee/Clean up failed" "/-600";
 	}
 	// 缶瓶
-	else if(strcmp(myname(), "trashbox_2") == 0){
+	else if(strcmp(myname(), "unburnable") == 0){
 	  if(strcmp(ent->name(), "can_0") == 0 ||
 	     strcmp(ent->name(), "can_1") == 0 ||
 	     strcmp(ent->name(), "can") == 0 ||
@@ -149,9 +149,9 @@ double MyController::onAction(ActionEvent &evt)
 	}
 
 	if(m_ref != NULL) {
-	  m_ref->sendMsgToSrv(msg.c_str());
+	//  m_ref->sendMsgToSrv(msg.c_str());
 	}
-	LOG_MSG((msg.c_str()));
+	//LOG_MSG((msg.c_str()));
       }
     }
   }
