@@ -27,9 +27,8 @@ private:
 	BaseService *m_hmd;
 	BaseService *m_wii;
     BaseService *m_orsDK2;
-   bool take;
-   bool put;
-
+	bool take;
+	bool put;
 
 	//初期位置
 	double m_posx, m_posy, m_posz;
@@ -39,22 +38,16 @@ private:
 	//データ数（関節数）最大値
 	int m_maxsize;
 	
-	// 体全体の角度
-	//double m_qw, m_qy, m_qx, m_qz;
-	
 	// 前回送信したyaw, pitch roll
 	double pyaw, ppitch, proll;
-	
 
+	// 体全体の角度
 	double m_qw, m_qy, m_qx, m_qz;
 	double o_qw, o_qx, o_qy, o_qz;
 	double po_qw, po_qx, po_qy, po_qz;
 
 	bool chk_orsDK2;
     bool restart_on;
-
-
-
 
 	// ロボットの名前
 	std::string robotName;
@@ -86,8 +79,7 @@ void UserController::onInit(InitEvent &evt)
 	m_posy = my->y();
 	m_posz = my->z();
 	m_range = 0.1;
-	//m_maxsize = 15;
-	m_maxsize = 19;//20141126-tome-ikeda
+	m_maxsize = 19; //TODO: Magic number
 	double qw = my->qw();
 	double qy = my->qy();
 	m_yrot = acos(fabs(qw))*2;
@@ -99,17 +91,13 @@ void UserController::onInit(InitEvent &evt)
 	m_qx = 0.0;
 	m_qy = 0.0;
 	m_qz = 0.0;
-
-
 	
 	o_qw = 1.0;
 	o_qx = 0.0;
 	o_qy = 0.0;
 	o_qz = 0.0;
 
-   restart_on = false;
-
-
+	restart_on = false;
 
 	// Add by inamura on 28th June 2013
 	my->setJointAngle ("RLEG_JOINT2", DEG2RAD(0));
@@ -134,83 +122,74 @@ void UserController::onInit(InitEvent &evt)
 double UserController::onAction(ActionEvent &evt)
 {
 
-  // サービスが使用可能か定期的にチェックする
-  bool av_kinect = checkService("SIG_KINECT_V2");
-  bool av_hmd = checkService("SIGORS");
-  bool av_wii = checkService("Wii_Service");
+	// サービスが使用可能か定期的にチェックする
+	bool av_kinect = checkService("SIG_KINECT_V2");
+	bool av_hmd = checkService("SIGORS");
+	bool av_wii = checkService("Wii_Service");
 
-  //bool chk_orsDK2 = checkService("SIGORSDK2");
-SimObj *my = this->getObj(this->myname());
-  // 使用可能
-  if(av_kinect && m_kinect == NULL){
-    // サービスに接続
-    m_kinect = connectToService("SIG_KINECT_V2");
+	//bool chk_orsDK2 = checkService("SIGORSDK2");
+	SimObj *my = this->getObj(this->myname());
+	// 使用可能
+	if(av_kinect && m_kinect == NULL){
+		// サービスに接続
+		m_kinect = connectToService("SIG_KINECT_V2");
 
-  }
-  else if (!av_kinect && m_kinect != NULL){
-    m_kinect = NULL;
-  }
+	}
+	else if (!av_kinect && m_kinect != NULL){
+		m_kinect = NULL;
+	}
 
+	//if(chk_orsDK2  && m_orsDK2 == NULL) {
 
-//if(chk_orsDK2  && m_orsDK2 == NULL) {
-		
+	//		if(chk_orsDK2) {
+	//			m_orsDK2 = connectToService("SIGORSDK2");
+	//		}
+	//}
 
-//		if(chk_orsDK2) {
-//			m_orsDK2 = connectToService("SIGORSDK2");
-//		}
-//}
+	// 使用可能
+	if(av_hmd && m_hmd == NULL){
+		// サービスに接続
+		m_hmd = connectToService("SIGORS");
+	}
+	else if (!av_hmd && m_hmd != NULL){
+		m_hmd = NULL;
+	}
 
-
-  // 使用可能
-
- if(av_hmd && m_hmd == NULL){
-    // サービスに接続
-    m_hmd = connectToService("SIGORS");
-
-  }
-  else if (!av_hmd && m_hmd != NULL){
-   m_hmd = NULL;
-  }
-
-  // 使用可能
-  if(av_wii && m_wii == NULL){
-    // サービスに接続
-    m_wii = connectToService("Wii_Service");
-  }
-  else if (!av_wii && m_wii != NULL){
-    m_wii = NULL;
-  }
-//printf("OnAction test \n");
-  //my->setJointQuaternion("RARM_JOINT2", 0.707, 0, 0, 0.707);
-  return 0.01;
+	// 使用可能
+	if(av_wii && m_wii == NULL){
+		// サービスに接続
+		m_wii = connectToService("Wii_Service");
+	}
+	else if (!av_wii && m_wii != NULL){
+		m_wii = NULL;
+	}
+	//printf("OnAction test \n");
+	//my->setJointQuaternion("RARM_JOINT2", 0.707, 0, 0, 0.707);
+	return 0.01;
 }
+
 
 void UserController::onRecvMsg(RecvMsgEvent &evt)
 {
+	std::string sender = evt.getSender();
 
+	//自分自身の取得
+	SimObj *my = getObj(myname());
 
+	//メッセージ取得
+	char *all_msg = (char*)evt.getMsg();
+	// printf("all_msg=\n%s\n",all_msg);
 
+	std::string ss = all_msg;
+	//ヘッダーの取り出し
+	int strPos1 = 0;
+	int strPos2;
+	std::string headss;
+	std::string tmpss;
+	strPos2 = ss.find(" ", strPos1);
+	headss.assign(ss, strPos1, strPos2-strPos1);
 
-  std::string sender = evt.getSender();
-
-  //自分自身の取得
-  SimObj *my = getObj(myname());
-
-  //メッセージ取得
-  char *all_msg = (char*)evt.getMsg();
- // printf("all_msg=\n%s\n",all_msg);
-
-  std::string ss = all_msg;
-  //ヘッダーの取り出し
-  int strPos1 = 0;
-  int strPos2;
-  std::string headss;
-  std::string tmpss;
-  strPos2 = ss.find(" ", strPos1);
-  headss.assign(ss, strPos1, strPos2-strPos1);
-
-
-   if (strcmp(all_msg,"go") == 0 ) {
+	if (strcmp(all_msg,"go") == 0 ) {
     	
     	//take == false;
     	//put == false;
@@ -218,10 +197,9 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
     	//sendMsg("VoiceReco_Service","Cancel the action ..");
     	//sleep(4);
     	sendMsg("robot_000",all_msg);
-         
     }
 
-  else if (strcmp(all_msg,"restart") == 0 && restart_on == true) {
+	else if (strcmp(all_msg,"restart") == 0 && restart_on == true) {
     	
     	//take == false;
     	//put == false;
@@ -233,7 +211,7 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
     }
 
 
-   else if (strcmp(all_msg,"reset") == 0 ) {
+	else if (strcmp(all_msg,"reset") == 0 ) {
     	
     	//take == false;
     	//put == false;
@@ -243,27 +221,27 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
     	sendMsg("robot_000",all_msg);
          
     }
-/*
-   else if (strcmp(all_msg,"reset_take") == 0 ) { 	
-    	take == true;
-    	put == false;
-        //printf("Man is taking \n");
-    	//sendMsg("VoiceReco_Service","Take this Object");
-    	//sleep(4);
-    	//sendMsg("robot_000",all_msg);    
-    }
+	/*
+	  else if (strcmp(all_msg,"reset_take") == 0 ) { 	
+	  take == true;
+	  put == false;
+	  //printf("Man is taking \n");
+	  //sendMsg("VoiceReco_Service","Take this Object");
+	  //sleep(4);
+	  //sendMsg("robot_000",all_msg);    
+	  }
 
-   else if (strcmp(all_msg,"reset_put") == 0 ) {
+	  else if (strcmp(all_msg,"reset_put") == 0 ) {
     	
-    	//take == false;
-    	put == true;
-        //printf("Man is taking \n");
-    	//sendMsg("VoiceReco_Service","Take this Object");
-    	//sleep(4);
-    	//sendMsg("robot_000",all_msg);  
-    }
+	  //take == false;
+	  put == true;
+	  //printf("Man is taking \n");
+	  //sendMsg("VoiceReco_Service","Take this Object");
+	  //sleep(4);
+	  //sendMsg("robot_000",all_msg);  
+	  }
     */
-   else if (strcmp(all_msg,"On_Take") == 0 ) {
+	else if (strcmp(all_msg,"On_Take") == 0 ) {
     	
     	//take == false;
     	take = true;
@@ -272,7 +250,7 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
     	//sleep(4);
     	//sendMsg("robot_000",all_msg);      
     }
-       else if (strcmp(all_msg,"On_put") == 0 ) {
+	else if (strcmp(all_msg,"On_put") == 0 ) {
     	
     	//take == false;
     	put = true;
@@ -283,22 +261,22 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
     }
 
 
-   else if (strcmp(all_msg,"restart_on") == 0  ) {
+	else if (strcmp(all_msg,"restart_on") == 0  ) {
     	
     	//take == false;
    	    restart_on = true;
-    	//put == true;
-        //printf("Man is taking \n");
-    	//sendMsg("VoiceReco_Service","Take this Object");
-    	//sleep(4);
-    	//sendMsg("robot_000",all_msg);    
+			//put == true;
+			//printf("Man is taking \n");
+			//sendMsg("VoiceReco_Service","Take this Object");
+			//sleep(4);
+			//sendMsg("robot_000",all_msg);    
     }
 
 
-   else if (strcmp(all_msg,"do") == 0 && take == true) {
+	else if (strcmp(all_msg,"do") == 0 && take == true) {
     	
     	take = false;
-       // printf("Man is taking \n");
+		// printf("Man is taking \n");
     	sendMsg("VoiceReco_Service","Take this Object");
     	//sleep(4);
     	sendMsg("robot_000",all_msg);
@@ -306,9 +284,9 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
     }
 
 
-   else  if (strcmp(all_msg,"do") == 0 && put == true) {
+	else  if (strcmp(all_msg,"do") == 0 && put == true) {
     	put = false;
-       //  printf("Man is putting \n");
+		//  printf("Man is putting \n");
     	sendMsg("VoiceReco_Service","Put it in that trash ");
     	//sleep(4);
     	sendMsg("robot_000",all_msg);
@@ -318,57 +296,57 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 
 
 
-  //std::cout<<ss<<std::endl;
+	//std::cout<<ss<<std::endl;
 
-  if(headss == "ORS_DATA"){
-    //HMDデータによる頭部の動き反映
-    moveHeadByHMD(ss);
-  }
-
-
+	if(headss == "ORS_DATA"){
+		//HMDデータによる頭部の動き反映
+		moveHeadByHMD(ss);
+	}
 
 
-//	std::string bodyss;
-//	bodyss.assign(ss, strPos2 + 1, ss.length() - strPos2);
-
-//	if(headss == "ORS_DATA") {
-//		moveByORSDK2(bodyss);
-//	}
 
 
-  else if(headss == "KINECT_DATA") {
-	  //KINECTデータによる頭部以外の体の動き反映
-	  moveBodyByKINECT(all_msg);
-	  // Add by inamura on 2014-03-02
-	  // comment out by tome-ikeda 2014-11-06
-	  //my->setJointAngle ("RLEG_JOINT2", DEG2RAD(0));
-	  //my->setJointAngle ("LLEG_JOINT2", DEG2RAD(0));
-	  //my->setJointAngle ("RLEG_JOINT4", DEG2RAD(0));
-	  //my->setJointAngle ("LLEG_JOINT4", DEG2RAD(0));
-	  // Do not collide with a desk
-	  //f (my->y() < 60)  my->y(60);
-  }
-  else if(ss == "go") {
-    sendMsg("robot_000","go");
-    LOG_MSG(("Starting the clean up task"));
-    std::cout<<"go"<<std::endl;
-  }
+	//	std::string bodyss;
+	//	bodyss.assign(ss, strPos2 + 1, ss.length() - strPos2);
 
-  else if(ss == "take" ) {
-//    sendMsg("robot_000","take");
-//    LOG_MSG(("Taking the trash"));
-    std::cout<<"take"<<std::endl;
-  }
+	//	if(headss == "ORS_DATA") {
+	//		moveByORSDK2(bodyss);
+	//	}
 
-  else if(ss == "put" ) {
-  //  sendMsg("robot_000","put");
- //   LOG_MSG(("Putting the trash in the trash box"));
-    std::cout<<"put"<<std::endl;
-  }
 
-  else if(ss == "init") {
-    sendMsg("robot_000","init");
-  }
+	else if(headss == "KINECT_DATA") {
+		//KINECTデータによる頭部以外の体の動き反映
+		moveBodyByKINECT(all_msg);
+		// Add by inamura on 2014-03-02
+		// comment out by tome-ikeda 2014-11-06
+		//my->setJointAngle ("RLEG_JOINT2", DEG2RAD(0));
+		//my->setJointAngle ("LLEG_JOINT2", DEG2RAD(0));
+		//my->setJointAngle ("RLEG_JOINT4", DEG2RAD(0));
+		//my->setJointAngle ("LLEG_JOINT4", DEG2RAD(0));
+		// Do not collide with a desk
+		//f (my->y() < 60)  my->y(60);
+	}
+	else if(ss == "go") {
+		sendMsg("robot_000","go");
+		LOG_MSG(("Starting the clean up task"));
+		std::cout<<"go"<<std::endl;
+	}
+
+	else if(ss == "take" ) {
+		//    sendMsg("robot_000","take");
+		//    LOG_MSG(("Taking the trash"));
+		std::cout<<"take"<<std::endl;
+	}
+
+	else if(ss == "put" ) {
+		//  sendMsg("robot_000","put");
+		//   LOG_MSG(("Putting the trash in the trash box"));
+		std::cout<<"put"<<std::endl;
+	}
+
+	else if(ss == "init") {
+		sendMsg("robot_000","init");
+	}
 }
 
 
@@ -451,10 +429,6 @@ void UserController::moveHeadByHMD(const std::string ss)
 		my->setJointQuaternion("HEAD_JOINT0", tmpQ3[0], tmpQ3[1], tmpQ3[2], tmpQ3[3]);
 	}
 }
-
-
-
-
 
 
 void UserController::moveByORSDK2(std::string ss)
@@ -551,10 +525,10 @@ void UserController::moveBodyByKINECT(char* all_msg)
 				//エージェント座標からグローバル座標への変換
 				double gx = cos(m_yrot)*x - sin(m_yrot)*z;
 				double gz = sin(m_yrot)*x + cos(m_yrot)*z;
-        	//	printf("x=%f, y=%f, z=%f\n",x,y,z);
-        	///	printf("m_yrot=%f, cos(m_yrot)=%f, sin(m_yrot)=%f\n",m_yrot,cos(m_yrot),sin(m_yrot));
-        	///	printf("gx=%f, gz=%f\n",gx,gz);
-        	//	printf("m_posx=%f, m_posy=%f, m_posz=%f\n",m_posx,m_posy,m_posz);
+				//	printf("x=%f, y=%f, z=%f\n",x,y,z);
+				///	printf("m_yrot=%f, cos(m_yrot)=%f, sin(m_yrot)=%f\n",m_yrot,cos(m_yrot),sin(m_yrot));
+				///	printf("gx=%f, gz=%f\n",gx,gz);
+				//	printf("m_posx=%f, m_posy=%f, m_posz=%f\n",m_posx,m_posy,m_posz);
         		//printf("m_posx+gx=%f, m_posy+y=%f, m_posz+gz=%f\n",m_posx+gx,m_posy+y,m_posz+gz);
 				my->setPosition(m_posx+gx,m_posy,m_posz+gz);
 				//printf("the avatar postion is  X : %f  ----- Y: %f ------ Z :  %f ---- end \n",m_posx+gx,m_posy+y,m_posz+gz);
@@ -573,17 +547,17 @@ void UserController::moveBodyByKINECT(char* all_msg)
 				m_qz = z; 
 				// Spherical linear interpolation on quaternion
 				/*
-				bodyQ_pre[0] = m_qw; bodyQ_pre[1] = m_qx; bodyQ_pre[2] = m_qy; bodyQ_pre[3] = m_qz;
-				bodyQ_now[0] =    w; bodyQ_now[1] =    x; bodyQ_now[2] =    y; bodyQ_now[3] =    z;
-				//slerp(bodyQ_pre, bodyQ_now, 0.5, &bodyQ_middle);
-				slerp(bodyQ_pre, bodyQ_now, 0.5, bodyQ_middle);
-				printf("WAIST    =(%f,%f,%f,%f)\n",w,               x,               y,               z);
-				printf("bodyQ_middle=(%f,%f,%f,%f)\n",bodyQ_middle[0], bodyQ_middle[1], bodyQ_middle[2], bodyQ_middle[3]);//wrong
-				my->setJointQuaternion("ROOT_JOINT0", bodyQ_middle[0], bodyQ_middle[1], bodyQ_middle[2], bodyQ_middle[3]);
-				m_qw = bodyQ_middle[0];
-				m_qx = bodyQ_middle[1];
-				m_qy = bodyQ_middle[2];
-				m_qz = bodyQ_middle[3];
+				  bodyQ_pre[0] = m_qw; bodyQ_pre[1] = m_qx; bodyQ_pre[2] = m_qy; bodyQ_pre[3] = m_qz;
+				  bodyQ_now[0] =    w; bodyQ_now[1] =    x; bodyQ_now[2] =    y; bodyQ_now[3] =    z;
+				  //slerp(bodyQ_pre, bodyQ_now, 0.5, &bodyQ_middle);
+				  slerp(bodyQ_pre, bodyQ_now, 0.5, bodyQ_middle);
+				  printf("WAIST    =(%f,%f,%f,%f)\n",w,               x,               y,               z);
+				  printf("bodyQ_middle=(%f,%f,%f,%f)\n",bodyQ_middle[0], bodyQ_middle[1], bodyQ_middle[2], bodyQ_middle[3]);//wrong
+				  my->setJointQuaternion("ROOT_JOINT0", bodyQ_middle[0], bodyQ_middle[1], bodyQ_middle[2], bodyQ_middle[3]);
+				  m_qw = bodyQ_middle[0];
+				  m_qx = bodyQ_middle[1];
+				  m_qy = bodyQ_middle[2];
+				  m_qz = bodyQ_middle[3];
 				*/
 				my->setJointQuaternion("ROOT_JOINT0", w, x, y, z);
 				continue;
@@ -698,5 +672,5 @@ bool UserController::slerp(dQuaternion qtn1, dQuaternion qtn2, double time, dQua
 
 extern "C" Controller * createController ()
 {
-  return new UserController;
+	return new UserController;
 }
