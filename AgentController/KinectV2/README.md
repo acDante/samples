@@ -18,26 +18,22 @@ KinectV2
 ## Requirement
 
  You can download from below:  
- SIGViewer-2.2.0 of SIGVerse-2.2.0   
- <http://sigverse.org/sigverse/main/download/>  
+ SIGViewer-2.2.0 or later , SIGVerse-2.2.0 or later
+ <http://sourceforge.net/projects/sigverse/>
+  
  Please install it as below:  
  <http://www.sigverse.com/wiki/en/index.php?Tutorial>   
  
- Ubuntu 12.04  
- Only Japanese edition can be obtained now.  
- <https://www.ubuntulinux.jp/News/ubuntu1204-desktop-ja-remix>  
- 
 
 ## Usage
- 1. boot up Ubuntu12.04 on VMware.
- 2. start SIGServer on Ubuntu. SIGVerse must be SIGVerse-2.2.0.  
+ 1. start SIGServer on Linux. SIGVerse must be SIGVerse-2.2.0 or later.
    $ cd /KinectV2  
    $ sigserver.sh -w ./kinectWorld.xml(filename) -p 9000(port number)  
- 3. start SIGViewer on Windows8.
+ 3. start SIGViewer on Windows8 or later.
  4. push start button on SIGViewer to start simulation.
- 5. edit KinectV2_2013.bat, set your IPadress and port number of Ubuntu.
+ 5. edit KinectV2_2013.bat, set your IP adress and port number of Linux machine
  6. execute KinectV2_2013.bat.
- 7. move your body infront fo Kinect sensor.
+ 7. move your body in front of KinectV2 sensor.
 
 ## Install
  set any place.
