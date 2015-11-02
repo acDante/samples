@@ -1,5 +1,5 @@
 #SIGVerse header file
-SIG_SRC  = $(SIGVERSE_PATH)/include/sigverse
+INCLUDE_PATH = $(SIGVERSE_PATH)/include
 
 #Target
 OBJS     = OculusRiftCtrl.so
@@ -8,7 +8,7 @@ all: $(OBJS)
 
 #Compile
 ./%.so: ./%.cpp
-	g++ -Wall -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(SIG_SRC) -I$(SIG_SRC)/comm/controller  -fPIC -shared -o $@   $<
+	g++ -Wall -DCONTROLLER -DNDEBUG -DdDOUBLE -std=c++11 -I$(INCLUDE_PATH) -fPIC -shared -o $@ $<
 
 clean:
 	rm $(OBJS)

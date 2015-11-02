@@ -1,7 +1,10 @@
 #sigverse header
 INCLUDE_PATH = $(SIGVERSE_PATH)/include
 
-all: kinectController.so
+#Target
+OBJS     = kinectController.so
+
+all: $(OBJS)
 
 #compile
 ./%.so: ./%.cpp
