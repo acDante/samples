@@ -59,7 +59,7 @@ double AgentController::onAction(ActionEvent &evt)
 	bool available = checkService("SIGKINECT");
    
 	//Service available
-	if (available && m_kinect == NULL) {
+	if (available && (m_kinect == NULL)) {
 		//connect to the service
 		m_kinect = connectToService("SIGKINECT");
     }
