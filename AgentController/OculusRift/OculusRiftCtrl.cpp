@@ -1,10 +1,12 @@
-#include <Controller.h>
-#include <ControllerEvent.h>
-#include <Logger.h>
-#include <ViewImage.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+
+#include "sigverse/commonlib/Controller.h"
+#include "sigverse/commonlib/ControllerEvent.h"
+#include "sigverse/commonlib/Logger.h"
+#include "sigverse/commonlib/ViewImage.h"
+
 
 #define DEG2RAD(DEG) ( (M_PI) * (DEG) / 180.0 )
 
@@ -15,7 +17,7 @@ public:
 	void onInit(InitEvent &evt);
 	double onAction(ActionEvent &evt);
 private:
-	BaseService *m_oculus;
+	BaseService *m_oculus = NULL;
 	double m_posx, m_posy, m_posz;
 	double m_yrot;
 	double m_range;
@@ -25,8 +27,9 @@ private:
 	double m_qw, m_qy, m_qx, m_qz;
 	double pyaw, ppitch, proll;
 
-	bool chk_srv;
+	bool chk_oculus = false;
 };
+
 
 void RobotController::onInit(InitEvent &evt)
 {
@@ -54,12 +57,10 @@ void RobotController::onInit(InitEvent &evt)
 
 double RobotController::onAction(ActionEvent &evt)
 {
-	if (chk_srv==NULL) {
-		bool ch_oculus = checkService("SIGORS");
+	chk_oculus = checkService("SIGORS");
 
-		if (ch_oculus) {
-			m_oculus = connectToService("SIGORS");
-		}
+	if (chk_oculus && (m_oculus==NULL)) {
+		m_oculus = connectToService("SIGORS");
 	}
 
 	return 1.0;
