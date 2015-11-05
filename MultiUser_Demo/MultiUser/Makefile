@@ -1,5 +1,5 @@
 #sigverse header
-SIG_SRC  = $(SIGVERSE_PATH)/include/sigverse
+INCLUDE_PATH  = $(SIGVERSE_PATH)/include
 
 #オブジェクトファイルの指定
 OBJS     = cleanUpUser.so cleanUpUser2.so MultiUserCtr.so Camera.so
@@ -8,7 +8,7 @@ all: $(OBJS)
 
 #compile
 ./%.so: ./%.cpp
-	g++ -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(SIG_SRC) -I$(SIG_SRC)/comm/controller -fPIC -shared -o $@ $<
+	g++ -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(INCLUDE_PATH) -fPIC -shared -o $@ $<
 
 clean:
 	rm ./*.so

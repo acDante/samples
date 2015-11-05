@@ -1,10 +1,6 @@
-#include <Controller.h>
-#include <ControllerEvent.h>
-#include <Logger.h>
-#include <ViewImage.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -12,9 +8,15 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <exception>
+
+#include "sigverse/commonlib/Controller.h"
+#include "sigverse/commonlib/ControllerEvent.h"
+#include "sigverse/commonlib/Logger.h"
+#include "sigverse/commonlib/ViewImage.h"
+
 #define SOCKET_ERROR        -1
 typedef struct sockaddr 	*LPSOCKADDR;
-#define PI 3.14
+
 #define DEG2RAD(DEG) ( (M_PI) * (DEG) / 180.0 )
 
 class UserController : public Controller
@@ -90,8 +92,8 @@ double UserController::getDis(Vector3d pos)
 void UserController::onInit(InitEvent &evt)
 {
 
-condition_grasp = true;
-condition_release = true;
+	condition_grasp = true;
+	condition_release = true;
 
 
 	other = getObj("man_blue");
@@ -167,144 +169,141 @@ condition_release = true;
 //定期的に呼び出される関数
 double UserController::onAction(ActionEvent &evt)
 {
-
-
-
 	Vector3d pos_Obj;
 	Vector3d pos_hand;
 	Vector3d pos_hand_me;
 
- CParts * parts = other->getParts("RARM_LINK7");
+	CParts * parts = other->getParts("RARM_LINK7");
 
-bottle->getPosition(pos_Obj);
-parts->getPosition(pos_hand);
-pos_hand -= pos_Obj;
+	bottle->getPosition(pos_Obj);
+	parts->getPosition(pos_hand);
+	pos_hand -= pos_Obj;
 
- double distance = getDis(pos_hand);
+	double distance = getDis(pos_hand);
 
  
 
-//std::cout<<"Man pink" <<  distance <<std::endl;
-SimObj *my = this->getObj(this->myname());
-double angL1 = my->getJointAngle("RARM_JOINT0")*180.0/(PI);
+	//std::cout<<"Man pink" <<  distance <<std::endl;
+	SimObj *my = this->getObj(this->myname());
+	double angL1 = my->getJointAngle("RARM_JOINT0")*180.0/(M_PI);
 
-CParts * parts2 = my->getParts("RARM_LINK7");
-parts2->getPosition(pos_hand_me);
-pos_hand_me -= pos_Obj;
-double distance2 = getDis(pos_hand_me);
-
-
-if(distance < 6 && m_grasp == true && condition_release == true)
- {
-   CParts * parts2 = my->getParts("RARM_LINK7");
-    parts2->releaseObj();
- //   m_grasp = false;    
-  //  m_grasp1 = false;
-    m_grasp = false;
-    condition_grasp = false;
-    //
- }
-
-// condition de rerelease object
-if(distance > 11  && m_grasp == true )
-{
-//m_grasp1 = false;
-//m_grasp = false; 
-	condition_release = true;
-}
+	CParts * parts2 = my->getParts("RARM_LINK7");
+	parts2->getPosition(pos_hand_me);
+	pos_hand_me -= pos_Obj;
+	double distance2 = getDis(pos_hand_me);
 
 
-// condtion to regrasp object
+	if(distance < 6 && m_grasp == true && condition_release == true)
+		{
+			CParts * parts2 = my->getParts("RARM_LINK7");
+			parts2->releaseObj();
+			//   m_grasp = false;    
+			//  m_grasp1 = false;
+			m_grasp = false;
+			condition_grasp = false;
+			//
+		}
 
-if(distance2 > 11  && m_grasp == false )
-{
-//m_grasp1 = false;
-//m_grasp = false; 
-	condition_grasp = true;
-}
+	// condition de rerelease object
+	if(distance > 11  && m_grasp == true )
+		{
+			//m_grasp1 = false;
+			//m_grasp = false; 
+			condition_release = true;
+		}
 
 
+	// condtion to regrasp object
 
-
-if(distance2 < 5 &&  m_grasp == false && condition_grasp == true )
-{
-
-	//std::cout<<"Grasping blue" << std::endl;
-CParts * parts = my->getParts("RARM_LINK7");
-        if(parts->graspObj("petbottle_0"))
-        {
-
-        	m_grasp = true;
-        }
- 	m_grasp = true;
- 	condition_release = false;
-}
+	if(distance2 > 11  && m_grasp == false )
+		{
+			//m_grasp1 = false;
+			//m_grasp = false; 
+			condition_grasp = true;
+		}
 
 
 
 
-double thetaL1 = -120+angL1;
+	if(distance2 < 5 &&  m_grasp == false && condition_grasp == true )
+		{
+
+			//std::cout<<"Grasping blue" << std::endl;
+			CParts * parts = my->getParts("RARM_LINK7");
+			if(parts->graspObj("petbottle_0"))
+				{
+
+					m_grasp = true;
+				}
+			m_grasp = true;
+			condition_release = false;
+		}
+
+
+
+
+	double thetaL1 = -120+angL1;
 
    
 
-  bool av_kinect = checkService(service_ID[1]);
-  bool av_hmd = checkService(service_ID[0]);
-  bool av_wii = checkService(service_ID[2]);
+	bool av_kinect = checkService(service_ID[1]);
+	bool av_hmd = checkService(service_ID[0]);
+	bool av_wii = checkService(service_ID[2]);
 
- // }
+	// }
 
-  // 使用可能
-  if(av_kinect && m_kinect == NULL){
-    // サービスに接続
+	// 使用可能
+	if(av_kinect && m_kinect == NULL){
+		// サービスに接続
 
     
-    m_kinect = connectToService(service_ID[1]);
-    sendMsg("multiuserctr_0","OK");
+		m_kinect = connectToService(service_ID[1]);
+		sendMsg("multiuserctr_0","OK");
 
-  }
-  else if (!av_kinect && m_kinect != NULL){
-    m_kinect = NULL;
-  }
+	}
+	else if (!av_kinect && m_kinect != NULL){
+		m_kinect = NULL;
+	}
 
-  // 使用可能
-  if(av_hmd && m_hmd == NULL){
-    // サービスに接続
-    m_hmd = connectToService(service_ID[0]);
+	// 使用可能
+	if(av_hmd && m_hmd == NULL){
+		// サービスに接続
+		m_hmd = connectToService(service_ID[0]);
   
-  }
-  else if (!av_hmd && m_hmd != NULL){
-    m_hmd = NULL;
-  }
+	}
+	else if (!av_hmd && m_hmd != NULL){
+		m_hmd = NULL;
+	}
 
-  // 使用可能
-  if(av_wii && m_wii == NULL){
-    // サービスに接続
-    m_wii = connectToService(service_ID[2]);
-  }
-  else if (!av_wii && m_wii != NULL){
-    m_wii = NULL;
-  }
+	// 使用可能
+	if(av_wii && m_wii == NULL){
+		// サービスに接続
+		m_wii = connectToService(service_ID[2]);
+	}
+	else if (!av_wii && m_wii != NULL){
+		m_wii = NULL;
+	}
 
-  return 0.01;
+	return 0.01;
 }
 
 void UserController::onRecvMsg(RecvMsgEvent &evt)
 {
 
-  std::string sender = evt.getSender();
+	std::string sender = evt.getSender();
 
-  //自分自身の取得
-  SimObj *my = getObj(myname());
+	//自分自身の取得
+	SimObj *my = getObj(myname());
 
-  //メッセージ取得
-  char *all_msg = (char*)evt.getMsg();
+	//メッセージ取得
+	char *all_msg = (char*)evt.getMsg();
 
-  std::string ss = all_msg;
-  //ヘッダーの取り出し
-  int strPos1 = 0;
-  int strPos2,strPos3;
-  std::string headss,cmd;
-  std::string tmpss,id;
+	std::string ss = all_msg;
+	//ヘッダーの取り出し
+	int strPos1 = 0;
+	int strPos2,strPos3;
+	std::string headss,cmd;
+	std::string tmpss,id;
 
 	strPos2 = ss.find(" ", strPos1);
 	headss.assign(ss, strPos1, strPos2-strPos1);
@@ -314,45 +313,45 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 	strPos3 = cmd.find("|", strPos1);
 	id.assign(cmd, strPos1, strPos3-strPos1+1);
     std::cout<<"The ID is :"<< id <<std::endl;
-   // attrId(priority,id);
+	// attrId(priority,id);
 
 
-if(sender == "multiuserctr_0" &&  id_init == true)
-{
+	if(sender == "multiuserctr_0" &&  id_init == true)
+		{
 
-for(int i=0;i< service_ID.size() ;i++)
-{
+			for(int i=0;i< service_ID.size() ;i++)
+				{
 
-service_ID[i] += ss;
-//std::cout<<"The service ID :"<< service_ID[i] <<std::endl;
-F_ID = ss;
-//std::cout<<" F_ID is :"<< F_ID <<std::endl;
-}
-id_init = false;
-std::string mf = "MultiUsersMenu ";
-mf += F_ID;
-sendMsg(mf,"Connected to Avatar 2");
+					service_ID[i] += ss;
+					//std::cout<<"The service ID :"<< service_ID[i] <<std::endl;
+					F_ID = ss;
+					//std::cout<<" F_ID is :"<< F_ID <<std::endl;
+				}
+			id_init = false;
+			std::string mf = "MultiUsersMenu ";
+			mf += F_ID;
+			sendMsg(mf,"Connected to Avatar 2");
 
-}
-  //std::cout<<ss<<std::endl;
+		}
+	//std::cout<<ss<<std::endl;
 
- else if(headss == "ORS_DATA" && F_ID == id){
-    //HMDデータによる頭部の動き反映
+	else if(headss == "ORS_DATA" && F_ID == id){
+		//HMDデータによる頭部の動き反映
 
-    moveHeadByHMD(ss);
-  }
-  else if(headss == "KINECT_DATA" && F_ID == id) {
-	  //KINECTデータによる頭部以外の体の動き反映
+		moveHeadByHMD(ss);
+	}
+	else if(headss == "KINECT_DATA" && F_ID == id) {
+		//KINECTデータによる頭部以外の体の動き反映
   	    std::cout<<"Hello world :)" <<std::endl;
-	  moveBodyByKINECT(all_msg);
-	  // Add by inamura on 2014-03-02
-	  my->setJointAngle ("RLEG_JOINT2", DEG2RAD(0));
-	  my->setJointAngle ("LLEG_JOINT2", DEG2RAD(0));
-	  my->setJointAngle ("RLEG_JOINT4", DEG2RAD(0));
-	  my->setJointAngle ("LLEG_JOINT4", DEG2RAD(0));
-	  // Do not collide with a desk
-	  if (my->y() < 60)  my->y(60);
-  }
+		moveBodyByKINECT(all_msg);
+		// Add by inamura on 2014-03-02
+		my->setJointAngle ("RLEG_JOINT2", DEG2RAD(0));
+		my->setJointAngle ("LLEG_JOINT2", DEG2RAD(0));
+		my->setJointAngle ("RLEG_JOINT4", DEG2RAD(0));
+		my->setJointAngle ("LLEG_JOINT4", DEG2RAD(0));
+		// Do not collide with a desk
+		if (my->y() < 60)  my->y(60);
+	}
   
 }
 
@@ -369,11 +368,11 @@ void UserController::moveHeadByHMD(const std::string ss)
 	std::string tmpss,id;
 	strPos2 = ss.find("|", strPos1);
 	headss.assign(ss, strPos1, strPos2-strPos1+1);
-     std:: string str = "ORS_DATA ";
-     str+= F_ID;
+	std:: string str = "ORS_DATA ";
+	str+= F_ID;
 
-std::cout<<"head :"<<  headss << std::endl;
-std::cout<<"str  :"<<  str << std::endl;
+	std::cout<<"head :"<<  headss << std::endl;
+	std::cout<<"str  :"<<  str << std::endl;
 
 
 	if(headss == str){
@@ -455,16 +454,16 @@ void UserController::moveBodyByKINECT(char* all_msg)
 	char * msg;
 	std::string tmpss,id;
 	//strPos2 = all_msg.find("|", strPos1);
-	 msg = strtok(all_msg,"|");
-	 //msg.assign(all_msg, strPos1, strPos2-strPos1+1);
-     std:: string str = "KINECT_DATA ";
-     str+= F_ID;
-     str = str.erase(str.size() - 1, 1);
+	msg = strtok(all_msg,"|");
+	//msg.assign(all_msg, strPos1, strPos2-strPos1+1);
+	std:: string str = "KINECT_DATA ";
+	str+= F_ID;
+	str = str.erase(str.size() - 1, 1);
     // std::cout<<"msg :"<<  msg << std::endl;
-   //  std::cout<<"str :"<<  str << std::endl;
+	//  std::cout<<"str :"<<  str << std::endl;
 
 	if (strcmp(msg,str.c_str()) == 0) {
-		    std::cout<<"Next hello world" <<std::endl;
+		std::cout<<"Next hello world" <<std::endl;
 		int i = 0;
 		while (true) {
 			i++;
@@ -481,43 +480,43 @@ void UserController::moveBodyByKINECT(char* all_msg)
 				double gz = sin(m_yrot)*x + cos(m_yrot)*z;
 				//my->setPosition(m_posx+gx,m_posy+y,m_posz+gz);
 				//limitedSetPosition(my, m_posx+gx,m_posy+y,m_posz+gz);
-                 if ( gx < 30 &&  gx > -30  && gz <  40  &&  gz >  -40  )
-                { 
-                 my->setPosition(m_posx+gx,m_posy,m_posz+gz);
-                 }
+				if ( gx < 30 &&  gx > -30  && gz <  40  &&  gz >  -40  )
+					{ 
+						my->setPosition(m_posx+gx,m_posy,m_posz+gz);
+					}
                 else if (gx > 30  && gz <  40  &&  gz >  -40 )
-                {
-                  my->setPosition(m_posx+ 29,m_posy,m_posz+gz);
-                }
-                 else if (gx < -30  && gz <  40  &&  gz >  -40)
-                {
-                  my->setPosition(m_posx - 29,m_posy,m_posz+gz);
-                }
+					{
+						my->setPosition(m_posx+ 29,m_posy,m_posz+gz);
+					}
+				else if (gx < -30  && gz <  40  &&  gz >  -40)
+					{
+						my->setPosition(m_posx - 29,m_posy,m_posz+gz);
+					}
                 else if (gz < -40 && gx < 30 &&  gx > -30) 
-                {
-                  my->setPosition(m_posx+gx,m_posy,m_posz-39);
-                }  
-                  else if (gz > 40 && gx < 30 &&  gx > -30)
-                {
-                  my->setPosition(m_posx+gx,m_posy,m_posz+39);
+					{
+						my->setPosition(m_posx+gx,m_posy,m_posz-39);
+					}  
+				else if (gz > 40 && gx < 30 &&  gx > -30)
+					{
+						my->setPosition(m_posx+gx,m_posy,m_posz+39);
 
-                } 
+					} 
                 else if (gx > 30 && gz < -40)
-                {
-                  my->setPosition(m_posx+ 29,m_posy,m_posz-39);
-                }
+					{
+						my->setPosition(m_posx+ 29,m_posy,m_posz-39);
+					}
                 else if (gx > 30 && gz >40)
-                {
-                  my->setPosition(m_posx+ 29,m_posy,m_posz+39);
-                }
+					{
+						my->setPosition(m_posx+ 29,m_posy,m_posz+39);
+					}
                 else if (gx < -30 && gz < -40 )
-                {
-                  my->setPosition(m_posx - 29,m_posy,m_posz - 39);
-                }
-                    else if (gx < -30 && gz > 40 )
-                {
-                  my->setPosition(m_posx - 29,m_posy,m_posz + 39);
-                }
+					{
+						my->setPosition(m_posx - 29,m_posy,m_posz - 39);
+					}
+				else if (gx < -30 && gz > 40 )
+					{
+						my->setPosition(m_posx - 29,m_posy,m_posz + 39);
+					}
 
 
 
@@ -646,39 +645,39 @@ bool UserController::slerp(dQuaternion qtn1, dQuaternion qtn2, double time, dQua
 	return true;
 }
 /*
-void UserController::onCollision(CollisionEvent &evt)
-{
-	//m_grasp = bottle->getIsGrasped();
+  void UserController::onCollision(CollisionEvent &evt)
+  {
+  //m_grasp = bottle->getIsGrasped();
   if (m_grasp == false && m_grasp2 == false){
   //	sendMsg("man_blue","graping");
-    typedef CollisionEvent::WithC C;
-    //触れたエンティティの名前を得ます
-    const std::vector<std::string> & with = evt.getWith();
-    // 衝突した自分のパーツを得ます
-    const std::vector<std::string> & mparts = evt.getMyParts();
-    //　衝突したエンティティでループします
-    for(int i = 0; i < with.size(); i++){
-      //右手に衝突した場合
-      if(mparts[i] == "RARM_LINK7"){
-        //自分を取得
-        SimObj *my = getObj(myname());
-        //自分の手のパーツを得ます
-        CParts * parts = my->getParts("RARM_LINK7");
-        if(parts->graspObj("petbottle_0")){
-        	m_grasp2 = true;
-        	m_grasp1 = false;
-        	//m_grasp = bottle->getIsGrasped();
-           m_grasp = true;
-        }
-      }
-    }
+  typedef CollisionEvent::WithC C;
+  //触れたエンティティの名前を得ます
+  const std::vector<std::string> & with = evt.getWith();
+  // 衝突した自分のパーツを得ます
+  const std::vector<std::string> & mparts = evt.getMyParts();
+  //　衝突したエンティティでループします
+  for(int i = 0; i < with.size(); i++){
+  //右手に衝突した場合
+  if(mparts[i] == "RARM_LINK7"){
+  //自分を取得
+  SimObj *my = getObj(myname());
+  //自分の手のパーツを得ます
+  CParts * parts = my->getParts("RARM_LINK7");
+  if(parts->graspObj("petbottle_0")){
+  m_grasp2 = true;
+  m_grasp1 = false;
+  //m_grasp = bottle->getIsGrasped();
+  m_grasp = true;
   }
-}
+  }
+  }
+  }
+  }
 
 */
 
 
 extern "C" Controller * createController ()
 {
-  return new UserController;
+	return new UserController;
 }
