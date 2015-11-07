@@ -59,7 +59,7 @@ double RobotController::onAction(ActionEvent &evt)
 		{
 		case 0:   { 
 			i = 0;
-			if(joints_Values.size() != 0) 
+			if ((int)joints_Values.size() != 0) 
 				{
 					std::cout << "the Sequence Size is  "<< joints_Values.size() << std::endl ;
 					m_state = 1;
@@ -78,7 +78,7 @@ double RobotController::onAction(ActionEvent &evt)
 		case 2:   { 
 			i= i+1;
 			std::cout << "the Sequence Number is  "<< i << std::endl ;
-			if(i < joints_Values.size()) 
+			if (i < (int)joints_Values.size()) 
 				{
 					m_state = 1;
 				}
@@ -168,7 +168,7 @@ void RobotController::onRecvMsg(RecvMsgEvent &evt)
 		value = msg.substr(found+2,found3);
 		//std::cout << "the the value  is "+ value << std::endl ;
 
-		for (int j=0; j<joints_Values.size(); j++)
+		for (int j=0; j<(int)joints_Values.size(); j++)
 			{
 				for (int i=0; i<NUMBER_OF_JOINT; i++)
 					{
