@@ -1,17 +1,14 @@
 #sigverse header
-SIG_SRC  = $(SIGVERSE_PATH)/include/sigverse
+INCLUDE_PATH  = $(SIGVERSE_PATH)/include
 
-#オブジェクトファイルの指定
-#OBJS     = Test.so TrashBox.so Camera.so Wagon.so Moderator.so
 OBJS     = Robot.so
-#OBJS     = CleanUpRoboDemo.so TrashBox.so Camera.so Wagon.so Moderator.so
-#OBJS     = Test.so TrashBox.so Furniture.so Camera.so Wagon.so Moderator.so
+
 
 all: $(OBJS)
 
 #compile
 ./%.so: ./%.cpp
-	g++ -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(SIG_SRC) -I$(SIG_SRC)/comm/controller -fPIC -shared -o $@ $<
+	g++ -Wall -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(INCLUDE_PATH) -fPIC -shared -o $@ $<
 
 clean:
 	rm ./*.so
