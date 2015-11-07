@@ -8,7 +8,9 @@
 
 //convert angle unit from degree to radian
 #define DEG2RAD(DEG) ( (M_PI) * (DEG) / 180.0 )
-#define error_angle_arm 0.2
+#define NUMBER_OF_JOINT  76
+#define error_angle_arm  0.2
+
 std::string joints_Names[] = {"LARM_JOINT0","LARM_JOINT1","LARM_JOINT2","LARM_JOINT3","LARM_JOINT4","LARM_JOINT5","LARM_JOINT6","RARM_JOINT0",
   "RARM_JOINT1","RARM_JOINT2","RARM_JOINT3","RARM_JOINT4","RARM_JOINT5","RARM_JOINT6","LLEG_JOINT0","LLEG_JOINT1","LLEG_JOINT2","LLEG_JOINT3","LLEG_JOINT4",
   "LLEG_JOINT5","RLEG_JOINT0","RLEG_JOINT1","RLEG_JOINT2","RLEG_JOINT3","RLEG_JOINT4","RLEG_JOINT5","ROOT_JOINT0","ROOT_JOINT1","ROOT_JOINT2","NECK_JOINT0",
@@ -168,7 +170,7 @@ void RobotController::onRecvMsg(RecvMsgEvent &evt)
 
 		for (int j=0; j<joints_Values.size(); j++)
 			{
-				for (int i=0; i<76; i++)
+				for (int i=0; i<NUMBER_OF_JOINT; i++)
 					{
 
 						std::cout << " I  ..."<< j << "   J ..." <<  i << "  the the value  is   ... " << joints_Values[j][i] << std::endl ;
@@ -184,9 +186,9 @@ void RobotController::onRecvMsg(RecvMsgEvent &evt)
 void RobotController::Capture( std::string number)
 {
 
-	double  joints_current[76]; 
+	double  joints_current[NUMBER_OF_JOINT]; 
 	std::vector <double> Vec_value;
-	for (int j=0; j<76; j++)
+	for (int j=0; j<NUMBER_OF_JOINT; j++)
 		{
 			joints_current[j] = m_my->getJointAngle(joints_Names[j].c_str());
 			Vec_value.push_back(joints_current[j]);
@@ -200,17 +202,17 @@ void RobotController::Capture( std::string number)
 bool RobotController::moveBody(std::vector <double > joints_Val)
 {
 	//bool j0 = false, j1 = false , j3 = false, j4 = false, j5 = false, j6 = false, j7 = false;
-	bool Joint_State[76];
-	double joints_current[76];
+	bool Joint_State[NUMBER_OF_JOINT];
+	double joints_current[NUMBER_OF_JOINT];
 	bool global_status = false; 
-	for (int j=0; j<76; j++)
+	for (int j=0; j<NUMBER_OF_JOINT; j++)
 		{
 			Joint_State[j]= false;
 			joints_current[j] = m_my->getJointAngle(joints_Names[j].c_str());
 		}
 
 
-	for (int i=0; i<76; i++)
+	for (int i=0; i<NUMBER_OF_JOINT; i++)
 
 		{
 			if(joints_current[i] != joints_Val[i] )
@@ -238,7 +240,7 @@ bool RobotController::moveBody(std::vector <double > joints_Val)
 
 	global_status = true;
 
-	for (int k=0; k<76; k++) {
+	for (int k=0; k<NUMBER_OF_JOINT; k++) {
 		if (Joint_State[k] == false)
 			global_status = false; 
 	}
