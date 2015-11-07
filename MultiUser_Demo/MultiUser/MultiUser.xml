@@ -5,8 +5,7 @@
 <!--   <instanciate class="WheelRobot-nii-v1.xm" type="Robot">
     <set-attr-value name="name" value="robot_000"/>
     <set-attr-value name="language" value="c++"/>
-    <set-attr-value name="implementation"
-                    value="./CleanUpRobot.so"/>
+    <set-attr-value name="implementation" value="./CleanUpRobot.so"/>
     <set-attr-value name="dynamics" value="false"/>
     <set-attr-value name="x" value="0.0"/>
     <set-attr-value name="y" value="30.0"/>
@@ -28,8 +27,7 @@
     <set-attr-value name="y" value="200.0"/>
     <set-attr-value name="z" value="190.0"/>
     <set-attr-value name="language" value="c++"/>
-    <set-attr-value name="implementation"
-                    value="./MultiUserCtr.so"/>
+    <set-attr-value name="implementation" value="./MultiUserCtr.so"/>
     <set-attr-value name="collision" value="false"/>
     <set-attr-value name="graspable" value="false"/>
   </instanciate>
@@ -63,14 +61,8 @@
             direction="0 0 1"
             position="0.0 0.0 5.0"/>
     <set-attr-value name="language" value="c++"/>
-
-    <set-attr-value name="implementation"
- value="./cleanUpUser.so"/>
-
-
-         <set-attr-value name="dynamics" value="false"/>
-
-
+    <set-attr-value name="implementation" value="./cleanUpUser.so"/>
+        <set-attr-value name="dynamics" value="false"/>
         <set-attr-value name="x" value="100.0"/>
         <set-attr-value name="y" value="  60.0"/>
         <set-attr-value name="z" value="-30.0"/>
@@ -92,13 +84,8 @@
     <set-attr-value name="language" value="c++"/>
     <set-attr-value name="language" value="c++"/>
 
-    <set-attr-value name="implementation"
- value="./cleanUpUser2.so"/>
-
-
-         <set-attr-value name="dynamics" value="false"/>
-
-
+    <set-attr-value name="implementation" value="./cleanUpUser2.so"/>
+        <set-attr-value name="dynamics" value="false"/>
         <set-attr-value name="x" value="-100.0"/>
         <set-attr-value name="y" value="  60.0"/>
         <set-attr-value name="z" value="-30.0"/>
@@ -107,9 +94,6 @@
         <set-attr-value name="qw" value="0.707"/>
     <set-attr-value name="qy" value="0.707"/>
   </instanciate>
-
-
-
 -->
 
 <!--
@@ -197,9 +181,7 @@
             direction="0 0 1"
             position="0.0 0.0 5.0"/>
     <set-attr-value name="language" value="c++"/>
- <!--オブジェクトファイルAgentController.soの指<定-->
-    <set-attr-value name="implementation"
- value="./cleanUpUser2.so"/>
+    <set-attr-value name="implementation" value="./cleanUpUser2.so"/>
 
  <!--動力学演算をfalseに設定-->
          <set-attr-value name="dynamics" value="false"/>
@@ -217,21 +199,17 @@
 
 
   <instanciate class="Man-nii-v2.xml">
-    <set-attr-value name="name" value="man_blue"/>
- <!--C++言語の指定-->
+  <set-attr-value name="name" value="man_blue"/>
+
   <camera id="1"
             link="HEAD_LINK"
             direction="0 0 1"
             position="0.0 0.0 5.0"/>
     <set-attr-value name="language" value="c++"/>
- <!--オブジェクトファイルAgentController.soの指<定-->
-    <set-attr-value name="implementation"
- value="./cleanUpUser.so"/>
+    <set-attr-value name="implementation" value="./cleanUpUser.so"/>
 
- <!--動力学演算をfalseに設定-->
-         <set-attr-value name="dynamics" value="false"/>
+        <set-attr-value name="dynamics" value="false"/>
 
- <!--エージェントの位置(x,y,z)-->
         <set-attr-value name="x" value="-30.0"/>
         <set-attr-value name="y" value="  60.0"/>
         <set-attr-value name="z" value="-85.0"/>
@@ -261,8 +239,7 @@
   <instanciate class="seCamera.xml">
     <set-attr-value name="name" value="FixedCam1"/>
     <set-attr-value name="language" value="c++"/>
-    <set-attr-value name="implementation"
-                    value="./Camera.so"/>
+    <set-attr-value name="implementation" value="./Camera.so"/>
     <set-attr-value name="dynamics" value="false"/>
     <set-attr-value name="x" value="-200.0"/>
     <set-attr-value name="y" value="200.0"/>
@@ -284,8 +261,7 @@
   <instanciate class="seCamera.xml">
     <set-attr-value name="name" value="FixedCam2"/>
     <set-attr-value name="language" value="c++"/>
-    <set-attr-value name="implementation"
-                    value="./Camera.so"/>
+    <set-attr-value name="implementation" value="./Camera.so"/>
     <set-attr-value name="dynamics" value="false"/>
     <set-attr-value name="x" value="-200.0"/>
     <set-attr-value name="y" value="200.0"/>
@@ -307,8 +283,7 @@
   <instanciate class="seCamera.xml">
     <set-attr-value name="name" value="FixedCam3"/>
     <set-attr-value name="language" value="c++"/>
-    <set-attr-value name="implementation"
-                    value="./Camera.so"/>
+    <set-attr-value name="implementation" value="./Camera.so"/>
     <set-attr-value name="dynamics" value="false"/>
     <set-attr-value name="x" value="200.0"/>
     <set-attr-value name="y" value="200.0"/>
@@ -330,8 +305,7 @@
   <instanciate class="seCamera.xml">
     <set-attr-value name="name" value="FixedCam4"/>
     <set-attr-value name="language" value="c++"/>
-    <set-attr-value name="implementation"
-                    value="./Camera.so"/>
+    <set-attr-value name="implementation" value="./Camera.so"/>
     <set-attr-value name="dynamics" value="false"/>
     <set-attr-value name="x" value="200.0"/>
     <set-attr-value name="y" value="200.0"/>
