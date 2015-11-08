@@ -1,6 +1,3 @@
-#include "ControllerEvent.h"
-#include "Controller.h"
-#include "Logger.h"
 #include <algorithm>
 #include <unistd.h>
 #include <math.h>
@@ -9,10 +6,11 @@
 #include <string>
 #include <time.h> // for clock
 
-#define PI 3.1415926535
+#include "sigverse/commonlib/ControllerEvent.h"
+#include "sigverse/commonlib/Controller.h"
+#include "sigverse/commonlib/Logger.h"
 
-//角度からラジアンに変換します
-#define DEG2RAD(DEG) ( (PI) * (DEG) / 180.0 )
+#define DEG2RAD(DEG) ( (M_PI) * (DEG) / 180.0 )
 
 
 // The robot must release the Object before to start a new task
@@ -2453,7 +2451,7 @@ double RobotController::rotateTowardObj(Vector3d pos, double velocity, double no
   }
   else {
     // 回転すべき円周距離
-    double distance = m_distance*PI*fabs(targetAngle)/(2*PI);
+    double distance = m_distance * M_PI * fabs(targetAngle)/(2 * M_PI);
 
     // 車輪の半径から移動速度を得る
     double vel = m_radius*velocity;
