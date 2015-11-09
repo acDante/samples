@@ -5,7 +5,6 @@
 #include "sigverse/commonlib/ControllerEvent.h"  
 #include "sigverse/commonlib/Logger.h" 
 
-
 using namespace std;
 
 class MyController : public Controller {
@@ -68,73 +67,73 @@ void MyController::onInit(InitEvent &evt)
 double MyController::onAction(ActionEvent &evt)
 {
 	/*gettimeofday(&t0, NULL);
-	int sec, msec;
-	if (t0.tv_usec < t1.tv_usec) {
-		sec = t0.tv_sec - t1.tv_sec - 1;
-		msec= 1000000 + t0.tv_usec - t1.tv_usec;
-	}
-	else {
-		sec = t0.tv_sec - t1.tv_sec;
-		msec = t0.tv_usec - t1.tv_usec;
-	}
-	LOG_MSG(("%d.%d",sec,msec));
-	t1 = t0;*/
+	  int sec, msec;
+	  if (t0.tv_usec < t1.tv_usec) {
+	  sec = t0.tv_sec - t1.tv_sec - 1;
+	  msec= 1000000 + t0.tv_usec - t1.tv_usec;
+	  }
+	  else {
+	  sec = t0.tv_sec - t1.tv_sec;
+	  msec = t0.tv_usec - t1.tv_usec;
+	  }
+	  LOG_MSG(("%d.%d",sec,msec));
+	  t1 = t0;*/
 
 	// check whether Referee service is available or not
 	bool available = checkService("RoboCupReferee");
-	if(!available && m_ref != NULL) m_ref = NULL;
-	else if(available && m_ref == NULL){
+	if (!available && m_ref != NULL) m_ref = NULL;
+	else if (available && m_ref == NULL) {
 		m_ref = connectToService("RoboCupReferee");
 	}
 
-	if (check1_clear == true && a == false && b == false && d == false){
+	if (check1_clear == true && a == false && b == false && d == false) {
 		total = total + 300;
 		stringstream ss;
 		ss << total;
 		string result = ss.str();
 		sendMsg("SIGViewer", result);
 		std::string msg = "RoboCupReferee/Check point1 clear/300";
-		if(m_ref != NULL){
+		if (m_ref != NULL) {
 			m_ref->sendMsgToSrv(msg.c_str());
 		}
 		LOG_MSG((msg.c_str()));
 		a = true;
 	}
 
-	if (elevator_clear == true && a == true && b == false && d == false){
+	if (elevator_clear == true && a == true && b == false && d == false) {
 		total = total + 300;
 		stringstream ss2;
 		ss2 << total;
 		string result2 = ss2.str();
 		sendMsg("SIGViewer", result2);
 		std::string msg = "RoboCupReferee/Elevator clear" "/300";
-		if(m_ref != NULL){
+		if (m_ref != NULL) {
 			m_ref->sendMsgToSrv(msg.c_str());
 		}
 		LOG_MSG((msg.c_str()));
 		b = true;
 	}
-	if (crowd_clear == true && a == true  && b == true && d == false){
+	if (crowd_clear == true && a == true  && b == true && d == false) {
 		total = total + 300;
 		stringstream ss5;
 		ss5 << total;
 		string result5 = ss5.str();
 		sendMsg("SIGViewer", result5);
 		std::string msg = "RoboCupReferee/Crowded loacation clear" "/300";
-		if(m_ref != NULL){
+		if (m_ref != NULL) {
 			m_ref->sendMsgToSrv(msg.c_str());
 		}
 		LOG_MSG((msg.c_str()));
 		d = true;
 	}
-	if (all_clear == true && a == true  && b == true && d == true && e == false){
+	if (all_clear == true && a == true  && b == true && d == true && e == false) {
 		total = total + 100;
 		stringstream ss;
 		ss << total;
 		string result = ss.str();
 		sendMsg("SIGViewer", result);
 		std::string msg = "RoboCupReferee/All check points clear" "/100";
-		if(m_ref != NULL){
+		if (m_ref != NULL) {
 			m_ref->sendMsgToSrv(msg.c_str());
 		}
 		LOG_MSG((msg.c_str()));
@@ -145,41 +144,41 @@ double MyController::onAction(ActionEvent &evt)
 
 void MyController::onRecvMsg(RecvMsgEvent &evt) {
 	string msg = evt.getMsg();
-	if (msg == "checkpoint1"){
-		if(!check1_clear){
+	if (msg == "checkpoint1") {
+		if (!check1_clear) {
 			check1 = true;
 			LOG_MSG(("checkpoint1"));
 		}
 	}
-	else if (msg == "checkpoint1_clear"){
-		if(check1){
+	else if (msg == "checkpoint1_clear") {
+		if (check1) {
 			check1_clear = true;
 			LOG_MSG(("checkpoint1_clear"));
 		}
 	}
-	else if (msg == "elevator_clear"){
-		if(entered){
+	else if (msg == "elevator_clear") {
+		if (entered) {
 			elevator_clear = true;
 		}
 	}
-	else if (msg == "Entered"){
-		if(!elevator_clear){
+	else if (msg == "Entered") {
+		if (!elevator_clear) {
 			//elevator = true;
 			entered = true;
 		}
 	}
-	else if (msg == "crowd_clear"){
+	else if (msg == "crowd_clear") {
 		crowd_clear = true;
-		if(check1_clear && elevator_clear && crowd_clear){
+		if (check1_clear && elevator_clear && crowd_clear) {
 			all_clear = true;
 		}
 	}
-	/*else if (msg == "finish_line"){
-		if(check1_clear && elevator_clear && crowd_clear){
-			finish_line = true;
-		}
-	}*/
-	else if(msg == "Task_start"){
+	/*else if (msg == "finish_line") {
+	  if (check1_clear && elevator_clear && crowd_clear) {
+	  finish_line = true;
+	  }
+	  }*/
+	else if (msg == "Task_start") {
 		check1 = false;
 		check1_clear = false;
 		//elevator = false;
@@ -196,10 +195,8 @@ void MyController::onRecvMsg(RecvMsgEvent &evt) {
 }
 
 /*void MyController::onCollision(CollisionEvent &evt) {
-}*/
+  }*/
 
 extern "C" Controller * createController() {
 	return new MyController;
 }
-
-

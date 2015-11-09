@@ -114,11 +114,11 @@ void MyController::onInit(InitEvent &evt)
 	//first = true;
 	taskNum = 0;
 
-	if((fp = fopen("tasknum.txt", "r")) == NULL) {
+	if ((fp = fopen("tasknum.txt", "r")) == NULL) {
 		printf("File do not exist:trial.txt\n");
 		exit(0);
 	}
-	else{
+	else {
 		fscanf(fp, "%d", &taskNum);
 		LOG_MSG(("Set taskNum: %d",taskNum));
 		fclose(fp);
@@ -133,14 +133,14 @@ void MyController::onInit(InitEvent &evt)
 
 	stepWidth = 45;
 
-	if((fp = fopen("motion.txt", "r")) == NULL) {
+	if ((fp = fopen("motion.txt", "r")) == NULL) {
 		printf("File do not exist.\n");
 		exit(0);
 	}
-	else{
+	else {
 		fscanf(fp, "%d", &motionNum);
 		fscanf(fp, "%d", &sleeptime);
-		for(int i=0; i<motionNum; i++){
+		for (int i=0; i<motionNum; i++) {
 			fscanf(fp, "%f %f %f %f %f %f %f %f %f %f %f",
 					   &HEIGHT[i],
 					   &LARM_JOINT1[i],
@@ -200,7 +200,7 @@ void MyController::initCondition()
 	dy=0;
 	dz=0;
 
-	for(int k=0; k<256; k++){
+	for (int k=0; k<256; k++) {
 		node.x[k] = 0.0;
 		node.y[k] = 0.0;
 		node.z[k] = 0.0;
@@ -213,7 +213,7 @@ void MyController::initCondition()
 	//std::cout << "[HUMAN]" << " load file : " << nodePath.str() << std::endl;
 	LOG_MSG(("[HUMAN] load file: %s", nodePath.str().c_str()));
 
-	if((fp = fopen(nodePath.str().c_str(), "r")) == NULL) {
+	if ((fp = fopen(nodePath.str().c_str(), "r")) == NULL) {
 		LOG_MSG(("File do not exist."));
 		exit(0);
 	}
@@ -231,10 +231,10 @@ void MyController::initCondition()
 	fclose(fp);
 	i=0;
 
-	if(taskNum%2){
+	if (taskNum%2) {
 		stepWidth = 45;
 	}
-	else{
+	else {
 		stepWidth = 60;
 	}
 
@@ -245,42 +245,41 @@ void MyController::resetPosition()
 	//std::cout << "x:" << node.x[0] << " z:" << node.z[0] << std::endl;
 	my->setPosition(node.x[0], 60.0, node.z[0]);
 	
-	if(node.flag[0] == -1){ // left
-		double rad = 0;
+	if (node.flag[0] == -1) { // left
 		Rotation rot(cos(0), 0.0, -sin(0), 0.0);
 		my->setRotation(rot);
 		robot->setPosition(node.x[0], 30.0, node.z[0]-100);
 		robot->setRotation(rot);
 	}
-	else if(node.flag[0] == -2){ // forward
+	else if (node.flag[0] == -2) { // forward
 		double rad = M_PI/4;
 		Rotation rot(cos(rad), 0.0, -sin(rad), 0.0);
 		my->setRotation(rot);
 		robot->setPosition(node.x[0]+100, 30.0, node.z[0]);
 		robot->setRotation(rot);
 	}
-	else if(node.flag[0] == -3){ // right
+	else if (node.flag[0] == -3) { // right
 		double rad = M_PI/2;
 		Rotation rot(cos(rad), 0.0, -sin(rad), 0.0);
 		my->setRotation(rot);
 		robot->setPosition(node.x[0], 30.0, node.z[0]+100);
 		robot->setRotation(rot);
 	}
-	else if(node.flag[0] == -4){ // backward
+	else if (node.flag[0] == -4) { // backward
 		double rad = M_PI;
 		Rotation rot(cos(rad), 0.0, -sin(rad), 0.0);
 		my->setRotation(rot);
 		robot->setPosition(node.x[0]-100, 30.0, node.z[0]);
 		robot->setRotation(rot);
 	}
-	
 	i=1;
 }
+
 
 double MyController::onAction(ActionEvent &evt)
 {
 	//LOG_MSG(("on action"));
-	if(!end && start){
+	if (!end && start) {
 		
 		Vector3d pos;
 		double angle;
@@ -288,7 +287,7 @@ double MyController::onAction(ActionEvent &evt)
 		my->getPosition(pos);
 
 		// 歩いていないとき(node上にいるとき)
-		if(!walking){
+		if (!walking) {
 			dx=(node.x[i]-pos.x());
 			dz=(node.z[i]-pos.z());
 			angle = atan2(dx,dz);
@@ -306,12 +305,12 @@ double MyController::onAction(ActionEvent &evt)
 		}
 
 		// 歩く
-		if(!stop){
+		if (!stop) {
 			double addx = 0.0;
 			double addz = 0.0;
 			
-			if(count%2){
-				for(int j=0; j<motionNum; j++){
+			if (count%2) {
+				for (int j=0; j<motionNum; j++) {
 					addx += dx;
 					addz += dz;
 					usleep(sleeptime);
@@ -328,28 +327,28 @@ double MyController::onAction(ActionEvent &evt)
 					my->setJointAngle("RLEG_JOINT6", DEG2RAD(RLEG_JOINT6[j]));
 				}
 			}
-			else{
-				for(int j=0; j<motionNum; j++){
+			else {
+				for (int j=0; j<motionNum; j++) {
 					addx += dx;
 					addz += dz;
 					usleep(sleeptime);
 					my->setPosition(pos.x()+addx, HEIGHT[i], pos.z()+addz);
-					my->setJointAngle("RARM_JOINT1", DEG2RAD(LARM_JOINT1[j]));
+					my->setJointAngle("RARM_JOINT1", DEG2RAD( LARM_JOINT1[j]));
 					my->setJointAngle("RARM_JOINT3", DEG2RAD(-LARM_JOINT3[j]));
-					my->setJointAngle("LARM_JOINT1", DEG2RAD(RARM_JOINT1[j]));
+					my->setJointAngle("LARM_JOINT1", DEG2RAD( RARM_JOINT1[j]));
 					my->setJointAngle("LARM_JOINT3", DEG2RAD(-RARM_JOINT3[j]));
-					my->setJointAngle("RLEG_JOINT2", DEG2RAD(LLEG_JOINT2[j]));
-					my->setJointAngle("RLEG_JOINT4", DEG2RAD(LLEG_JOINT4[j]));
-					my->setJointAngle("RLEG_JOINT6", DEG2RAD(LLEG_JOINT6[j]));
-					my->setJointAngle("LLEG_JOINT2", DEG2RAD(RLEG_JOINT2[j]));
-					my->setJointAngle("LLEG_JOINT4", DEG2RAD(RLEG_JOINT4[j]));
-					my->setJointAngle("LLEG_JOINT6", DEG2RAD(RLEG_JOINT6[j]));
+					my->setJointAngle("RLEG_JOINT2", DEG2RAD( LLEG_JOINT2[j]));
+					my->setJointAngle("RLEG_JOINT4", DEG2RAD( LLEG_JOINT4[j]));
+					my->setJointAngle("RLEG_JOINT6", DEG2RAD( LLEG_JOINT6[j]));
+					my->setJointAngle("LLEG_JOINT2", DEG2RAD( RLEG_JOINT2[j]));
+					my->setJointAngle("LLEG_JOINT4", DEG2RAD( RLEG_JOINT4[j]));
+					my->setJointAngle("LLEG_JOINT6", DEG2RAD( RLEG_JOINT6[j]));
 				}
 			}
 			count++;
 
 			// 目標点に到着
-			if(step==count){
+			if (step==count) {
 				count = 0;
 				step = 0;
 				walking = false;
@@ -360,70 +359,70 @@ double MyController::onAction(ActionEvent &evt)
 		double checkPoint = node.flag[i-1];
 
 		/*// 人が歩き始める前に待機
-		if(checkPoint == WAIT_PERSON && !waitForHuman){
+		if (checkPoint == WAIT_PERSON && !waitForHuman) {
 			stop = true;
-			if(getDistanceToRobot() < 150){
+			if (getDistanceToRobot() < 150) {
 				stop = false;
 				waitForHuman = true;
 			}
 		}*/
 		// チェックポイント1
-		/*else if(checkPoint == CHECK_POINT1 && !sendMsg_CheckPoint1){
+		/*else if (checkPoint == CHECK_POINT1 && !sendMsg_CheckPoint1) {
 			//sendMsg("score","checkpoint1_clear");
 			//LOG_MSG(("check point1 clear"));
 			sendMsg_CheckPoint1 = true;
 		}*/
 
 		// 人が歩き始める
-		if(checkPoint == WALKING_PERSON && !sentMsg_Man){
+		if (checkPoint == WALKING_PERSON && !sentMsg_Man) {
 			//sendMsg("man_001", "point1");
 			
 			//LOG_MSG(("walk"));
 			stop = true;
-			if(getDistanceToRobot() < 200){
+			if (getDistanceToRobot() < 200) {
 				sendMsg("man_001", "walk");
 				sentMsg_Man = true;
 			}
 		}
 
 		// エレベータ前待機
-		else if(checkPoint == FRONT_OF_ELEVATOR && !waitForElevator){
+		else if (checkPoint == FRONT_OF_ELEVATOR && !waitForElevator) {
 			stop = true;
-			if(getDistanceToRobot() < 200){
+			if (getDistanceToRobot() < 200) {
 				stop = false;
 				waitForElevator = true;
 			}
 		}
 		// エレベータ奥
-		if(checkPoint == ELEVATOR && !elevator){
-			if(!getoff){
+		if (checkPoint == ELEVATOR && !elevator) {
+			if (!getoff) {
 				stop = true;
 				elevator = true;
 			}
 		}
 		// ロボットが退出したらエレベータから出る
-		if(getoff && !elevator_end){
+		if (getoff && !elevator_end) {
 			elevator = false;
 			stop = false;
 			elevator_end = true;
 		}
 		// エレベータクリア
-		if(checkPoint==ELEVATOR_CLEAR && !sentMsg_CheckPoint2){
+		if (checkPoint==ELEVATOR_CLEAR && !sentMsg_CheckPoint2) {
 			getoff = false;
 			//sendMsg("score","elevator_clear");
 			//LOG_MSG(("elevator_clear"));
 			sentMsg_CheckPoint2 = true;
 		}
 		// 人ごみを通過後待機
-		else if(checkPoint == CROWD && !waitForCrowd){
+		else if (checkPoint == CROWD && !waitForCrowd) {
 			stop = true;
-			if(getDistanceToRobot() < 200){
+			if (getDistanceToRobot() < 200) {
 				stop = false;
 				waitForCrowd = true;
 			}
 		}
 		// 人ごみを通過
-		else if(checkPoint == CROWD_END && !sentMsg_Crowd){
+		else if (checkPoint == CROWD_END && !sentMsg_Crowd) {
 			//std::string msg5 = "crowd";
 			//sendMsg("score", msg5);
 			//LOG_MSG(("crowd"));
@@ -431,8 +430,8 @@ double MyController::onAction(ActionEvent &evt)
 		}
 
 		// 終了点に着いた
-		//if(checkPoint==END && follow){
-		if(checkPoint==END){
+		//if (checkPoint==END && follow) {
+		if (checkPoint==END) {
 			end = true;
 		}
 	}
@@ -446,47 +445,47 @@ void MyController::onRecvMsg(RecvMsgEvent &evt)
 	//LOG_MSG(("get: %s", msg.c_str()));
 
 	// タスク開始
-	if(msg == "Task_start"){
+	if (msg == "Task_start") {
 		count = 0;
 		//initCondition();
 		start = true;
 		stop = false;
 		//trialCount++;
 	}
-	else if(msg == "Reset_position"){
+	else if (msg == "Reset_position") {
 		LOG_MSG(("Reset"));
 		initCondition();
-		//if(!resetPos){
+		//if (!resetPos) {
 			//initCondition();
 			resetPosition();
 			//resetPos = true;
 		//}
 	}
-	else if(msg == "Passed_through" && sentMsg_Man){
+	else if (msg == "Passed_through" && sentMsg_Man) {
 		passed = true;
 		stop = false;
 	}
-	else if(msg == "Door_close" && elevator && doorClose && !sentMsg_Elevator){
+	else if (msg == "Door_close" && elevator && doorClose && !sentMsg_Elevator) {
 		//sendMsg("wall_008", "elevator_close");
 		//LOG_MSG(("elevator close"));
 		sentMsg_Elevator = true;
 	}
 	// ロボットがエレベータに入り終わった
-	else if(msg == "entered"){
+	else if (msg == "entered") {
 		LOG_MSG(("entered"));
 		doorClose = true;
 	}
 	// ロボットがエレベータから退出した
-	else if(msg == "Get_off"){
+	else if (msg == "Get_off") {
 		getoff = true;
 		//sendMsg("score","elevator_clear");
 	}
-	if(msg == "Give_up"){
+	if (msg == "Give_up") {
 		//start = false;
 		end = true;
 		//LOG_MSG(("get: give up"));
 	}
-	if(msg == "Task_end"){
+	if (msg == "Task_end") {
 		//LOG_MSG(("get: task end"));
 		//sendMsg("Moderator_0","Get_end_msg");
 		stop = true;

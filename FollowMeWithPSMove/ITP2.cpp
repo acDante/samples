@@ -53,20 +53,20 @@ double MyController::onAction(ActionEvent &evt)
 	operator_obj->getPosition(operatorPos);
 
 	// operator
-	if(fabs(operatorPos.x()-myPos.x()) < checkSize_x/2.0 &&
+	if (fabs(operatorPos.x()-myPos.x()) < checkSize_x/2.0 &&
 	   fabs(operatorPos.z()-myPos.z()) < checkSize_z/2.0 &&
-	   flag2 == false){
+	   flag2 == false) {
 		flag1 = true;
 	}
 
 	// robot
-	if(fabs(robotPos.x()-myPos.x()) < checkSize_x/2.0 &&
+	if (fabs(robotPos.x()-myPos.x()) < checkSize_x/2.0 &&
 	   fabs(robotPos.z()-myPos.z()) < checkSize_z/2.0 &&
-	   flag1 == true){
+	   flag1 == true) {
 		flag2 = true;
 	}
 
-	if(flag1 && flag2 && !sentMsg){
+	if (flag1 && flag2 && !sentMsg) {
 		LOG_MSG(("elevator_clear"));
 		sendMsg("score", "elevator_clear");
 		sentMsg = true;
@@ -77,7 +77,7 @@ double MyController::onAction(ActionEvent &evt)
 
 void MyController::onRecvMsg(RecvMsgEvent &evt) {
 	std::string msg = evt.getMsg();
-	if (msg == "Task_start"){
+	if (msg == "Task_start") {
 		sentMsg = false;
 		flag1 = false;
 		flag2 = false;

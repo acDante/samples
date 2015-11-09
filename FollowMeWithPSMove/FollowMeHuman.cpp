@@ -55,18 +55,18 @@ void MyController::onInit(InitEvent &evt)
 
 	// 手を下げる
 	my->setJointAngle("LARM_JOINT2", DEG2RAD(-90));
-	my->setJointAngle("RARM_JOINT2", DEG2RAD(90));
+	my->setJointAngle("RARM_JOINT2", DEG2RAD( 90));
 
 	stepWidth = 70;
 	sleeptime = 300000;
 
-	if((fp = fopen("motion.txt", "r")) == NULL) {
+	if ((fp = fopen("motion.txt", "r")) == NULL) {
 		LOG_MSG(("File do not exist."));
 	}
-	else{
+	else {
 		fscanf(fp, "%d", &motionNum);
 		fscanf(fp, "%d", &sleeptime);
-		for(int i=0; i<motionNum; i++){
+		for (int i=0; i<motionNum; i++) {
 			fscanf(fp, "%f %f %f %f %f %f %f %f %f %f %f",
 					   &HEIGHT[i],
 					   &LARM_JOINT1[i],
@@ -90,7 +90,7 @@ double MyController::onAction(ActionEvent &evt)
 {
 	Vector3d pos;
 
-	if (start == true){
+	if (start == true) {
 
 		my->getPosition(pos);
 
@@ -99,11 +99,11 @@ double MyController::onAction(ActionEvent &evt)
 		double addx = 0.0;
 		double addz = 0.0;
 
-		if(count%2){
-			for(int i=0; i<motionNum; i++){
+		if (count%2) {
+			for (int i=0; i<motionNum; i++) {
 				addx += dx;
 				addz += dz;
-				if(motionNum)
+				if (motionNum)
 					usleep(sleeptime);
 				my->setPosition(pos.x()+addx, HEIGHT[i], pos.z()+addz);
 				my->setJointAngle("LARM_JOINT1", DEG2RAD(LARM_JOINT1[i]));
@@ -118,33 +118,33 @@ double MyController::onAction(ActionEvent &evt)
 				my->setJointAngle("RLEG_JOINT6", DEG2RAD(RLEG_JOINT6[i]));
 			}
 		}
-		else{
-			for(int i=0; i<motionNum; i++){
+		else {
+			for (int i=0; i<motionNum; i++) {
 				addx += dx;
 				addz += dz;
 				usleep(sleeptime);
 				my->setPosition(pos.x()+addx, HEIGHT[i], pos.z()+addz);
-				my->setJointAngle("RARM_JOINT1", DEG2RAD(LARM_JOINT1[i]));
+				my->setJointAngle("RARM_JOINT1", DEG2RAD( LARM_JOINT1[i]));
 				my->setJointAngle("RARM_JOINT3", DEG2RAD(-LARM_JOINT3[i]));
-				my->setJointAngle("LARM_JOINT1", DEG2RAD(RARM_JOINT1[i]));
+				my->setJointAngle("LARM_JOINT1", DEG2RAD( RARM_JOINT1[i]));
 				my->setJointAngle("LARM_JOINT3", DEG2RAD(-RARM_JOINT3[i]));
-				my->setJointAngle("RLEG_JOINT2", DEG2RAD(LLEG_JOINT2[i]));
-				my->setJointAngle("RLEG_JOINT4", DEG2RAD(LLEG_JOINT4[i]));
-				my->setJointAngle("RLEG_JOINT6", DEG2RAD(LLEG_JOINT6[i]));
-				my->setJointAngle("LLEG_JOINT2", DEG2RAD(RLEG_JOINT2[i]));
-				my->setJointAngle("LLEG_JOINT4", DEG2RAD(RLEG_JOINT4[i]));
-				my->setJointAngle("LLEG_JOINT6", DEG2RAD(RLEG_JOINT6[i]));
+				my->setJointAngle("RLEG_JOINT2", DEG2RAD( LLEG_JOINT2[i]));
+				my->setJointAngle("RLEG_JOINT4", DEG2RAD( LLEG_JOINT4[i]));
+				my->setJointAngle("RLEG_JOINT6", DEG2RAD( LLEG_JOINT6[i]));
+				my->setJointAngle("LLEG_JOINT2", DEG2RAD( RLEG_JOINT2[i]));
+				my->setJointAngle("LLEG_JOINT4", DEG2RAD( RLEG_JOINT4[i]));
+				my->setJointAngle("LLEG_JOINT6", DEG2RAD( RLEG_JOINT6[i]));
 			}
 		}
 		count++;
 
-		if(count==2){
+		if (count==2) {
 			sleep(3);
 		}
-		if(count==4){
+		if (count==4) {
 			sendMsg("operator","Passed_through");
 		}
-		if(count>step){
+		if (count>step) {
 			start = false;
 		}
 	}
@@ -155,15 +155,15 @@ double MyController::onAction(ActionEvent &evt)
 void MyController::onRecvMsg(RecvMsgEvent &evt)
 {
 	string msg = evt.getMsg();
-	if(msg == "walk"){
+	if (msg == "walk") {
 		start = true;
 	}
-	else if(msg == "Task_start"){
+	else if (msg == "Task_start") {
 		start = false;
 		my->setPosition(initPos);
 		count = 0;
 	}
-	else if(msg == "Give_up"){
+	else if (msg == "Give_up") {
 		start = false;
 	}
 

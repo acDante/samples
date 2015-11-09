@@ -8,9 +8,6 @@
 #include "sigverse/commonlib/ControllerEvent.h"  
 #include "sigverse/commonlib/Logger.h" 
 
-// Convert degree to radian
-#define DEG2RAD(DEG) ( (M_PI) * (DEG) / 180.0 )
-
 using namespace std;
 
 
@@ -90,7 +87,7 @@ void MyController::onInit(InitEvent &evt)
 
 double MyController::onAction(ActionEvent &evt)
 {
-	switch(m_state){
+	switch(m_state) {
 		// wait
 		case 0:{
 			break;
@@ -102,7 +99,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 101: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-50,60,500), m_vel, 1.0, evt.time());
 				m_state = 102;
@@ -110,7 +107,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 102: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-50,60,575), m_vel, 1.0, evt.time());
 				m_state = 103;
@@ -118,7 +115,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 103: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-450,60,575),m_vel_rot,evt.time());
 				m_state = 104;
@@ -126,7 +123,7 @@ double MyController::onAction(ActionEvent &evt)
 			}
 		}
 		case 104: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-450,60,575), m_vel, 1.0, evt.time());
 				m_state = 105;
@@ -134,7 +131,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 105: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				// wait for a walking person
 				usleep(3200000);
@@ -148,7 +145,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 107: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-525,60,575), m_vel, 1.0, evt.time());
 				m_state = 200;
@@ -157,7 +154,7 @@ double MyController::onAction(ActionEvent &evt)
 		}
 		// 2nd section
 		case 200: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-800,60,575),m_vel_rot,evt.time());
 				m_state = 201;
@@ -165,7 +162,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 201: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-800,60,575), m_vel, 1.0, evt.time());
 				m_state = 202;
@@ -173,7 +170,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 202: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-800,60,275),m_vel_rot,evt.time());
 				m_state = 203;
@@ -181,7 +178,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 203: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-800,60,275), m_vel, 1.0, evt.time());
 				m_state = 204;
@@ -189,7 +186,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 204: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-1100,60,275),m_vel_rot,evt.time());
 				m_state = 205;
@@ -197,7 +194,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 205: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-1100,60,275), m_vel, 1.0, evt.time());
 				m_state = 206;
@@ -205,7 +202,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 206: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 
 				// tell robot entered in an elevator
@@ -222,7 +219,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 208: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-800,60,275),m_vel_rot,evt.time());
 				m_state = 209;
@@ -230,7 +227,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 209: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-800,60,275), m_vel, 1.0, evt.time());
 				m_state = 210;
@@ -238,7 +235,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 210: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 
 				// 
@@ -258,7 +255,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 301: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-800,60,-200), m_vel, 1.0, evt.time());
 				m_state = 302;
@@ -266,7 +263,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 302: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-970,60,-200),m_vel_rot,evt.time());
 				m_state = 303;
@@ -274,7 +271,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 303: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-970,60,-200), m_vel, 1.0, evt.time());
 				m_state = 304;
@@ -282,7 +279,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 304: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-970,60,-400),m_vel_rot,evt.time());
 				m_state = 305;
@@ -290,7 +287,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 305: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-970,60,-400), m_vel, 1.0, evt.time());
 				m_state = 306;
@@ -298,7 +295,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 306: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-800,60,-550),m_vel_rot,evt.time());
 				m_state = 307;
@@ -306,7 +303,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 307: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-800,60,-550), m_vel, 1.0, evt.time());
 				m_state = 900;
@@ -315,7 +312,7 @@ double MyController::onAction(ActionEvent &evt)
 		}
 		// finish line
 		case 900: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-800,60,-750),m_vel_rot,evt.time());
 				m_state = 901;
@@ -323,7 +320,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 901: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-800,60,-750), m_vel, 1.0, evt.time());
 				m_state = 999;
@@ -338,7 +335,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1101: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				//m_time = goToObj(Vector3d(-50,60,500), m_vel*20, 1.0, evt.time());
 				m_time = goToObj(Vector3d(-50,60,-300), m_vel, 1.0, evt.time());
@@ -347,7 +344,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1102: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				//m_time = goToObj(Vector3d(-50,60,575), m_vel*20, 1.0, evt.time());
 				m_time = rotateTowardObj(Vector3d(-300,60,-300),m_vel_rot,evt.time());
@@ -356,7 +353,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1103: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				//m_time = rotateTowardObj(Vector3d(-450,60,575),m_vel,evt.time());
 				m_time = goToObj(Vector3d(-300,60,-300), m_vel, 1.0, evt.time());
@@ -365,7 +362,7 @@ double MyController::onAction(ActionEvent &evt)
 			}
 		}
 		case 1104: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-300,60,575),m_vel_rot,evt.time());
 				m_state = 1105;
@@ -373,7 +370,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1105: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-300,60,575), m_vel, 1.0, evt.time());
 				m_state = 1106;
@@ -381,7 +378,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1106: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-450,60,575),m_vel_rot,evt.time());
 				m_state = 1107;
@@ -389,7 +386,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1107: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-450,60,575), m_vel, 1.0, evt.time());
 				m_state = 1108;
@@ -397,7 +394,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1108: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				// wait for a walking person
 				usleep(3200000);
@@ -411,7 +408,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1110: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-525,60,575), m_vel, 1.0, evt.time());
 				m_state = 1200;
@@ -420,7 +417,7 @@ double MyController::onAction(ActionEvent &evt)
 		}
 		// 2nd section
 		case 1200: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-800,60,575),m_vel_rot,evt.time());
 				m_state = 1201;
@@ -428,7 +425,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1201: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-800,60,575), m_vel, 1.0, evt.time());
 				m_state = 1202;
@@ -436,7 +433,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1202: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-800,60,275),m_vel_rot,evt.time());
 				m_state = 1203;
@@ -444,7 +441,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1203: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-800,60,275), m_vel, 1.0, evt.time());
 				m_state = 1204;
@@ -452,7 +449,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1204: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-1100,60,275),m_vel_rot,evt.time());
 				m_state = 1205;
@@ -460,7 +457,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1205: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-1100,60,275), m_vel, 1.0, evt.time());
 				m_state = 1206;
@@ -468,7 +465,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1206: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 
 				// tell robot entered in an elevator
@@ -485,7 +482,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1208: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-800,60,275),m_vel_rot,evt.time());
 				m_state = 1209;
@@ -493,7 +490,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1209: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-800,60,275), m_vel, 1.0, evt.time());
 				m_state = 1210;
@@ -501,7 +498,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1210: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 
 				// 
@@ -521,7 +518,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1301: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-800,60,-200), m_vel, 1.0, evt.time());
 				m_state = 1302;
@@ -529,7 +526,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1302: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-970,60,-200),m_vel_rot,evt.time());
 				m_state = 1303;
@@ -537,7 +534,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1303: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-970,60,-200), m_vel, 1.0, evt.time());
 				m_state = 1304;
@@ -545,7 +542,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1304: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-970,60,-400),m_vel_rot,evt.time());
 				m_state = 1305;
@@ -553,7 +550,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1305: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-970,60,-400), m_vel, 1.0, evt.time());
 				m_state = 1306;
@@ -561,7 +558,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1306: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-800,60,-550),m_vel_rot,evt.time());
 				m_state = 1307;
@@ -569,7 +566,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1307: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-800,60,-550), m_vel, 1.0, evt.time());
 				m_state = 1900;
@@ -578,7 +575,7 @@ double MyController::onAction(ActionEvent &evt)
 		}
 		// finish line
 		case 1900: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = rotateTowardObj(Vector3d(-800,60,-750),m_vel_rot,evt.time());
 				m_state = 1901;
@@ -586,7 +583,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 1901: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				m_time = goToObj(Vector3d(-800,60,-750), m_vel, 1.0, evt.time());
 				m_state = 999;
@@ -594,7 +591,7 @@ double MyController::onAction(ActionEvent &evt)
 			break;
 		}
 		case 999: {
-			if(evt.time() >= m_time){
+			if (evt.time() >= m_time) {
 				m_my->setWheelVelocity(0.0, 0.0);
 				broadcastMsg("Task_finished");
 				m_state = 0;
@@ -608,26 +605,26 @@ double MyController::onAction(ActionEvent &evt)
 void MyController::onRecvMsg(RecvMsgEvent &evt)
 {
 	std::string msg = evt.getMsg();
-	if(msg == "Task_start"){
-		if(trials==0){
+	if (msg == "Task_start") {
+		if (trials==0) {
 			m_state = 100;
 		}
-		else{
+		else {
 			m_state = 1100;
 		}
 		broadcastMsg("get message: Task_start");
 	}
-	else if(msg == "Task_end"){
+	else if (msg == "Task_end") {
 		m_my->setWheelVelocity(0.0, 0.0);
 		m_state = 0;
 		broadcastMsg("get message: Task_end");
 		trials++;
 	}
-	else if(msg == "Time_over"){
+	else if (msg == "Time_over") {
 		m_my->setWheelVelocity(0.0, 0.0);
 		m_state = 0;
 	}
-	/*else if(m_state == 207 && msg == "leave the elevator"){
+	/*else if (m_state == 207 && msg == "leave the elevator") {
 		broadcastMsg("get message: leave the elevator");
 		m_state = 208;
 	}*/
@@ -665,7 +662,7 @@ double MyController::rotateTowardObj(Vector3d pos, double velocity, double now)
 	double qy = myRot.qy();
 	double theta = 2*acos(fabs(qw));
 
-	if(qw*qy < 0){
+	if (qw*qy < 0) {
 		theta = -theta;
 	}
 
@@ -674,19 +671,19 @@ double MyController::rotateTowardObj(Vector3d pos, double velocity, double now)
 	double targetAngle = acos(tmp);
 
 	// calcurate target angle
-	if(tmpp.x() > 0){
+	if (tmpp.x() > 0) {
 		targetAngle = -1*targetAngle;
 	}
 	targetAngle += theta;
 
-	if(targetAngle<-M_PI){
+	if (targetAngle<-M_PI) {
 		 targetAngle += 2*M_PI;
 	}
-	else if(targetAngle>M_PI){
+	else if (targetAngle>M_PI) {
 		targetAngle -= 2*M_PI;
 	}
 
-	if(targetAngle == 0.0){
+	if (targetAngle == 0.0) {
 		return 0.0;
 	}
 	else {
@@ -700,10 +697,10 @@ double MyController::rotateTowardObj(Vector3d pos, double velocity, double now)
 		double time = distance / vel;
 
 		// start rotating
-		if(targetAngle > 0.0){
+		if (targetAngle > 0.0) {
 			m_my->setWheelVelocity(velocity, -velocity);
 		}
-		else{
+		else {
 			m_my->setWheelVelocity(-velocity, velocity);
 		}
 

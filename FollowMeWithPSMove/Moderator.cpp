@@ -1,6 +1,5 @@
 #include <sstream>
 #include <iomanip>
-//#include <sys/time.h>
 #include <unistd.h>
 
 #include "sigverse/commonlib/Controller.h"  
@@ -46,7 +45,7 @@ private:
 	Rotation initialRotation_operator;
 	Vector3d initialPosition_man;
 	Rotation initialRotation_man;
-	const static unsigned int jtnum=7;
+	const static int jtnum=7;
 	std::vector<std::string> jointName;
 	double prv1JAng_r[jtnum];
 	double crrJAng_r[jtnum];
@@ -70,10 +69,9 @@ private:
 	bool echoEndMsg;
 };
 
+
 void MyController::onInit(InitEvent &evt)
 {
-	int i, size;
-
 	retValue     = 0.08;
 	roboName     = "robot_004";
 	mdName       = "moderator_0";
@@ -83,17 +81,14 @@ void MyController::onInit(InitEvent &evt)
 	crrPos  = Vector3d(0,0,0);
 	prv1Pos = Vector3d(0,0,0);
 
-	//
-	//gettimeofday(&t1, NULL);
-
 	task = false;
 	taskNum = 0;
 
-	if((fp = fopen("tasknum.txt", "r")) == NULL) {
+	if ((fp = fopen("tasknum.txt", "r")) == NULL) {
 		printf("File do not exist:trial.txt\n");
 		exit(0);
 	}
-	else{
+	else {
 		fscanf(fp, "%d", &taskNum);
 		LOG_MSG(("Set taskNum: %d",taskNum));
 		fclose(fp);
@@ -116,17 +111,17 @@ void MyController::onInit(InitEvent &evt)
 	obj->getRotation(initialRotation_man);
 }
 
+
 double MyController::onAction(ActionEvent &evt)
 {
-	if(taskNum >= MAX_TRIAL){
+	if (taskNum >= MAX_TRIAL) {
 		return retValue;
 	}
 
-
 	// check whether Referee service is available or not
 	bool available = checkService("RoboCupReferee");
-	if(!available && m_ref != NULL) m_ref = NULL;
-	else if(available && m_ref == NULL){
+	if (!available && m_ref != NULL) m_ref = NULL;
+	else if (available && m_ref == NULL) {
 		m_ref = connectToService("RoboCupReferee");
 	}
 
@@ -147,7 +142,7 @@ double MyController::onAction(ActionEvent &evt)
 	*/
 
 	// reset task
-	if(!task){
+	if (!task) {
 		int intervalTime = 3;
 		resetCondition();
 		//sendMsg("operator", "Reset_position");
@@ -157,18 +152,18 @@ double MyController::onAction(ActionEvent &evt)
 
 		// broadcast start message
 		broadcastMsg(start_msg);
-		if(m_ref != NULL){
+		if (m_ref != NULL) {
 			m_ref->sendMsgToSrv("RoboCupReferee/start");
 		}
 		LOG_MSG(("RoboCupReferee/start"));
 
 		LOG_MSG(("task num: %d",taskNum+1));
 
-		if((fp = fopen("tasknum.txt", "w")) == NULL) {
+		if ((fp = fopen("tasknum.txt", "w")) == NULL) {
 			printf("File do not exist:trial.txt\n");
 			//exit(0);
 		}
-		else{
+		else {
 			//fscanf(fp, "%d", &taskNum);
 			fprintf(fp,"%d",taskNum+1);
 			LOG_MSG(("update tasknum.txt: %d",taskNum+1));
@@ -196,46 +191,48 @@ double MyController::onAction(ActionEvent &evt)
 		CParts *parts = r_my->getParts(i->first.c_str());
 		bool state = parts->getCollisionState();
 
-		if(state){
+		if (state) {
 			colState=true;       // collided with main body of robot
-			if(rsLen == 0.0) {
+			if (rsLen == 0.0) {
 				r_my->setRotation(prv1Rot);
 			} else {
 				r_my->setPosition(prv1Pos);
 			}
 
-			if(!colState){
+			if (!colState) {
 				prv1Pos=crrPos;
 				prv1Rot=crrRot;
-			} else if(pcolState){
-				for(int i=0;i<jtnum;i++) prv1JAng_r[i]=crrJAng_r[i];
-					pcolState = false;
-				} else{
+			} else if (pcolState) {
+				for (int i=0; i<jtnum; i++)
+					prv1JAng_r[i]=crrJAng_r[i];
+				pcolState = false;
+			} else {
 				colState = false;
 			}
 
 			std::string msg = "RoboCupReferee/Collision" "/-100";
 
-			if(m_ref != NULL){
+			if (m_ref != NULL) {
 				m_ref->sendMsgToSrv(msg.c_str());
 			}
-			else{
+			else {
 				LOG_MSG((msg.c_str()));
 			}
 			break;
 		}
 	}
 
-	if(!colState){
+	if (!colState) {
 		prv1Pos=crrPos;
 		prv1Rot=crrRot;
 		//colState=false;     // reset collision condition
 	}
-	else if(pcolState){
-		for(int i=0;i<jtnum;i++) prv1JAng_r[i]=crrJAng_r[i];
-			pcolState = false;
+	else if (pcolState) {
+		for (int i=0; i<jtnum; i++)
+			prv1JAng_r[i]=crrJAng_r[i];
+		pcolState = false;
 	}
-	else{
+	else {
 		//Do nothing on "collided" condition
 		//LOG_MSG((colPtName.c_str()));
 		colState = false;
@@ -243,11 +240,11 @@ double MyController::onAction(ActionEvent &evt)
 	
 	std::stringstream time_ss;
 	double elapsedTime = evt.time() - startTime;
-	//if(evt.time() - startTime > endTime){
-	if(elapsedTime > endTime){
+	//if (evt.time() - startTime > endTime) {
+	if (elapsedTime > endTime) {
 		LOG_MSG(("Time_over"));
 		broadcastMsg("Time_over");
-		if(m_ref != NULL){
+		if (m_ref != NULL) {
 			m_ref->sendMsgToSrv("RoboCupReferee/end");
 		}
 		LOG_MSG(("RoboCupReferee/end"));
@@ -256,7 +253,7 @@ double MyController::onAction(ActionEvent &evt)
 		breakTask();
 		time_ss << "RoboCupReferee/time/00:00:00";
 	}
-	else{
+	else {
 		double remainedTime = endTime - elapsedTime;
 		int min, sec, msec;
 		sec = (int)remainedTime;
@@ -268,10 +265,10 @@ double MyController::onAction(ActionEvent &evt)
 		time_ss << std::setw(2) << std::setfill('0') << sec;// << ":";
 		//time_ss << std::setw(2) << std::setfill('0') << msec;
 	}
-	if(m_ref != NULL){
+	if (m_ref != NULL) {
 		m_ref->sendMsgToSrv(time_ss.str().c_str());
 	}
-	else{
+	else {
 		LOG_MSG((time_ss.str().c_str()));
 	}
 
@@ -284,16 +281,16 @@ void MyController::onRecvMsg(RecvMsgEvent &evt)
 	std::string msg    = evt.getMsg();
 	LOG_MSG(("%s: %s",sender.c_str(), msg.c_str()));
 
-	if(msg == giveup_msg){
+	if (msg == giveup_msg) {
 		//sendMsg(operatorName, giveup_msg);
-		//if(task){
+		//if (task) {
 			broadcastMsg(end_msg);
 			/*echoEndMsg = false;
-			while(!echoEndMsg){
+			while(!echoEndMsg) {
 				usleep(100000);
 				broadcastMsg(end_msg);
 			}*/
-			if(m_ref != NULL){
+			if (m_ref != NULL) {
 				m_ref->sendMsgToSrv("RoboCupReferee/end");
 				LOG_MSG(("RoboCupReferee/end"));
 			}
@@ -302,14 +299,14 @@ void MyController::onRecvMsg(RecvMsgEvent &evt)
 			breakTask();
 		//}
 	}
-	if(msg == finish_msg){
+	if (msg == finish_msg) {
 		broadcastMsg(end_msg);
 		/*echoEndMsg = false;
-		while(!echoEndMsg){
+		while(!echoEndMsg) {
 			usleep(100000);
 			broadcastMsg(end_msg);
 		}*/
-		if(m_ref != NULL){
+		if (m_ref != NULL) {
 			m_ref->sendMsgToSrv("RoboCupReferee/end");
 			LOG_MSG(("RoboCupReferee/end"));
 		}
@@ -317,14 +314,15 @@ void MyController::onRecvMsg(RecvMsgEvent &evt)
 		sleep(3);
 		breakTask();
 	}
-	if(msg == "Get_end_msg"){
+	if (msg == "Get_end_msg") {
 		LOG_MSG(("get: Get_end_msg"));
 		echoEndMsg = true;
 	}
 }
 
-bool MyController::sendEndMsg(){
+bool MyController::sendEndMsg() {
 	broadcastMsg(end_msg);
+	return true;
 }
 
 /*void MyController::initialize()
@@ -335,7 +333,7 @@ bool MyController::sendEndMsg(){
 {
 	// broadcast start message
 	broadcastMsg(start_msg);
-	if(m_ref != NULL){
+	if (m_ref != NULL) {
 		m_ref->sendMsgToSrv("RoboCupReferee/start");
 	}
 	LOG_MSG(("RoboCupReferee/start"));
@@ -345,7 +343,7 @@ void MyController::breakTask()
 	//task = false;
 	taskNum++;
 
-	if(taskNum == MAX_TRIAL){
+	if (taskNum == MAX_TRIAL) {
 		resetCondition();
 		LOG_MSG(("End of all tasks"));
 		broadcastMsg("End of all tasks");

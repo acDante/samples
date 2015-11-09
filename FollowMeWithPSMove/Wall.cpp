@@ -16,7 +16,7 @@ void MyController::onRecvMsg(RecvMsgEvent &evt)
 	SimObj *obj = getObj(myname());
 	Vector3d pos;
 	std::string msg = evt.getMsg();
-	if(msg == "Door_close"){
+	if (msg == "Door_close") {
 		obj->getPosition(pos);
 		obj->setPosition( pos.x(), pos.y() , pos.z()+150);
 		sleep(5);
