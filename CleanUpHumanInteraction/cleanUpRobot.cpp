@@ -1,17 +1,13 @@
-#include "ControllerEvent.h"
-#include "Controller.h"
-#include "Logger.h"
-#include <algorithm>
 #include <unistd.h>
+#include <algorithm>
 #include <math.h>
 
-#define PI 3.1415926535
+#include "sigverse/commonlib/ControllerEvent.h"
+#include "sigverse/commonlib/Controller.h"
+#include "sigverse/commonlib/Logger.h"
 
-//角度からラジアンに変換します
-#define DEG2RAD(DEG) ( (PI) * (DEG) / 180.0 )
+#define DEG2RAD(DEG) ( (M_PI) * (DEG) / 180.0 )
 
-
-//ControllerのサブクラスMoveControllerの宣言します
 class RobotController : public Controller {
 public:
 
@@ -206,10 +202,10 @@ double RobotController::onAction(ActionEvent &evt)
   case 0: {
     //broadcastMsgToSrv("Let's start the clean up task\n");
     sendMsg("VoiceReco_Service","Let's start the clean up task\n");
-    double angL1 =m_my->getJointAngle("LARM_JOINT1")*180.0/(PI);
-    double angL4 =m_my->getJointAngle("LARM_JOINT4")*180.0/(PI);
-    double angR1 =m_my->getJointAngle("RARM_JOINT1")*180.0/(PI);
-    double angR4 =m_my->getJointAngle("RARM_JOINT4")*180.0/(PI);
+    double angL1 =m_my->getJointAngle("LARM_JOINT1")*180.0/(M_PI);
+    double angL4 =m_my->getJointAngle("LARM_JOINT4")*180.0/(M_PI);
+    double angR1 =m_my->getJointAngle("RARM_JOINT1")*180.0/(M_PI);
+    double angR4 =m_my->getJointAngle("RARM_JOINT4")*180.0/(M_PI);
     double thetaL1 = -20-angL1;
     double thetaL4 = -160-angL4;
     double thetaR1 = -20-angR1;
@@ -356,8 +352,8 @@ double RobotController::onAction(ActionEvent &evt)
       // 移動を止める
       m_my->setWheelVelocity(0.0, 0.0);
       // 関節の回転を始める setting arm for grasping
-      double angR1 =m_my->getJointAngle("RARM_JOINT1")*180.0/(PI);
-      double angR4 =m_my->getJointAngle("RARM_JOINT4")*180.0/(PI);
+      double angR1 =m_my->getJointAngle("RARM_JOINT1")*180.0/(M_PI);
+      double angR4 =m_my->getJointAngle("RARM_JOINT4")*180.0/(M_PI);
       double thetaR1 = -30.0-angR1;
       double thetaR4 = 0.0-angR4;
       if(thetaR1<0) m_my->setJointVelocity("RARM_JOINT1", -m_jvel, 0.0);
@@ -380,7 +376,7 @@ double RobotController::onAction(ActionEvent &evt)
       if(m_grasp) {
         //broadcastMsgToSrv("grasping the trash");
         // 関節の回転を始める setting arm for taking
-        double angR4 =m_my->getJointAngle("RARM_JOINT4")*180.0/(PI);
+        double angR4 =m_my->getJointAngle("RARM_JOINT4")*180.0/(M_PI);
         double thetaR4 = -90.0-angR4;
         if(thetaR4<0) m_my->setJointVelocity("RARM_JOINT4", -m_jvel, 0.0);
         else m_my->setJointVelocity("RARM_JOINT4", m_jvel, 0.0);
@@ -657,7 +653,7 @@ bool RobotController::recognizeTrash(Vector3d &pos, std::string &name)
 void RobotController::onCollision(CollisionEvent &evt)
 {
   if (m_grasp == false){
-    typedef CollisionEvent::WithC C;
+
     //触れたエンティティの名前を得ます
     const std::vector<std::string> & with = evt.getWith();
     // 衝突した自分のパーツを得ます
@@ -721,7 +717,7 @@ double RobotController::rotateTowardObj(Vector3d pos, double velocity, double no
   }
   else {
     // 回転すべき円周距離
-    double distance = m_distance*PI*fabs(targetAngle)/(2*PI);
+    double distance = m_distance*M_PI*fabs(targetAngle)/(2*M_PI);
 
     // 車輪の半径から移動速度を得る
     double vel = m_radius*velocity;

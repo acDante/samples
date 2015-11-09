@@ -1,6 +1,3 @@
-#include "ControllerEvent.h"
-#include "Controller.h"
-#include "Logger.h"
 #include <algorithm>
 #include <unistd.h>
 #include <math.h>
@@ -8,12 +5,9 @@
 #include <iostream>
 #include <string>
 
-
-
-#define PI 3.1415926535
-
-//角度からラジアンに変換します
-#define DEG2RAD(DEG) ( (PI) * (DEG) / 180.0 )
+#include "sigverse/commonlib/ControllerEvent.h"
+#include "sigverse/commonlib/Controller.h"
+#include "sigverse/commonlib/Logger.h"
 
 
 // The robot must release the Object before to start a new task
@@ -1671,7 +1665,7 @@ bool RobotController::recognizeTrash(Vector3d &pos, std::string &name)
 void RobotController::onCollision(CollisionEvent &evt)
 {
   if (m_grasp == false){
-    typedef CollisionEvent::WithC C;
+	  //typedef CollisionEvent::WithC C;
     //触れたエンティティの名前を得ます
     const std::vector<std::string> & with = evt.getWith();
     // 衝突した自分のパーツを得ます
@@ -1735,7 +1729,7 @@ double RobotController::rotateTowardObj(Vector3d pos, double velocity, double no
   }
   else {
     // 回転すべき円周距離
-    double distance = m_distance*PI*fabs(targetAngle)/(2*PI);
+    double distance = m_distance*M_PI*fabs(targetAngle)/(2*M_PI);
 
     // 車輪の半径から移動速度を得る
     double vel = m_radius*velocity;
