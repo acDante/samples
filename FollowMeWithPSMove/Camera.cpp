@@ -1,18 +1,16 @@
-#include "Controller.h"
-#include <ControllerEvent.h>
-#include "Logger.h"
 #include <unistd.h>
 #include <fstream>
+
+#include "sigverse/commonlib/Controller.h"  
+#include "sigverse/commonlib/ControllerEvent.h"  
+#include "sigverse/commonlib/Logger.h" 
 
 // PSMoveAPI
 #include "PSMoveData.h"
 #include <psmoveapi/psmove.h> // only for buttons numerical code
 
-#define PI 3.141592
-
-//角度からラジアンに変換します。
-#define DEG2RAD(DEG) ( (PI) * (DEG) / 180.0 )
-#define RAD2DEG(RAD) ( (RAD) * 180.0 / (PI) )
+#define DEG2RAD(DEG) ( (M_PI) * (DEG) / 180.0 )
+#define RAD2DEG(RAD) ( (RAD) * 180.0 / (M_PI) )
 
 class CameraController : public Controller
 {

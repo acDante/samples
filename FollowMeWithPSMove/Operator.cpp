@@ -1,6 +1,3 @@
-#include "ControllerEvent.h"  
-#include "Controller.h"  
-#include "Logger.h"  
 #include <algorithm>
 //#include <string> 
 #include <sstream>
@@ -8,7 +5,10 @@
 #include <math.h>
 #include <unistd.h>
 
-// Convert degree to radian
+#include "sigverse/commonlib/Controller.h"  
+#include "sigverse/commonlib/ControllerEvent.h"  
+#include "sigverse/commonlib/Logger.h" 
+
 #define DEG2RAD(DEG) ( (M_PI) * (DEG) / 180.0 )
 
 #define WAIT_PERSON       0.5 //人が歩き始める場所

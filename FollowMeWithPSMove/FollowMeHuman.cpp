@@ -1,13 +1,11 @@
-#include "ControllerEvent.h"  
-#include "Controller.h"  
-#include "Logger.h"
 #include <unistd.h>
 #include <algorithm>
 
-#define PI 3.1415926535
+#include "sigverse/commonlib/Controller.h"  
+#include "sigverse/commonlib/ControllerEvent.h"  
+#include "sigverse/commonlib/Logger.h" 
 
-//角度からラジアンに変換します
-#define DEG2RAD(DEG) ( (PI) * (DEG) / 180.0 )   
+#define DEG2RAD(DEG) ( (M_PI) * (DEG) / 180.0 )   
 
 bool start;
 bool sw;
