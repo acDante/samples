@@ -84,7 +84,7 @@ void UserController::onInit(InitEvent &evt)
 	double qw = my->qw();
 	double qy = my->qy();
 	m_yrot = acos(fabs(qw))*2;
-	if(qw*qy > 0)
+	if (qw*qy > 0)
 		m_yrot = -1*m_yrot;
 	
 	// 体全体の向き
@@ -131,37 +131,37 @@ double UserController::onAction(ActionEvent &evt)
 	//bool chk_orsDK2 = checkService("SIGORSDK2");
 	SimObj *my = this->getObj(this->myname());
 	// 使用可能
-	if(av_kinect && m_kinect == NULL){
+	if (av_kinect && m_kinect == NULL) {
 		// サービスに接続
 		m_kinect = connectToService("SIG_KINECT_V2");
 
 	}
-	else if (!av_kinect && m_kinect != NULL){
+	else if (!av_kinect && m_kinect != NULL) {
 		m_kinect = NULL;
 	}
 
-	//if(chk_orsDK2  && m_orsDK2 == NULL) {
+	//if (chk_orsDK2  && m_orsDK2 == NULL) {
 
-	//		if(chk_orsDK2) {
+	//		if (chk_orsDK2) {
 	//			m_orsDK2 = connectToService("SIGORSDK2");
 	//		}
 	//}
 
 	// 使用可能
-	if(av_hmd && m_hmd == NULL){
+	if (av_hmd && m_hmd == NULL) {
 		// サービスに接続
 		m_hmd = connectToService("SIGORS");
 	}
-	else if (!av_hmd && m_hmd != NULL){
+	else if (!av_hmd && m_hmd != NULL) {
 		m_hmd = NULL;
 	}
 
 	// 使用可能
-	if(av_wii && m_wii == NULL){
+	if (av_wii && m_wii == NULL) {
 		// サービスに接続
 		m_wii = connectToService("Wii_Service");
 	}
-	else if (!av_wii && m_wii != NULL){
+	else if (!av_wii && m_wii != NULL) {
 		m_wii = NULL;
 	}
 	//printf("OnAction test \n");
@@ -293,29 +293,21 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
     	sendMsg("robot_000",all_msg);
     	
     }
-
-
-
-
 	//std::cout<<ss<<std::endl;
 
-	if(headss == "ORS_DATA"){
+	if (headss == "ORS_DATA") {
 		//HMDデータによる頭部の動き反映
 		moveHeadByHMD(ss);
 	}
-
-
-
-
 	//	std::string bodyss;
 	//	bodyss.assign(ss, strPos2 + 1, ss.length() - strPos2);
 
-	//	if(headss == "ORS_DATA") {
+	//	if (headss == "ORS_DATA") {
 	//		moveByORSDK2(bodyss);
 	//	}
 
 
-	else if(headss == "KINECT_DATA") {
+	else if (headss == "KINECT_DATA") {
 		//KINECTデータによる頭部以外の体の動き反映
 		moveBodyByKINECT(all_msg);
 		// Add by inamura on 2014-03-02
@@ -327,25 +319,25 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 		// Do not collide with a desk
 		//f (my->y() < 60)  my->y(60);
 	}
-	else if(ss == "go") {
+	else if (ss == "go") {
 		sendMsg("robot_000","go");
 		LOG_MSG(("Starting the clean up task"));
 		std::cout<<"go"<<std::endl;
 	}
 
-	else if(ss == "take" ) {
+	else if (ss == "take" ) {
 		//    sendMsg("robot_000","take");
 		//    LOG_MSG(("Taking the trash"));
 		std::cout<<"take"<<std::endl;
 	}
 
-	else if(ss == "put" ) {
+	else if (ss == "put" ) {
 		//  sendMsg("robot_000","put");
 		//   LOG_MSG(("Putting the trash in the trash box"));
 		std::cout<<"put"<<std::endl;
 	}
 
-	else if(ss == "init") {
+	else if (ss == "init") {
 		sendMsg("robot_000","init");
 	}
 }
@@ -364,10 +356,10 @@ void UserController::moveHeadByHMD(const std::string ss)
 	strPos2 = ss.find(" ", strPos1);
 	headss.assign(ss, strPos1, strPos2-strPos1);
 
-	if(headss == "ORS_DATA"){
+	if (headss == "ORS_DATA") {
 		//    LOG_MSG((all_msg));
 		//  }
-		//  if(headss == "HMD_DATA"){
+		//  if (headss == "HMD_DATA") {
 
 		double yaw, pitch, roll;
 		strPos1 = strPos2+1;
@@ -387,7 +379,7 @@ void UserController::moveHeadByHMD(const std::string ss)
 		tmpss.assign(ss, strPos1, strPos2-strPos1);
 		roll = atof(tmpss.c_str());
 
-		if(yaw == pyaw && pitch == ppitch && roll == proll)  return;
+		if (yaw == pyaw && pitch == ppitch && roll == proll)  return;
 		else {
 			pyaw = yaw;
 			ppitch = pitch;
@@ -487,29 +479,11 @@ void UserController::moveByORSDK2(std::string ss)
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void UserController::moveBodyByKINECT(char* all_msg)
 {
 	//自分自身の取得
 	SimObj *my = this->getObj(this->myname());
 	char* msg = strtok(all_msg," ");
-
-
 
 	if (strcmp(msg,"KINECT_DATA") == 0) {
 		int i = 0;
@@ -535,7 +509,7 @@ void UserController::moveBodyByKINECT(char* all_msg)
 				//printf("the avatar postion is  X : %f  ----- Y: %f ------ Z :  %f ---- end \n",m_posx+gx,m_posy+y,m_posz+gz);
 				continue;
 			} 
-			else if(strcmp(type,"WAIST") == 0) {
+			else if (strcmp(type,"WAIST") == 0) {
 				static dQuaternion bodyQ_pre, bodyQ_now, bodyQ_middle;
 				//体全体の回転 rotation of whole body
 				double w = atof(strtok(NULL,","));
@@ -583,7 +557,7 @@ void UserController::moveBodyByKINECT(char* all_msg)
 				double tmp = sin(angle/2);
 				double vx = x/tmp;				double vy = y/tmp;				double vz = z/tmp;
 				double len = sqrt(vx*vx + vy*vy + vz*vz);
-				if(len < (1 - m_range) || (1 + m_range) < len) continue;
+				if (len < (1 - m_range) || (1 + m_range) < len) continue;
 
 				bodypartsQ_now[index][0] = w;   bodypartsQ_now[index][1] = x;   bodypartsQ_now[index][2] = y;  bodypartsQ_now[index][3] = z;
 				slerp(bodypartsQ_pre[index], bodypartsQ_now[index], 0.5, &bodypartsQ_middle[index]);
@@ -621,13 +595,12 @@ void UserController::moveBodyByKINECT(char* all_msg)
 			double vy = y/tmp;
 			double vz = z/tmp;
 			double len = sqrt(vx*vx+vy*vy+vz*vz);
-			if(len < (1 - m_range) || (1 + m_range) < len) continue;
+			if (len < (1 - m_range) || (1 + m_range) < len) continue;
 			// HEAD_JOINT1はHMDにより回転
-			if(strcmp(type,"HEAD_JOINT1") != 0 ){
+			if (strcmp(type,"HEAD_JOINT1") != 0 ) {
 				my->setJointQuaternion(type,w,x,y,z);
 			}
 #endif
-
 		}
 	}
 }
@@ -668,7 +641,6 @@ bool UserController::slerp(dQuaternion qtn1, dQuaternion qtn2, double time, dQua
 	}
 	return true;
 }
-
 
 
 extern "C" Controller * createController ()
