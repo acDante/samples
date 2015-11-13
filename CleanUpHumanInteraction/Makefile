@@ -7,7 +7,7 @@ all: $(OBJS)
 
 #compile
 ./%.so: ./%.cpp
-	g++ -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(INCLUDE_PATH) -fPIC -shared -o $@ $<
+	g++ -Wall -DCONTROLLER -DNDEBUG -DUSE_ODE -DdDOUBLE -I$(INCLUDE_PATH) -fPIC -shared -o $@ $<
 
 clean:
 	rm ./*.so
