@@ -42,6 +42,7 @@ private:
 	std::string robotName;
 };
 
+
 void UserController::onInit(InitEvent &evt)
 {
 	robotName = "robot_000";
@@ -115,19 +116,14 @@ double UserController::onAction(ActionEvent &evt)
 	return 1.5;
 }
 
+
 void UserController::onRecvMsg(RecvMsgEvent &evt)
 {
-
 	std::string sender = evt.getSender();
 
-	//自分自身の取得
-	SimObj *my = getObj(myname());
-
-	//メッセージ取得
 	char *all_msg = (char*)evt.getMsg();
 
 	std::string ss = all_msg;
-	//ヘッダーの取り出し
 	int strPos1 = 0;
 	int strPos2;
 	std::string headss;
@@ -135,46 +131,40 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 	strPos2 = ss.find(" ", strPos1);
 	headss.assign(ss, strPos1, strPos2-strPos1);
 
-
-	//std::cout<<ss<<std::endl;
-
 	if (headss == "ORS_DATA") {
-		//HMDデータによる頭部の動き反映
 		moveHeadByHMD(ss);
 	}
 	else if (headss == "KINECT_DATA") {
-		//KINECTデータによる頭部以外の体の動き反映
 		moveBodyByKINECT(all_msg);
 	}
 	else if (ss == "go") {
-		sendMsg("robot_000","go");
+		sendMsg(robotName, "go");
 		LOG_MSG(("Starting the clean up task"));
 		std::cout<<"go"<<std::endl;
 	}
 
 	else if (ss == "take" ) {
-		sendMsg("robot_000","take");
+		sendMsg(robotName, "take");
 		LOG_MSG(("Taking the trash"));
 		std::cout<<"take"<<std::endl;
 	}
 
 	else if (ss == "put" ) {
-		sendMsg("robot_000","put");
+		sendMsg(robotName, "put");
 		LOG_MSG(("Putting the trash in the trash box"));
 		std::cout<<"put"<<std::endl;
 	}
 
 	else if (ss == "init") {
-		sendMsg("robot_000","init");
+		sendMsg(robotName, "init");
 	}
 }
 
-void UserController::moveHeadByHMD(const std::string ss) {
 
-	//自分自身の取得
+void UserController::moveHeadByHMD(const std::string ss)
+{
 	SimObj *my = this->getObj(this->myname());
 
-	//ヘッダーの取り出し
 	int strPos1 = 0;
 	int strPos2;
 	std::string headss;

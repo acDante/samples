@@ -174,15 +174,12 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 {
 	std::string sender = evt.getSender();
 
-	//自分自身の取得
-	SimObj *my = getObj(myname());
+	//SimObj *my = getObj(myname());
 
-	//メッセージ取得
 	char *all_msg = (char*)evt.getMsg();
 	// printf("all_msg=\n%s\n",all_msg);
 
 	std::string ss = all_msg;
-	//ヘッダーの取り出し
 	int strPos1 = 0;
 	int strPos2;
 	std::string headss;
@@ -197,7 +194,7 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
         //printf("Man is taking \n");
     	//sendMsg("VoiceReco_Service","Cancel the action ..");
     	//sleep(4);
-    	sendMsg("robot_000",all_msg);
+    	sendMsg(robotName, all_msg);
     }
 
 	else if (strcmp(all_msg,"restart") == 0 && restart_on == true) {
@@ -207,7 +204,7 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
         //printf("Man is taking \n");
     	sendMsg("VoiceReco_Service","Restart the clean up task ..");
     	//sleep(4);
-    	sendMsg("robot_000",all_msg);
+    	sendMsg(robotName, all_msg);
          
     }
 
@@ -219,7 +216,7 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
         //printf("Man is taking \n");
     	sendMsg("VoiceReco_Service","Cancel the action ..");
     	//sleep(4);
-    	sendMsg("robot_000",all_msg);
+    	sendMsg(robotName, all_msg);
          
     }
 	/*
@@ -229,7 +226,7 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 	  //printf("Man is taking \n");
 	  //sendMsg("VoiceReco_Service","Take this Object");
 	  //sleep(4);
-	  //sendMsg("robot_000",all_msg);    
+	  //sendMsg(robotName, all_msg);    
 	  }
 
 	  else if (strcmp(all_msg,"reset_put") == 0 ) {
@@ -239,7 +236,7 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 	  //printf("Man is taking \n");
 	  //sendMsg("VoiceReco_Service","Take this Object");
 	  //sleep(4);
-	  //sendMsg("robot_000",all_msg);  
+	  //sendMsg(robotName, all_msg);  
 	  }
     */
 	else if (strcmp(all_msg,"On_Take") == 0 ) {
@@ -249,7 +246,7 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
         //printf("Man is taking \n");
     	//sendMsg("VoiceReco_Service","Take this Object");
     	//sleep(4);
-    	//sendMsg("robot_000",all_msg);      
+    	//sendMsg(robotName, all_msg);      
     }
 	else if (strcmp(all_msg,"On_put") == 0 ) {
     	
@@ -258,19 +255,18 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
         //printf("Man is taking \n");
     	//sendMsg("VoiceReco_Service","Take this Object");
     	//sleep(4);
-    	//sendMsg("robot_000",all_msg);    
+    	//sendMsg(robotName, all_msg);    
     }
 
 
 	else if (strcmp(all_msg,"restart_on") == 0  ) {
-    	
     	//take == false;
    	    restart_on = true;
 			//put == true;
 			//printf("Man is taking \n");
 			//sendMsg("VoiceReco_Service","Take this Object");
 			//sleep(4);
-			//sendMsg("robot_000",all_msg);    
+			//sendMsg(robotName, all_msg);    
     }
 
 
@@ -280,8 +276,7 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 		// printf("Man is taking \n");
     	sendMsg("VoiceReco_Service","Take this Object");
     	//sleep(4);
-    	sendMsg("robot_000",all_msg);
-         
+    	sendMsg(robotName, all_msg);
     }
 
 
@@ -290,7 +285,7 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 		//  printf("Man is putting \n");
     	sendMsg("VoiceReco_Service","Put it in that trash ");
     	//sleep(4);
-    	sendMsg("robot_000",all_msg);
+    	sendMsg(robotName, all_msg);
     	
     }
 	//std::cout<<ss<<std::endl;
@@ -306,7 +301,6 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 	//		moveByORSDK2(bodyss);
 	//	}
 
-
 	else if (headss == "KINECT_DATA") {
 		//KINECTデータによる頭部以外の体の動き反映
 		moveBodyByKINECT(all_msg);
@@ -320,25 +314,25 @@ void UserController::onRecvMsg(RecvMsgEvent &evt)
 		//f (my->y() < 60)  my->y(60);
 	}
 	else if (ss == "go") {
-		sendMsg("robot_000","go");
+		sendMsg(robotName, "go");
 		LOG_MSG(("Starting the clean up task"));
 		std::cout<<"go"<<std::endl;
 	}
 
 	else if (ss == "take" ) {
-		//    sendMsg("robot_000","take");
+		//    sendMsg(robotName, "take");
 		//    LOG_MSG(("Taking the trash"));
 		std::cout<<"take"<<std::endl;
 	}
 
 	else if (ss == "put" ) {
-		//  sendMsg("robot_000","put");
+		//  sendMsg(robotName, "put");
 		//   LOG_MSG(("Putting the trash in the trash box"));
 		std::cout<<"put"<<std::endl;
 	}
 
 	else if (ss == "init") {
-		sendMsg("robot_000","init");
+		sendMsg(robotName, "init");
 	}
 }
 
@@ -475,7 +469,6 @@ void UserController::moveByORSDK2(std::string ss)
 	dQMultiply1(tmpQ, bodyQ, headQ);
 
 	my->setJointQuaternion("HEAD_JOINT0", tmpQ[0], tmpQ[1], tmpQ[2], tmpQ[3]);
-
 }
 
 
