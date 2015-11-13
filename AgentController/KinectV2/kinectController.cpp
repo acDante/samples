@@ -4,7 +4,6 @@
 #include "sigverse/commonlib/Logger.h"
 #include "sigverse/commonlib/ControllerEvent.h"
  
-#define DEG2RAD(DEG) ( (M_PI) * (DEG) / 180.0 )
  
 using namespace std;
  

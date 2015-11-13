@@ -8,8 +8,6 @@
 #include "sigverse/commonlib/ViewImage.h"
 
 
-#define DEG2RAD(DEG) ( (M_PI) * (DEG) / 180.0 )
-
 class RobotController : public Controller
 {
 public:
