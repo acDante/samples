@@ -3,13 +3,10 @@ OBJ=$(SRC:.cpp=.o)
 EXE=PSMoveAPIService.sig
 
 
-SIGVERSEPATH= # put the path to your SIGService include directory
-
-
 SIGVERSELIB= # put the path to your SIGService lib directory
 
 
-INCLUDE=-I$(SIGVERSEPATH)
+INCLUDE=-I$(SIGVERSEPATH)/include
 LIBSPATH=-L$(SIGVERSELIB)
 
 
