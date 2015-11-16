@@ -11,7 +11,8 @@ using namespace OVR;
 
 #undef new  // reset the redefinition in OVR*.h headers to normal one
 
-class OculusRiftService : public sigverse::SIGService{
+class OculusRiftService : public sigverse::SIGService
+{
 	Ptr<DeviceManager>  pManager;
 	Ptr<HMDDevice>      pHMD;
 	Ptr<SensorDevice>   pSensor;
@@ -20,7 +21,7 @@ class OculusRiftService : public sigverse::SIGService{
 	bool                InfoLoaded;
 
 public:
-    OculusRiftService(std::string name) : SIGService(name){};
+    OculusRiftService(std::string name) : SIGService(name) {};
     ~OculusRiftService();
 
 	// initialization for whole procedure on this service
@@ -39,7 +40,9 @@ public:
 	std::string DoubleToString(float x);	
 };
 
-void OculusRiftService::onInit(){
+
+void OculusRiftService::onInit()
+{
 	// initialization(prepare varibles for data acquisition of OculusRift's sensors)
 	OVR::System::Init();
 
@@ -48,61 +51,65 @@ void OculusRiftService::onInit(){
 
 	pHMD = *pManager->EnumerateDevices<HMDDevice>().CreateDevice();
 
-	if (pHMD){
+	if (pHMD) {
 		InfoLoaded = pHMD->GetDeviceInfo(&Info);
 		pSensor = *pHMD->GetSensor();
 	}
-	else{
+	else {
 	   pSensor = *pManager->EnumerateDevices<SensorDevice>().CreateDevice();
 	}
 
-	if (pSensor){
+	if (pSensor) {
 	   pFusionResult->AttachToSensor(pSensor);
 	}
 }
 
-void OculusRiftService::getInfoOculusRift(){
+
+void OculusRiftService::getInfoOculusRift()
+{
 	//display info. of attached Oculus Rift
 	//---------------------------------------------------------------
 	std::cout << "----- Oculus Console -----" << std::endl;
 
-	if (pHMD){
+	if (pHMD) {
 		std::cout << " [x] HMD Found" << std::endl;
 	}
-	else{
+	else {
 		std::cout << " [ ] HMD Not Found" << std::endl;
 	}
 
-	if (pSensor){
+	if (pSensor) {
 		std::cout << " [x] Sensor Found" << std::endl;
 	}
-	else{
+	else {
 		std::cout << " [ ] Sensor Not Found" << std::endl;
 	}
 
 	std::cout << "--------------------------" << std::endl;
 
-	if (InfoLoaded){
-		std::cout << " DisplayDeviceName: " << Info.DisplayDeviceName << std::endl;
-		std::cout << " ProductName: " << Info.ProductName << std::endl;
-		std::cout << " Manufacturer: " << Info.Manufacturer << std::endl;
-		std::cout << " Version: " << Info.Version << std::endl;
-		std::cout << " HResolution: " << Info.HResolution<< std::endl;
-		std::cout << " VResolution: " << Info.VResolution<< std::endl;
-		std::cout << " HScreenSize: " << Info.HScreenSize<< std::endl;
-		std::cout << " VScreenSize: " << Info.VScreenSize<< std::endl;
-		std::cout << " VScreenCenter: " << Info.VScreenCenter<< std::endl;
-		std::cout << " EyeToScreenDistance: " << Info.EyeToScreenDistance << std::endl;
+	if (InfoLoaded) {
+		std::cout << " DisplayDeviceName:      " << Info.DisplayDeviceName << std::endl;
+		std::cout << " ProductName:            " << Info.ProductName << std::endl;
+		std::cout << " Manufacturer:           " << Info.Manufacturer << std::endl;
+		std::cout << " Version:                " << Info.Version << std::endl;
+		std::cout << " HResolution:            " << Info.HResolution<< std::endl;
+		std::cout << " VResolution:            " << Info.VResolution<< std::endl;
+		std::cout << " HScreenSize:            " << Info.HScreenSize<< std::endl;
+		std::cout << " VScreenSize:            " << Info.VScreenSize<< std::endl;
+		std::cout << " VScreenCenter:          " << Info.VScreenCenter<< std::endl;
+		std::cout << " EyeToScreenDistance:    " << Info.EyeToScreenDistance << std::endl;
 		std::cout << " LensSeparationDistance: " << Info.LensSeparationDistance << std::endl;
 		std::cout << " InterpupillaryDistance: " << Info.InterpupillaryDistance << std::endl;
-		std::cout << " DistortionK[0]: " << Info.DistortionK[0] << std::endl;
-		std::cout << " DistortionK[1]: " << Info.DistortionK[1] << std::endl;
-		std::cout << " DistortionK[2]: " << Info.DistortionK[2] << std::endl;
+		std::cout << " DistortionK[0]:         " << Info.DistortionK[0] << std::endl;
+		std::cout << " DistortionK[1]:         " << Info.DistortionK[1] << std::endl;
+		std::cout << " DistortionK[2]:         " << Info.DistortionK[2] << std::endl;
 		std::cout << "--------------------------" << std::endl;
 	}
 }
 
-OculusRiftService::~OculusRiftService(){
+
+OculusRiftService::~OculusRiftService()
+{
 	// shutdown SIGService
     this->disconnect();
 	
@@ -114,8 +121,10 @@ OculusRiftService::~OculusRiftService(){
 	OVR::System::Destroy();
 }
 
+
 //periodic procedure for sending messages to the controller
-double OculusRiftService::onAction(){
+double OculusRiftService::onAction()
+{
 	float r_yaw, r_pitch, r_roll;
 
 	Quatf q = pFusionResult->GetOrientation();
@@ -125,7 +134,7 @@ double OculusRiftService::onAction(){
 	std::vector<std::string> names;
 	names = this->getAllConnectedEntitiesName();
 	int entSize = names.size();
-	for(int i = 0; i < entSize; i++) {
+	for (int i = 0; i < entSize; i++) {
 		std::string msg = "ORS_DATA ";
 		msg += DoubleToString(r_yaw);
 		msg += DoubleToString(r_pitch);
@@ -136,8 +145,10 @@ double OculusRiftService::onAction(){
 	return 0.1;  //time period
 }
 
+
 // utility function to convert data type from 'double' to 'string'
-std::string OculusRiftService::DoubleToString(float x){
+std::string OculusRiftService::DoubleToString(float x)
+{
 	char tmp[32];
 	sprintf_s(tmp, 32, "%.3f", x);
 	std::string str = std::string(tmp);
@@ -145,8 +156,10 @@ std::string OculusRiftService::DoubleToString(float x){
 	return str;
 }
 
+
 //entry point
-void main(int argc, char* argv[]){
+void main(int argc, char* argv[])
+{
 	// create instance
 	OculusRiftService srv("SIGORS");
 
@@ -156,14 +169,14 @@ void main(int argc, char* argv[]){
 		sprintf_s(saddr, 128, "%s", argv[1]);
 		portnumber = (unsigned int)atoi(argv[2]);
 	}
-	else{
+	else {
 		exit(0);
 	}
 
 	// connect to SIGServer
-	if(srv.connect(saddr, portnumber)){
+	if (srv.connect(saddr, portnumber)) {
 	// connect to SIGViewer
-		if(srv.connectToViewer()){
+		if (srv.connectToViewer()) {
 		// set exit condition of main-loop automatic
 		// if SIGViewer is disconnected from server, main loop will be broken up
 			srv.setAutoExitLoop(true);
