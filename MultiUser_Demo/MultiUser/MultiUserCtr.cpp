@@ -9,8 +9,6 @@ public:
 	void onRecvMsg(RecvMsgEvent &evt);
 
 private:
-
-
 	struct avatar
 	{
 		std::string name;
@@ -38,7 +36,6 @@ private:
 	std::string avatars_number;
 	BaseService *m_ref;
 
-
 	std::vector<std::string> names;
 
 };
@@ -59,38 +56,29 @@ void MyController::onInit(InitEvent &evt)
 	std::string scmd = "";
 	std::string stmpss = "";
 
-	for(int j = 0; j< names.size();j++)
-		{
+	for (int j = 0; j< names.size();j++) {
+		std::cout<<"the name is :"<< names[j] <<std::endl;
+		sstrPos1 = 0;
+		sstrPos2 = 0;
+		sstrPos3 = 0;
+		sheadss = "";
+		scmd = "";
+		stmpss = "";
 
-			std::cout<<"the name is :"<< names[j] <<std::endl;
-			sstrPos1 = 0;
-			sstrPos2 = 0;
-			sstrPos3 = 0;
-			sheadss = "";
-			scmd = "";
-			stmpss = "";
-
-			sstrPos2 = names[j].find("_", sstrPos1);
-			sheadss.assign(names[j], sstrPos1, sstrPos2-sstrPos1);
-			avatar avatar1;
-
-			if(sheadss == "man")
-				{
-					avatar1.name = names[j];
-					avatar1.ID = "";
-					list.push_back(avatar1);
-
-
-				}
-
+		sstrPos2 = names[j].find("_", sstrPos1);
+		sheadss.assign(names[j], sstrPos1, sstrPos2-sstrPos1);
+		avatar avatar1;
+		
+		if (sheadss == "man") {
+			avatar1.name = names[j];
+			avatar1.ID = "";
+			list.push_back(avatar1);
 		}
+	}
 
-	for(int j = 0; j< list.size();j++)
-		{
-
-			std::cout<<"the list content:"<< list[j].name <<std::endl;
-
-		}
+	for (int j = 0; j< list.size();j++) {
+		std::cout<<"the list content:"<< list[j].name <<std::endl;
+	}
 	/*
 	  avatar avatar4;
 	  avatar4.name ="man_000";
@@ -102,9 +90,9 @@ void MyController::onInit(InitEvent &evt)
 	  avatar1.ID = "";
 	  list.push_back(avatar1);
 	*/
-
 	m_ref = NULL;
 }
+
 
 double MyController::onAction(ActionEvent &evt)
 {
@@ -122,13 +110,8 @@ double MyController::onAction(ActionEvent &evt)
 
 void MyController::onRecvMsg(RecvMsgEvent &evt)
 {
-
 	std::string sender = evt.getSender();
 
-	//自分自身の取得
-	SimObj *my = getObj(myname());
-
-	//メッセージ取得
 	char *all_msg = (char*)evt.getMsg();
 
 	std::string ss = all_msg;
@@ -146,77 +129,55 @@ void MyController::onRecvMsg(RecvMsgEvent &evt)
 	id.assign(cmd, strPos1, strPos3-strPos1+1);
 	//std::cout<<"The ID is :  "<< id <<std::endl;
 	bool aff = true;
-	bool comp = false;
 
 	if (headss == "MultiUsersMenu")
 		{
 			bool available = checkService(ss);
-			if(!available && m_ref != NULL) m_ref = NULL;
-			else if(available && m_ref == NULL){
+			if (!available && m_ref != NULL) m_ref = NULL;
+			else if (available && m_ref == NULL){
 				m_ref = connectToService(ss);
 			}
 			int nn = 0;
-			for(int j = 0; j< list.size();j++)
-				{
-
-					if (id != list[j].ID)
-						{
-							nn++;
-						}
-					else
-						{
-							sendMsg(list[j].name,list[j].ID);
-							m_state = 0;
-							ind = j;
-							current_avatar = list[j].name;
-						}
-
+			for (int j = 0; j< list.size();j++) {
+				if (id != list[j].ID) {
+					nn++;
 				}
-
-			if (nn == list.size())
-				{
-					for(int i = 0; i< list.size();i++)
-						{
-
-
-							if(list[i].ID == "" && aff == true )
-								{
-
-									list[i].ID = id;
-									sendMsg(list[i].name,list[i].ID);
-									m_state = 0;
-									ind = i;
-									current_avatar = list[i].name;
-									aff = false;
-
-								}
-
-						}
-
+				else {
+					sendMsg(list[j].name,list[j].ID);
+					m_state = 0;
+					ind = j;
+					current_avatar = list[j].name;
 				}
-
+			}
+			if (nn == list.size()) {
+				for (int i = 0; i< list.size();i++) {
+					if (list[i].ID == "" && aff == true ) {
+						list[i].ID = id;
+						sendMsg(list[i].name,list[i].ID);
+						m_state = 0;
+						ind = i;
+						current_avatar = list[i].name;
+						aff = false;
+					}
+				}
+			}
 		}
 
 
-	if (ss == "Info")
+	if (ss == "Info") {
+		std::cout<<"Sending info to:"<< sender <<std::endl;
 
-		{
-			std::cout<<"Sending info to:"<< sender <<std::endl;
-
-			std::string mess = "";
-			mess +=  "AvatarInformation/" ;
-			mess += avatars_number;
+		std::string mess = "";
+		mess +=  "AvatarInformation/" ;
+		mess += avatars_number;
+		mess +=  "/" ;
+		for (int j = 0; j< list.size();j++) {
+			mess += list[j].name ;
 			mess +=  "/" ;
-			for(int j = 0; j< list.size();j++)
-				{
-
-					mess += list[j].name ;
-					mess +=  "/" ;
-				}
-			std::cout<<"The message is :"<< mess <<std::endl;
-			sendMsg(sender,mess);
-
 		}
+		std::cout<<"The message is :"<< mess <<std::endl;
+		sendMsg(sender,mess);
+	}
 }
 
 
