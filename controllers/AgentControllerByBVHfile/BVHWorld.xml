@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <world name="bvhfileworld">
 
-	<!--重力の設定-->
+	<!-- Gravity -->
 	<gravity x="0.0" y="-9.8" z="0.0"/>  
 
-	<!--エージェントMan-niiの設定-->
+	<!-- humanoid agent Man-nii -->
 	<instanciate class="Man-bvh.xml"> 
 
-		<!--エージェント名-->
+		<!-- Name of the agent -->
 		<set-attr-value name="name" value="man_000"/> 
 
-		<!--C++言語の指定-->
+		<!-- C++ for the controller -->
 		<set-attr-value name="language" value="c++"/> 
 
-		<!--オブジェクトファイルBVHController.soの指定-->
+		<!-- specification of controller file -->
 		<set-attr-value name="implementation" value="./BVHController.so"/> 
 
-		<!--BVHファイル名の指定-->
+		<!-- specification of BVH file -->
 		<set-attr-value name="BvhFile" value="./filename.bvh"/> 
 
-		<!--動力学演算をfalseに設定-->
+		<!-- Set dynamics mode off -->
 		<set-attr-value name="dynamics" value="false"/> 
 
-		<!--エージェントの位置(x,y,z)-->
+		<!-- position of the agent(x,y,z) -->
 		<set-attr-value name="x" value="0.0"/>
 		<set-attr-value name="y" value="60.0"/>
 		<set-attr-value name="z" value="0.0"/>
 
 	</instanciate>
-
 </world>
