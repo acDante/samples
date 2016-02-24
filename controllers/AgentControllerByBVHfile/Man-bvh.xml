@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<define-class name="Man-bvh" inherit="Agent.xml">
+
+   <set-attr-value name="scalex" value="0.7"/>
+   <set-attr-value name="scaley" value="0.7"/>
+   <set-attr-value name="scalez" value="0.7"/>
+
+  <!-- bvh file name　-->
+  <attr name="BvhFile" type="string" group="bvh" value=""/>
+
+   <x3d>
+       <filename>bvh_man.x3d</filename>
+   </x3d>
+
+</define-class>
