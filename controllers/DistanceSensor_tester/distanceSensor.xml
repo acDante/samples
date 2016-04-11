@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf8"?>
+<world name="myworld5">
+
+  <gravity x="0.0" y="-980.7" z="0.0"/>
+  <instanciate class="WheelRobot-nii-v1.xml">
+
+    <!--エージェント名-->
+    <set-attr-value name="name" value="robot_000"/>
+
+    <!--C++言語の指定-->
+    <set-attr-value name="language" value="c++"/>
+
+    <!--コントローラの指定-->
+    <set-attr-value name="implementation"
+                    value="./distanceSensor.so"/>
+
+    <!--動力学演算をfalseに設定-->
+    <set-attr-value name="dynamics" value="false"/>
+    
+    <!--エージェントの位置(x,y,z)-->
+    <set-attr-value name="x" value="0.0"/>
+    <set-attr-value name="y" value="30.0"/>
+    <set-attr-value name="z" value="-40.0"/>
+    
+    <set-attr-value name="qw" value="0.0"/>
+    <set-attr-value name="qy" value="1.0"/>
+    
+    <!--カメラのID番号,リンク名、方向、位置, 視野角(y方向)の設定, 縦横比-->
+    <camera id="1"
+            link="HEAD_LINK"
+            direction="0 0 1"
+            position="0.0 0.0 5.0"
+            fov="45"
+            aspectRatio="1.5"/>
+  </instanciate>
+
+  <!--リビングルーム-->
+  <instanciate class="seTV.xml">
+    <set-attr-value name="name" value="TV_0"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="-20.0"/>
+    <set-attr-value name="y" value="87.3"/>
+    <set-attr-value name="z" value="-250.0"/>
+    <set-attr-value name="visStateAttrName" value="switch"/>
+    <set-attr-value name="switch" value="on"/>
+  </instanciate>
+
+  <instanciate class="seBookShelf_A.xml">
+    <set-attr-value name="name" value="BookShelf_0"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="-200.0"/>
+    <set-attr-value name="y" value="75.0"/>
+    <set-attr-value name="z" value="-100.0"/>
+    <set-attr-value name="qw" value="0.707"/>
+    <set-attr-value name="qx" value="0.0"/>
+    <set-attr-value name="qy" value="0.707"/>
+    <set-attr-value name="qz" value="0.0"/>
+  </instanciate>
+
+  <instanciate class="seBookShelf_B.xml">
+    <set-attr-value name="name" value="BookShelf_1"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="-0.0"/>
+    <set-attr-value name="y" value="59.5"/>
+    <set-attr-value name="z" value="100.0"/>
+    <set-attr-value name="qw" value="0.0"/>
+    <set-attr-value name="qy" value="1.0"/>
+  </instanciate>
+
+  <instanciate class="seTVbass_B.xml">
+    <set-attr-value name="name" value="TVdai_0"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="-20.0"/>
+    <set-attr-value name="y" value="25.1"/>
+    <set-attr-value name="z" value="-250.0"/>
+  </instanciate>
+
+  <instanciate class="seTana_c02.xml">
+    <set-attr-value name="name" value="tana_0"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="150.0"/>
+    <set-attr-value name="y" value="81.5"/>
+    <set-attr-value name="z" value="-100.0"/>
+    <set-attr-value name="qw" value="0.707"/>
+    <set-attr-value name="qy" value="-0.707"/>
+  </instanciate>
+</world>
+
