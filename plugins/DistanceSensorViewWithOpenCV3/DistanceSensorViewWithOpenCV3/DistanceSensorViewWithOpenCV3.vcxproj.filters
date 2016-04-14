@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="MainForm.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MainForm.h" />
+    <ClInclude Include="ViewClass.h">
+      <Filter>ViewClass</Filter>
+    </ClInclude>
+    <ClInclude Include="DistanceSensorView.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="ViewClass">
+      <UniqueIdentifier>{5ce33118-4729-4654-8851-e897d0cb392d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MainForm.resx" />
+  </ItemGroup>
+</Project>
