@@ -125,6 +125,8 @@ private:
   int m_state;
   Vector3d target_update;
  // ros::NodeHandle Turtle_n;
+  double control_speed;
+  double control_turn;
 }; 
 
 
@@ -240,7 +242,8 @@ double MobileController::getDist3D(Vector3d pos, Vector3d pos2)
 
 bool MobileController::goTo(Vector3d pos, double rangeToPoint)
 {
-  double speed;
+  double speed_linear;
+  double speed_angular;
   geometry_msgs::Twist vel;
   Vector3d ownPosition;
   my->getPosition(ownPosition);
@@ -251,6 +254,61 @@ bool MobileController::goTo(Vector3d pos, double rangeToPoint)
   double angle = getAngularXonVect(pos, ownPosition);
   double dist = getDistoObj(pos,ownPosition);
   double roll = getRoll(ownRotation);
+  
+   speed_linear = fabs(dist-rangeToPoint);
+     if(speed_linear > 15)
+        {
+        speed_linear = 0.20;
+        }
+     else
+        {
+        speed_linear = speed_linear/100;
+        }
+
+ speed_angular = fabs(angle-roll)*4;
+/*
+      if ()
+      {
+       
+      }
+      else ()
+      {
+       
+      }
+*/
+if(speed_linear > control_speed)
+{
+control_speed = std::min( speed_linear, control_speed + 0.02 );
+}
+else if(speed_linear < control_speed)
+{
+ control_speed = std::max( speed_linear, control_speed - 0.02 );
+
+}
+else
+{
+ control_speed = speed_linear;
+}
+
+
+
+if(speed_angular/4 > control_turn)
+{
+control_turn = std::min( speed_angular/4, control_turn + 0.1 );
+}
+else if(speed_angular/4 < control_speed)
+{
+ control_turn = std::max( speed_angular/4, control_turn - 0.1 );
+
+}
+else
+{
+ control_turn = speed_angular/4;
+}
+
+
+
+
 
   if (angle > 3 || angle < -3) angle = M_PI;
 
@@ -262,6 +320,8 @@ bool MobileController::goTo(Vector3d pos, double rangeToPoint)
         stopRobotMove();
       vel.angular.z = 0;
       vel.linear.x = 0;
+      control_speed = 0;
+      control_turn = 0;
       Vel_pub = vel;
     //  cmd_vel_pub.publish(Vel_pub);
         return true;
@@ -269,13 +329,16 @@ bool MobileController::goTo(Vector3d pos, double rangeToPoint)
       }
     else
       {
-        speed = dist-rangeToPoint;
+
+
+  std::cout << "the linear speed is  " <<  speed_linear << std::endl;      
+
         if (dist-rangeToPoint < 5)
           if ( dist-rangeToPoint > 0 ) 
           {
             my->setWheelVelocity(1, 1);
                 vel.angular.z = 0;
-                vel.linear.x = 0.12;
+                vel.linear.x = control_speed;
                 Vel_pub = vel;
           }
 
@@ -283,7 +346,7 @@ bool MobileController::goTo(Vector3d pos, double rangeToPoint)
             {
             my->setWheelVelocity(-1, -1);
                 vel.angular.z = 0;
-                vel.linear.x = -0.12;
+                vel.linear.x = -control_speed;
                 Vel_pub = vel;
             }
 
@@ -291,7 +354,7 @@ bool MobileController::goTo(Vector3d pos, double rangeToPoint)
         {
           my->setWheelVelocity(Robot_speed , Robot_speed );
                 vel.angular.z = 0;
-                vel.linear.x = 0.12;
+                vel.linear.x = control_speed;
                 Vel_pub = vel;
         }
 
@@ -299,7 +362,7 @@ bool MobileController::goTo(Vector3d pos, double rangeToPoint)
         {
           my->setWheelVelocity(-Robot_speed , -Robot_speed );
                 vel.angular.z = 0;
-                vel.linear.x = -0.12;
+                vel.linear.x = -control_speed;
                 Vel_pub = vel;
         }
 
@@ -309,62 +372,74 @@ bool MobileController::goTo(Vector3d pos, double rangeToPoint)
       }
   else
     {
-      speed = fabs(angle-roll)*4;
-      if (speed/4 > 0.3)
+    vel.linear.x = Vel_pub.linear.x;
+      if(fabs(vel.linear.x) > 0.03)
+      {
+        if(vel.linear.x > 0.02)
+       vel.linear.x = vel.linear.x - 0.01;
+        if(vel.linear.x < - 0.02)
+          vel.linear.x = vel.linear.x + 0.01;
+      }
+      else
+        vel.linear.x = 0;
+
+control_speed = vel.linear.x;
+ std::cout << "the angular speed is  " <<   speed_angular << std::endl;    
+      if (speed_angular/4 > 0.3)
         if (angle < -M_PI_2 && roll > M_PI_2)
         {
-          my->setWheelVelocity(-0.5, 0.5);
-                vel.angular.z = 0.8;
-                vel.linear.x = 0;
+          my->setWheelVelocity(-control_turn/2, control_turn/2);
+                vel.angular.z = control_turn;
+             //   vel.linear.x = 0.05;
                 Vel_pub = vel;
         }
         else if (angle > M_PI_2 && roll < -M_PI_2)
         {
-          my->setWheelVelocity(0.5, -0.5);
-                vel.angular.z = -0.8;
-                vel.linear.x = 0;
+          my->setWheelVelocity(control_turn/2, -control_turn/2);
+                vel.angular.z = -control_turn;
+              //  vel.linear.x = 0.05;
                 Vel_pub = vel;
         }
         else if (angle < roll)
         {
-          my->setWheelVelocity(0.5, -0.5);
-                vel.angular.z = -0.8;
-                vel.linear.x = 0;
+          my->setWheelVelocity(control_turn/2, -control_turn/2);
+                vel.angular.z = -control_turn;
+              //  vel.linear.x = 0.05;
                 Vel_pub = vel;
         }
         else
         {
-          my->setWheelVelocity(-0.5, 0.5);
-                vel.angular.z = 0.8;
-                vel.linear.x = 0;
+          my->setWheelVelocity(-control_turn/2, control_turn/2);
+                vel.angular.z = control_turn;
+            //    vel.linear.x = 0.05;
                 Vel_pub = vel;
         }
       else if (angle < -M_PI_2 && roll > M_PI_2)
       {
-        my->setWheelVelocity(-speed, speed);
-                vel.angular.z = 0.8;
-                vel.linear.x = 0;
+        my->setWheelVelocity(-control_turn/2, control_turn/2);
+                vel.angular.z = control_turn;
+            //    vel.linear.x = 0.05;
                 Vel_pub = vel;
       }
       else if (angle > M_PI_2 && roll < -M_PI_2)
       {
-        my->setWheelVelocity(speed, -speed);
-                vel.angular.z = -0.8;
-                vel.linear.x = 0;
+        my->setWheelVelocity(control_turn/2, -control_turn/2);
+                vel.angular.z = -control_turn;
+          //      vel.linear.x = 0.05;
                 Vel_pub = vel;
       }
       else if (angle < roll)
       {
-        my->setWheelVelocity(speed, -speed);
-                vel.angular.z = -0.8;
-                vel.linear.x = 0;
+        my->setWheelVelocity(control_turn/2, -control_turn/2);
+                vel.angular.z = -control_turn;
+           //     vel.linear.x = 0.05;
                 Vel_pub = vel;
       }
       else
       {
-        my->setWheelVelocity(-speed, speed);
-                vel.angular.z = 0.8;
-                vel.linear.x = 0;
+        my->setWheelVelocity(-control_turn/2, control_turn/2);
+                vel.angular.z = control_turn;
+        //        vel.linear.x = 0.05;
                 Vel_pub = vel;
       }
 
@@ -472,7 +547,8 @@ void MobileController::onInit(InitEvent &evt)
   my = this->getRobotObj(this->myname());  
   my->setWheel(10.0, 10.0);  
   ros::init(argc, argv, "sig_turtle_node");
-                                                                                            
+  control_speed = 0; 
+  control_turn = 0;                                                                                         
   ros::NodeHandle n;                            
                                                
 // cmd_vel_sub =  n.subscribe<geometry_msgs::Twist>("cmd_vel_mux/input/teleop", 1, &MobileController::OnCmdVel, this );
