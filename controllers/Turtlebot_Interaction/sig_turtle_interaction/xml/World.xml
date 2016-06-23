@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf8"?>
+ <world name="myworld1">
+
+  <gravity x="0.0" y="-980.7" z="0.0"/>
+
+
+
+
+  <instanciate class="Man-nii.xml">
+    <set-attr-value name="name" value="man_000"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="0.0"/>
+    <set-attr-value name="y" value="60.0"/>
+    <set-attr-value name="z" value="0.0"/>
+    <set-attr-value name="qw" value="0"/>
+    <set-attr-value name="qy" value="-3"/>
+    <camera id="1"
+            link="HEAD_LINK"
+            direction="0 0 1"
+            position="0.0 0.0 5.0"/>
+    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="implementation" value="./Human_avatar.so"/>
+  </instanciate>
+
+  <instanciate class="TurtleBot.xml"  type="Robot" >
+    <set-attr-value name="name" value="robot_000"/>
+    <set-attr-value name="dynamics" value="false"/>
+
+
+
+    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="implementation"  value="/home/sigverse/catkin_ws_SIG_turtlebot/devel/lib/libturtle_interaction.so"/>
+
+    <set-attr-value name="x" value="0.0"/>
+    <set-attr-value name="y" value="1.0"/>
+    <set-attr-value name="z" value="130.0"/>
+
+    <set-attr-value name="scalex" value="100.0"/>
+    <set-attr-value name="scaley" value="100.0"/>
+    <set-attr-value name="scalez" value="100.0"/>
+    <set-attr-value name="collision" value="true"/>
+    <camera id="1" 
+            link="LINK_Kinect"
+            direction="0.0 0.0 1.0" 
+            position="0.0 0.0 5.0"/>
+
+
+  </instanciate>
+
+
+    <instanciate class="CheckPoint.xml">  
+    <set-attr-value name="name" value="checkpoint_000"/> 
+    <set-attr-value name="dynamics" value="false"/>  
+    <set-attr-value name="x" value="-1100.0"/>  
+    <set-attr-value name="y" value="60.0"/>  
+    <set-attr-value name="z" value="275.0"/>
+    <set-attr-value name="collision" value="false"/>
+  </instanciate>
+<!--
+  <instanciate class="sePetBottle2LEmpty.xml">
+    <set-attr-value name="name" value="petbottle_0"/>
+    <set-attr-value name="dynamics" value="true"/>
+
+    <set-attr-value name="x" value="0.0"/>
+    <set-attr-value name="y" value="16.67"/>
+    <set-attr-value name="z" value="100.0"/>
+    <set-attr-value name="collision" value="true"/>
+  </instanciate>
+
+  <instanciate class="sePetBottle2LEmpty.xml">
+    <set-attr-value name="name" value="petbottle_1"/>
+    <set-attr-value name="dynamics" value="true"/>
+
+    <set-attr-value name="x" value="0.0"/>
+    <set-attr-value name="y" value="16.67"/>
+    <set-attr-value name="z" value="200.0"/>
+    <set-attr-value name="collision" value="true"/>
+  </instanciate>
+-->
+ </world>

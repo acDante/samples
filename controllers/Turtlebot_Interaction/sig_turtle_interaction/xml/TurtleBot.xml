@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf8"?>
+<define-class  inherit="Agent.xml" name="Turtle_Bot">
+  
+
+
+  <x3d>
+    <filename>TurtleBot.x3d</filename>
+  </x3d>
+
+</define-class>
