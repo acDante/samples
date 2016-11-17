@@ -1,53 +1,27 @@
 SIGVerse/samples/textbook
 ========================
-RobotController for textbook
+人工知能概論演習
 
-Please perform the following steps.
+Windows版のSIGVerseで動作します．
 
-1. Create SIGServer for Windows.
-2. Create work directory.
+作業ディレクトリは以下の通りです．
 
-About this directory
-------------------------
-This directory include sample robot controller for textbook.
-
-Please perform "sigmake.bat", and start SIGServer with attached WinWorld.xml.
+C:\SIGVerse\sigverse-<version>\work
 
 
-Difinition of the wall
-------------------------
-You can set the wall of the maze in "Configuration.txt".
+Moderator.cpp
+---
+迷路の環境を設定し，ロボットのスタート位置を指定します．
 
-The definitions of each axial wall are as follows.
-
-xWall : number (Position)  
- ---+---+---+---+--- 5 (450)  
-|            3,4 4,4|  
- ---+---+---+---+--- 4 (350)  
-|                4,3|  
- ---+---+---+---+--- 3 (250)  
-|                   |  
- ---+---+---+---+--- 2 (150)  
-|0,1                |  
- ---+---+---+---+--- 1 (50)  
-|0,0 1,0            |  
- ---+---+---+---+--- 0 (-50)  
-  0   1   2   3   4    
-  0  100 200 300 400  
+また，ロボットに報酬を返します．
 
 
-zWall : number (Position)  
- ---+---+---+---+---   
-|            3,4 4,4| 4 -400  
- ---+---+---+---+---   
-|                4,3| 3 -300  
- ---+---+---+---+---   
-|                   | 2 -200  
- ---+---+---+---+---   
-|0,1                | 1 -100  
- ---+---+---+---+---   
-|0,0 1,0            | 0 0  
- ---+---+---+---+---   
-0   1   2   3   4   5   
--50 50  150 250 350 450  
+QLearning.cpp
+---
+Q学習を用いて経路を学習します．
 
+ε-Greedy法を用いて行動を選択します．
+
+QLearning.h
+---
+各種パラメータを設定します．
