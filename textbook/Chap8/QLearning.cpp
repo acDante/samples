@@ -26,6 +26,7 @@ private:
 	void	 init_qvalues();
 	void	 update_qvalues(STATE olds, STATE news, ACTION action, double r);
 	double	 best_qvalue(STATE state);
+	void	 write_qvalues(void);
 	ACTION	 eGreedy(STATE state, int step);
 	double	 reward_value;
 	int		 episode;
@@ -36,8 +37,6 @@ private:
 	Vector3d roboPos;
 	//衝突判定
 	bool Collision;
-	bool initPosition;
-	bool startStep;
 
 	RobotState ROBOT;
 	int walkstep;
@@ -51,12 +50,11 @@ void RobotController::onInit(InitEvent &evt)
 	m_view = (ViewService*)connectToService("SIGViewer");
 	robot = getRobotObj(myname());
 	Collision = false;
-	initPosition = false;
-	startStep = false;
 	episode = 0;
 	step = 0;
 
 	walkstep = 0;
+	ROBOT = STOP;
 }
 
 
@@ -140,12 +138,8 @@ double RobotController::onAction(ActionEvent &evt)
 			}
 			ROBOT = WALK;
 		}
-		else {
-			ROBOT = GETREWARD;
-		}
-		
+		else ROBOT = GETREWARD;
 		break;
-
 	}
 	case GETREWARD:
 	{
@@ -173,6 +167,7 @@ double RobotController::onAction(ActionEvent &evt)
 		if (reward_value == GOAL_REWARD) {
 			step = 0;
 			episode++;
+			write_qvalues();
 			sendMsg("moderator_0", "initial");
 			ROBOT = STOP;
 		}
@@ -236,8 +231,8 @@ void RobotController::onCollision(CollisionEvent &evt)
  */
 void RobotController::init_qvalues()
 {
-	for (int r = 0; r < (SIZE - 1); r++)
-		for (int c = 0; c < (SIZE - 1); c++)
+	for (int r = 0; r < SIZE; r++)
+		for (int c = 0; c < SIZE; c++)
 			for (int a = NORTH; a <= WEST; a++){
 				qvalues[r][c][a] = 0.0;
 				state_action_recency[r][c][a] = 0;
@@ -275,6 +270,21 @@ double RobotController::best_qvalue(STATE state)
 	return (best_val);
 }
 
+/*
+ * Q値を出力
+ */
+void RobotController::write_qvalues(void) {
+	std::ofstream outputfile("Q-values.txt");
+	
+	for (int r = 0; r < SIZE; r++)
+		for (int c = 0; c < SIZE; c++)
+			for (int a = NORTH; a <= WEST; a++){
+				outputfile << "qvalues[" << r << "][" << c << "][" << a << "]: " <<qvalues[r][c][a] << std::endl;
+			}
+
+	outputfile.close();
+}
+
 
 /*
  * epsilon-greedy method
@@ -307,14 +317,13 @@ ACTION RobotController::eGreedy(STATE state, int step)
 				// Q値が等しいものがあった場合
 				act = static_cast<ACTION>(index);
 				tmpAct.push_back(act);
+				if (!tmpAct.empty()) {
+					// Q値が等しいものがあった場合，ランダムに行動を選択する
+					int tmpNum = rand() % tmpAct.size();
+					act = static_cast<ACTION>(tmpAct[tmpNum]);
+				}
 			}
 		}
-		if (!tmpAct.empty()) {
-			// Q値が等しいものがあった場合，ランダムに行動を選択する
-			int tmpNum = rand() % tmpAct.size();
-			act = static_cast<ACTION>(tmpAct[tmpNum]);
-		}
-
 	}
 	if (act < 0 || act > 3)
 		fprintf(stderr, "Fatal error in eGreedy (%d)\n", (int)act);
