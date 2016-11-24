@@ -144,17 +144,23 @@ double Moderator::GetReward(std::string colli)
  */
 void Moderator::InitRobot(void)
 {
+	int XPos = rand() % SIZE;
+	int ZPos = rand() % SIZE;
 
-	int XPos = rand() % (SIZE - 1);
-	int ZPos = rand() % (SIZE - 1);
-	std::cout << "[Moderator] init Position : " << XPos << ", " << ZPos << std::endl;
+	if (XPos == GOAL_COL && ZPos == GOAL_ROW) {
+		// ‰ŠúˆÊ’u‚ªGOAL‚¾‚Á‚½‚ç‚à‚¤ˆê“x‰ŠúˆÊ’u‚ðŒˆ‚ß‚é
+		InitRobot();
+	}
+	else {
+		std::cout << "[Moderator] init Position : " << XPos << ", " << ZPos << std::endl;
 
-	InitPos.x(XPos * 100);
-	InitPos.y(54.0);
-	InitPos.z(ZPos * 100);
+		InitPos.x(XPos * 100);
+		InitPos.y(54.0);
+		InitPos.z(ZPos * 100);
 
-	robot->setPosition(InitPos);
-	sendMsg(robotName, "QLearning");
+		robot->setPosition(InitPos);
+		sendMsg(robotName, "QLearning");
+	}
 }
 
 /*
