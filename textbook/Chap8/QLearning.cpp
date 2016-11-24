@@ -183,11 +183,10 @@ double RobotController::onAction(ActionEvent &evt)
 		break;
 	case STOP:
 		Collision = false;
-		std::cout << "STOP STOP STOP STOP" << std::endl;
+		std::cout << "---------- STOP ----------" << std::endl;
 		break;
 
 	}
-
 
 	return 0.05;
 }
@@ -217,6 +216,12 @@ void RobotController::onRecvMsg(RecvMsgEvent &evt)
 
 	if (msg == "QLearning")
 		ROBOT = INITPOSITION;
+
+	if (msg == "StopLearning"){
+		ROBOT = STOP;
+		sendMsg("moderator_0", "initial");
+	}
+		
 	
 
 }
@@ -284,16 +289,17 @@ double RobotController::best_qvalue(STATE state)
 ACTION RobotController::eGreedy(STATE state, int step)
 {
 	ACTION act = NORTH;
-	double rvalue = rand();
-	double best_val = 0.0;
+	double rvalue = rand() % (100 + 1);
+	double best_val = -1000000.0;
 	double curr_val = -1000000.0;
 	std::vector<int> tmpAct;
 
-	if (rvalue > EPSILON) {
+	//std::cout << "rvalue : " << rvalue << std::endl;
+	//std::cout << "EPSILON: " << EPSILON * 100 << std::endl;
+
+	if (rvalue > EPSILON * 100) {
 		// (1 - EPSILON)の確率 ランダムにactを選択
 		act = static_cast<ACTION>(rand() % (NUM_ACTIONS));
-		if (act < 0 || act > 3)
-			fprintf(stderr, "Fatal error in choose_best_action rand-(%d)\n", (int)act);
 	}
 	else {
 		// EPSILONの確率 Q値が最大となるようなactionを選択
@@ -305,12 +311,15 @@ ACTION RobotController::eGreedy(STATE state, int step)
 				tmpAct.push_back(act);
 			}
 			else if (curr_val == best_val) {
-				// Q値が等しいものがあった場合 (未確認 2016/11/17) 
+				// Q値が等しいものがあった場合
 				act = static_cast<ACTION>(index);
 				tmpAct.push_back(act);
-				int tmpNum = rand() % tmpAct.size();
-				act = static_cast<ACTION>(tmpAct[tmpNum]);
 			}
+		}
+		if (!tmpAct.empty()) {
+			// Q値が等しいものがあった場合，ランダムに行動を選択する
+			int tmpNum = rand() % tmpAct.size();
+			act = static_cast<ACTION>(tmpAct[tmpNum]);
 		}
 
 	}

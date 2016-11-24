@@ -58,6 +58,8 @@ private:
 	Rotation InitRot;
 	
 	std::string robotName;
+
+	bool learning;
 };
 
 /*
@@ -68,6 +70,8 @@ void Moderator::onInit(InitEvent &evt)
 	m_view = (ViewService*)connectToService("SIGViewer");
 	robotName = "robot_000";
 	robot = getRobotObj(robotName.c_str());
+
+	learning = true;
 
 	// 迷路のサイズ, ゴール位置, 壁の配置を読み込む
 	InitWorld();
@@ -114,7 +118,15 @@ void Moderator::onRecvMsg(RecvMsgEvent &evt)
 		// 初めの状態に戻る
 		std::cout << "[Moderator] : " << "New initial position" << std::endl;
 		InitRobot();
-		sendMsg(sender, "QLearning");
+		if (learning)
+			sendMsg(sender, "QLearning");
+		
+	}
+	if (msg == "stop") {
+		// 学習を終了する
+		std::cout << "[Moderator] : " << "stop learning" << std::endl;
+		learning = false;
+		sendMsg(sender, "StopLearning");
 	}
 }
 
