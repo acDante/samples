@@ -1,7 +1,5 @@
-Chap8
+Chap8 Q-Learning
 ===
-## Q-Learning
----
 
 
 ### QLearning.h
