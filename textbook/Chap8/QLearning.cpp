@@ -217,13 +217,6 @@ void RobotController::onRecvMsg(RecvMsgEvent &evt)
 	if (msg == "QLearning")
 		ROBOT = INITPOSITION;
 
-	if (msg == "StopLearning"){
-		ROBOT = STOP;
-		sendMsg("moderator_0", "initial");
-	}
-		
-	
-
 }
 
 /*
