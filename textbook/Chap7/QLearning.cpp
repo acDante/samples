@@ -49,6 +49,9 @@ void RobotController::onInit(InitEvent &evt)
 {
 	m_view = (ViewService*)connectToService("SIGViewer");
 	robot = getRobotObj(myname());
+
+	init_qvalues();
+
 	Collision = false;
 	episode = 0;
 	step = 0;
