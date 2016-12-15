@@ -41,7 +41,11 @@ public:
 	void	 onRecvMsg(RecvMsgEvent &evt);
 
 private:
-	int		 GetSensor(std::string pos);
+	void	 init_sonzai();
+	double	 update_sonzai();
+	int		 GetSensor(std::string act);
+	void	 printPro();
+	double SONZAI[SIZE][SIZE];
 
 	// 初期設定を行う関数
 	void	 InitRobot(void);	// ロボットのスタート位置を設定する
@@ -75,6 +79,7 @@ void Moderator::onInit(InitEvent &evt)
 	robot->getPosition(roboPos);
 	robot->getRotation(InitRot);
 
+	init_sonzai();
 }
 
 
@@ -118,25 +123,52 @@ void Moderator::onRecvMsg(RecvMsgEvent &evt)
 }
 
 /*
- * センサー情報を返す
+ * 存在確率を初期化する
  */
-int Moderator::GetSensor(std::string pos)
+void Moderator::init_sonzai()
 {
+	for (int r = 0; r < SIZE; r++)
+		for (int c = 0; c < SIZE; c++)
+			SONZAI[r][c] = 0.0;
 
-	std::replace(pos.begin(), pos.end(), ':', ' ');
-	std::stringstream tmpss;
-	tmpss << pos;
-	std::string rowstr, colstr;
-	tmpss >> rowstr >> colstr;
-	int row = std::stoi(rowstr);
-	int col = std::stoi(colstr);
+}
+
+/*
+ * ロボットが選択した行動に沿って存在確率を更新
+ */
+int Moderator::GetSensor(std::string act)
+{
+	if (act == "100") {	// 無情報
+		for (int r = 0; r < SIZE; r++)
+			for (int c = 0; c < SIZE; c++)
+				SONZAI[r][c] = 1.0 / (SIZE * SIZE);
+	}
+	else {
+
+	}
+	printPro();
+	
 	int wall;
-	int n = WALL[row * 2][col + 1];
-	int w = WALL[row * 2 + 1][col];
-	int e = WALL[row * 2 + 1][col + 1];
-	int s = WALL[row * 2 + 2][col + 1];
-	std::cout << n << ", " << w << ", " << e << ", " << s << std::endl;
+	//int n = WALL[row * 2][col + 1];
+	//int w = WALL[row * 2 + 1][col];
+	//int e = WALL[row * 2 + 1][col + 1];
+	//int s = WALL[row * 2 + 2][col + 1];
+	//std::cout << n << ", " << w << ", " << e << ", " << s << std::endl;
+	
 	return wall;
+}
+
+/*
+ * 地図の存在確率を表示させる
+ */
+void Moderator::printPro()
+{
+	for (int r = 0; r < SIZE; r++) {
+		for (int c = 0; c < SIZE; c++)
+			std::cout << "( " << r << ", " << c << " ):" << SONZAI[r][c] << " ";
+		std::cout << std::endl;
+	}
+
 }
 
 /*

@@ -21,15 +21,10 @@ public:
 	void	 onCollision(CollisionEvent &evt);
 
 private:
-	void	 init_sonzai();
-	void	 printPro();
-
 	ViewService *m_view;
 	RobotObj *robot;
 	Vector3d roboPos;
 
-	double SONZAI[SIZE][SIZE];
-	
 	bool Collision;	// è’ìÀîªíË
 	bool Action;	// çsìÆÇµÇƒÇ¢Ç¢Ç©Ç«Ç§Ç©
 
@@ -48,7 +43,6 @@ void RobotController::onInit(InitEvent &evt)
 	m_view = (ViewService*)connectToService("SIGViewer");
 	robot = getRobotObj(myname());
 
-	init_sonzai();
 	walkstep = 0;
 	step = 0;
 
@@ -71,38 +65,9 @@ double RobotController::onAction(ActionEvent &evt)
 		// std::cout << "INI : " << roboPos.x() << " " << roboPos.y() << " " << roboPos.z() << std::endl;
 		olds.row = roboPos.z() / 100;
 		olds.col = roboPos.x() / 100;
-		std::cout << "[ÅZ] " /*<< olds.row << ", " << olds.col << std::endl*/;
+		std::cout << "[ÅZ] " /*<< olds.row << ", " << olds.col*/ << std::endl;
 
 		ROBOT = GETSENSOR;
-		break;
-	case GETSENSOR:
-	{
-		Action = false;
-		robot->getPosition(roboPos);
-		news.row = roboPos.z() / 100;
-		news.col = roboPos.x() / 100;
-		std::stringstream ss;
-		ss << news.row << ":" << news.col;
-		std::cout << news.row << ", " << news.col << std::endl;
-
-		std::string msg = "sensor " + ss.str();
-		sendMsg("moderator_0", msg);
-
-		ROBOT = STOP;
-		break;
-	}
-	case CALCILATION:
-		if (step == 0) {	// ñ≥èÓïÒ
-			for (int r = 0; r < SIZE; r++)
-				for (int c = 0; c < SIZE; c++)
-					SONZAI[r][c] = 1.0 / (SIZE * SIZE);
-		}
-		else {
-
-		}
-		printPro();
-		step++;
-		ROBOT = ACTIONDECISION;
 		break;
 	case ACTIONDECISION:
 		walkstep = 0;
@@ -164,9 +129,25 @@ double RobotController::onAction(ActionEvent &evt)
 		else ROBOT = GETSENSOR;
 		break;
 	}
+	case GETSENSOR:
+	{
+		Action = false;
+		std::stringstream ss;
+		if (step == 0)
+			ss << 100;
+		else 
+			ss << act;
+		std::string msg = "sensor " + ss.str();
+		std::cout << msg << std::endl;
+		sendMsg("moderator_0", msg);
+
+		step++;
+		ROBOT = STOP;
+		break;
+	}
 	case STOP:
 		Collision = false;
-		std::cout << "---------- STOP ----------" << std::endl;
+		// std::cout << "---------- STOP ----------" << std::endl;
 		break;
 	}
 
@@ -207,7 +188,7 @@ void RobotController::onRecvMsg(RecvMsgEvent &evt)
 	}
 
 	if (header == "sensor") {
-		ROBOT = CALCILATION;
+		ROBOT = ACTIONDECISION;
 	}
 }
 
@@ -219,29 +200,6 @@ void RobotController::onCollision(CollisionEvent &evt)
 
 }
 
-/*
-* ë∂ç›ämó¶Çèâä˙âªÇ∑ÇÈ
-*/
-void RobotController::init_sonzai()
-{
-	for (int r = 0; r < SIZE; r++)
-		for (int c = 0; c < SIZE; c++)
-			SONZAI[r][c] = 0.0;
-
-}
-
-/*
- * ínê}ÇÃë∂ç›ämó¶Çï\é¶Ç≥ÇπÇÈ
- */
-void RobotController::printPro()
-{
-	for (int r = 0; r < SIZE; r++) {
-		for (int c = 0; c < SIZE; c++)
-			std::cout << "( " << r << ", " << c << " ):" << SONZAI[r][c] << " ";
-		std::cout << std::endl;
-	}
-
-}
 
 /*
  * Export this function
