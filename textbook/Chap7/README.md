@@ -1,4 +1,4 @@
-Chap8 Q-Learning
+Chap7 Q-Learning
 ===
 
 
