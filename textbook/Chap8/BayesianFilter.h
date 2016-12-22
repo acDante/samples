@@ -21,6 +21,30 @@
 typedef struct { int col; int row; } STATE;
 typedef enum { NORTH = 0, EAST, SOUTH, WEST } ACTION;
 
-typedef enum { STOP = 0, INITPOSITION, ACTIONDECISION, WALK, GETSENSOR, CALCILATION } RobotState;
+typedef enum { STOP = 0, INITPOSITION, ACTIONDECISION, PREPAREWALK, WALK, CALCULATION, NEXTSTEP } RobotState;
+
+/* 5*5 */
+int WALL[2 * SIZE + 1][SIZE + 1] = {
+	{ -1, 1, 1, 1, 1, 1 },			// -1はダミー
+	{ 1, 1, 0, 0, 1, 1 },			//  1は壁
+	{ -1, 0, 1, 1, 0, 0 },			//  0は通れる
+	{ 1, 0, 0, 0, 1, 1 },
+	{ -1, 0, 1, 1, 0, 0 },
+	{ 1, 1, 0, 1, 0, 1 },
+	{ -1, 0, 1, 0, 1, 0 },
+	{ 1, 0, 0, 1, 0, 1 },
+	{ -1, 1, 0, 0, 0, 1 },
+	{ 1, 0, 1, 1, 0, 1 },
+	{ -1, 1, 1, 1, 1, 1 } };
+
+/* 3*3 */
+//int WALL[2 * SIZE + 1][SIZE + 1] = {
+//	{ -1, 1, 1, 1 },			// -1はダミー
+//	{  1, 1, 0, 1 },			//  1は壁
+//	{ -1, 0, 0, 1 },			//  0は通れる
+//	{  1, 0, 0, 1 },
+//	{ -1, 0, 1, 0 },
+//	{  1, 0, 1, 1 },
+//	{ -1, 1, 1, 1 } };
 
 #endif
