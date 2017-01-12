@@ -91,15 +91,16 @@ void Moderator::onRecvMsg(RecvMsgEvent &evt)
 void Moderator::InitRobot(void)
 {
 
-	//int XPos = rand() % (SIZE - 1);
-	//int ZPos = rand() % (SIZE - 1);
-	//std::cout << "[Moderator] init Position : " << XPos << ", " << ZPos << std::endl;
+	int XPos = rand() % (SIZE - 1);
+	int ZPos = rand() % (SIZE - 1);
+	// XPos -> col, ZPos -> row
+	std::cout << "[Moderator] init Position : " << ZPos << ", " << XPos << std::endl;
 
-	//InitPos.x(XPos * 100);
-	//InitPos.y(54.0);
-	//InitPos.z(ZPos * 100);
+	InitPos.x(XPos * 100);
+	InitPos.y(54.0);
+	InitPos.z(ZPos * 100);
 
-	//robot->setPosition(InitPos);
+	robot->setPosition(InitPos);
 	sendMsg(robotName, "BayesianFilter");
 }
 
