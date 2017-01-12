@@ -1,0 +1,799 @@
+﻿<?xml version="1.0" encoding="utf8"?>
+
+	<world name="winworld">
+
+	<gravity x="0.0" y="-980.7" z="0.0"/>
+
+	<instanciate class="Robot-nii.xml">
+		<set-attr-value name="name" value="robot_000"/> 
+		<set-attr-value name="language" value="c++"/> 
+		<set-attr-value name="implementation" value="./ParticleFilter.dll"/> 
+		<set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="collision" value="true"/>
+<!--
+    <set-attr-value name="x" value="-300.0"/>
+		<set-attr-value name="y" value="54.0"/>
+		<set-attr-value name="z" value="200.0"/>
+-->
+    <set-attr-value name="x" value="0.0"/>
+    <set-attr-value name="y" value="54.0"/>
+    <set-attr-value name="z" value="0.0"/>
+
+  </instanciate>
+    
+<!--Moderater-->
+  <instanciate class="seModerator.xml">
+    <set-attr-value name="name" value="moderator_0"/>
+    <set-attr-value name="dynamics" value="false"/>
+    <set-attr-value name="x" value="190.0"/>
+    <set-attr-value name="y" value="200.0"/>
+    <set-attr-value name="z" value="190.0"/>
+    <set-attr-value name="language" value="c++"/>
+    <set-attr-value name="implementation"  value="./Moderator.dll"/>
+    <set-attr-value name="collision" value="false"/>
+    <set-attr-value name="graspable" value="false"/>
+  </instanciate>
+    
+    
+    
+<!-- x-axis wall -->
+  <!-- z = 0 -->
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_00"/>
+      <set-attr-value name="x" value="0.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="-50.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_10"/>
+      <set-attr-value name="x" value="100.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="-50.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_20"/>
+      <set-attr-value name="x" value="200.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="-50.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_30"/>
+      <set-attr-value name="x" value="300.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="-50.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_40"/>
+      <set-attr-value name="x" value="400.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="-50.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    
+  <!-- z = 1 -->
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_01"/>
+      <set-attr-value name="x" value="0.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="50.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_11"/>
+      <set-attr-value name="x" value="100.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="50.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_21"/>
+      <set-attr-value name="x" value="200.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="50.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_31"/>
+      <set-attr-value name="x" value="300.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="50.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_41"/>
+      <set-attr-value name="x" value="400.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="50.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+
+    <!-- z = 2 -->
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_02"/>
+      <set-attr-value name="x" value="0.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="150.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_12"/>
+      <set-attr-value name="x" value="100.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="150.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_22"/>
+      <set-attr-value name="x" value="200.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="150.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_32"/>
+      <set-attr-value name="x" value="300.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="150.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_42"/>
+      <set-attr-value name="x" value="400.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="150.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    
+  <!-- z = 3 -->
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_03"/>
+      <set-attr-value name="x" value="0.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="250.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_13"/>
+      <set-attr-value name="x" value="100.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="250.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_23"/>
+      <set-attr-value name="x" value="200.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="250.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_33"/>
+      <set-attr-value name="x" value="300.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="250.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_43"/>
+      <set-attr-value name="x" value="400.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="250.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+
+  <!-- z = 4 -->
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_04"/>
+      <set-attr-value name="x" value="0.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="350.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_14"/>
+      <set-attr-value name="x" value="100.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="350.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_24"/>
+      <set-attr-value name="x" value="200.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="350.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_34"/>
+      <set-attr-value name="x" value="300.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="350.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_44"/>
+      <set-attr-value name="x" value="400.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="350.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+
+  <!-- z = 5 -->
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_05"/>
+      <set-attr-value name="x" value="0.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="450.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_15"/>
+      <set-attr-value name="x" value="100.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="450.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_25"/>
+      <set-attr-value name="x" value="200.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="450.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_35"/>
+      <set-attr-value name="x" value="300.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="450.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_xy.xml">
+      <set-attr-value name="name" value="wallx_45"/>
+      <set-attr-value name="x" value="400.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="450.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+
+
+<!-- z-axis wall -->
+  <!-- x = 0 -->
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_00"/>
+      <set-attr-value name="x" value="-50.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="0.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_01"/>
+      <set-attr-value name="x" value="-50.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="100.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_02"/>
+      <set-attr-value name="x" value="-50.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="200.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_03"/>
+      <set-attr-value name="x" value="-50.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="300.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_04"/>
+      <set-attr-value name="x" value="-50.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="400.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+
+  <!-- x = 1 -->
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_10"/>
+      <set-attr-value name="x" value="50.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="0.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_11"/>
+      <set-attr-value name="x" value="50.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="100.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_12"/>
+      <set-attr-value name="x" value="50.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="200.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_13"/>
+      <set-attr-value name="x" value="50.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="300.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_14"/>
+      <set-attr-value name="x" value="50.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="400.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+
+  <!-- x = 2 -->
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_20"/>
+      <set-attr-value name="x" value="150.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="0.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_21"/>
+      <set-attr-value name="x" value="150.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="100.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_22"/>
+      <set-attr-value name="x" value="150.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="200.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_23"/>
+      <set-attr-value name="x" value="150.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="300.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_24"/>
+      <set-attr-value name="x" value="150.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="400.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+
+ <!-- x = 3 -->
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_30"/>
+      <set-attr-value name="x" value="250.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="0.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_31"/>
+      <set-attr-value name="x" value="250.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="100.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_32"/>
+      <set-attr-value name="x" value="250.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="200.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_33"/>
+      <set-attr-value name="x" value="250.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="300.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_34"/>
+      <set-attr-value name="x" value="250.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="400.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+
+  <!-- x = 4 -->
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_40"/>
+      <set-attr-value name="x" value="350.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="0.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_41"/>
+      <set-attr-value name="x" value="350.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="100.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_42"/>
+      <set-attr-value name="x" value="350.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="200.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_43"/>
+      <set-attr-value name="x" value="350.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="300.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_44"/>
+      <set-attr-value name="x" value="350.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="400.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+
+  <!-- x = 5 -->
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_50"/>
+      <set-attr-value name="x" value="450.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="0.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_51"/>
+      <set-attr-value name="x" value="450.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="100.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_52"/>
+      <set-attr-value name="x" value="450.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="200.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_53"/>
+      <set-attr-value name="x" value="450.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="300.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    <instanciate class="wall3_yz.xml">
+      <set-attr-value name="name" value="wallz_54"/>
+      <set-attr-value name="x" value="450.0"/>
+      <set-attr-value name="y" value="-100.0"/>
+      <set-attr-value name="z" value="400.0"/>
+      <set-attr-value name="scalex" value="1.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="1.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="true"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    
+    <instanciate class="floor1.xml">
+      <set-attr-value name="name" value="floor"/>
+      <set-attr-value name="x" value="200.0"/>
+      <set-attr-value name="y" value="0.0"/>
+      <set-attr-value name="z" value="200.0"/>
+      <set-attr-value name="scalex" value="5.0"/>
+      <set-attr-value name="scaley" value="1.0"/>
+      <set-attr-value name="scalez" value="5.0"/>
+      <set-attr-value name="dynamics" value="false"/>
+      <set-attr-value name="collision" value="false"/>
+      <set-attr-value name="graspable" value="false"/>
+    </instanciate>
+    
+  </world>
