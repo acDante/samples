@@ -12,7 +12,6 @@
 
 #define DEG2RAD(DEG) ( (M_PI) * (DEG) / 180.0 )
 
-
 class RobotController : public Controller 
 {
 public:
@@ -42,6 +41,7 @@ private:
 	void information_integration();
 	void normalization();
 	void print(double probability[SIZE][SIZE]);
+	void maximum(double probability[SIZE][SIZE]);
 
 	double preSONZAI[SIZE][SIZE];
 	double SONZAI[SIZE][SIZE];
@@ -58,13 +58,9 @@ void RobotController::onInit(InitEvent &evt)
 	m_view = (ViewService*)connectToService("SIGViewer");
 	robot = getRobotObj(myname());
 
-	walkstep = 0;
-	step = 0;
-
 	Collision = false;
 	Action = false;
 
-	init_sonzai();
 }
 
 
@@ -78,6 +74,17 @@ double RobotController::onAction(ActionEvent &evt)
 
 	switch (ROBOT)
 	{
+	case INITIALIZE:
+		walkstep = 0;
+		step = 0;
+
+		Collision = false;
+		Action = false;
+
+		init_sonzai();
+
+		ROBOT = INITPOSITION;
+		break;
 	case INITPOSITION:
 		robot->getPosition(roboPos);
 		// std::cout << "INI : " << roboPos.x() << " " << roboPos.y() << " " << roboPos.z() << std::endl;
@@ -132,6 +139,9 @@ double RobotController::onAction(ActionEvent &evt)
 		normalization();
 		std::cout << "正規化" << std::endl;
 		print(SONZAI); // 存在確率の表示
+
+		// 自己位置の表示
+		maximum(SONZAI);
 		
 		ROBOT = NEXTSTEP;
 		break;
@@ -246,7 +256,10 @@ void RobotController::onRecvMsg(RecvMsgEvent &evt)
 	std::cout << "[ROBOT MSG]: " << msg << std::endl;
 
 	if (msg == "BayesianFilter")
-		ROBOT = INITPOSITION;
+		ROBOT = INITIALIZE;
+		//ROBOT = INITPOSITION;
+	if (msg == "initial")
+		sendMsg("moderator_0", "initial");
 
 	if (msg == "n") {
 		act = static_cast<ACTION>(0);
@@ -402,6 +415,34 @@ void RobotController::print(double probability[SIZE][SIZE])
 		std::cout << std::endl;
 	}
 
+}
+
+/*
+ * 存在確率の最大値である座標を表示させる
+ */
+void RobotController::maximum(double probability[SIZE][SIZE])
+{
+	double max_value = probability[0][0];
+	std::vector<std::pair<int, int> > pair_pos;
+		
+	for (int r = 0; r < SIZE; r++) {
+		for (int c = 0; c < SIZE; c++) {
+			if (max_value < probability[r][c]) {
+				pair_pos.clear();
+				max_value = probability[r][c];
+				pair_pos.push_back(std::make_pair(r, c));
+			}
+			else if (max_value == probability[r][c]) 
+				pair_pos.push_back(std::make_pair(r, c));
+		}
+	}
+	if (max_value == probability[0][0]) 
+		pair_pos.push_back(std::make_pair(0, 0));
+	std::cout << "max value = " << max_value << std::endl;
+	std::cout << "max value pos" << std::endl;
+	for (int i = 0; i < pair_pos.size(); i++)
+		std::cout << "  ( " << pair_pos[i].first << ", " << pair_pos[i].second << " )" << std::endl;
+	
 }
 
 /*
