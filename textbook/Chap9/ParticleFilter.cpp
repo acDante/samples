@@ -34,24 +34,25 @@ private:
 	int walkstep;
 	int	step;
 
-	void calcSENSOR(std::vector<int> wall);
-	void information_integration();
-	void normalization();
 	void maximum(double probability[SIZE][SIZE]);
 
-	double preSONZAI[SIZE][SIZE];
-	double SONZAI[SIZE][SIZE];
-	double SENSOR[SIZE][SIZE];
-	double G[SIZE][SIZE]; // SONZAIに比例する値
-
-	void init_PARTICLE();
+	void init_PRTCL();
+	void init_SONZAI();
 	std::vector<int> get_wall_status(STATE pos);
-	void transition(ACTION act);
+	void sampling(ACTION act);
+	void calcSONZAI(ACTION act);
+	void calcSENSOR(std::vector<int> wall);
+	void update_weights();
+	void normalize_weights();
+	void resampling();
 	void print(double particle[SIZE][SIZE]);
 
-	double PARTICLE[SIZE][SIZE];
-	double prePARTICLE[SIZE][SIZE];
-
+	double SONZAI[SIZE][SIZE];
+	double preSONZAI[SIZE][SIZE];
+	double PRTCL[SIZE][SIZE];
+	double prePRTCL[SIZE][SIZE];
+	double PRTCL_weights[SIZE][SIZE];
+	double SENSOR[SIZE][SIZE];
 
 };
 
@@ -86,7 +87,7 @@ double RobotController::onAction(ActionEvent &evt)
 		Collision = false;
 		Action = false;
 
-		init_PARTICLE();
+		init_PRTCL();
 
 		ROBOT = INITPOSITION;
 		break;
@@ -112,37 +113,52 @@ double RobotController::onAction(ActionEvent &evt)
 		 */ 
 		if (step == 0) {
 			for (int r = 0; r < SIZE; r++)
-				for (int c = 0; c < SIZE; c++)
-					prePARTICLE[r][c] = PA / (SIZE * SIZE);
+				for (int c = 0; c < SIZE; c++) {
+					prePRTCL[r][c] = PA / (SIZE * SIZE);
+					preSONZAI[r][c] = 1.0 / (SIZE * SIZE);
+				}
+					
 			ROBOT = ACTIONDECISION;
 			std::cout << "粒子の分布を初期化" << std::endl;
-			print(prePARTICLE);
+			print(prePRTCL);
+			std::cout << "無情報" << std::endl;
+			print(preSONZAI);
 			step++;
 			break;
 		}
 
 		std::cout << "1ステップ前の粒子の分布" << std::endl;
-		print(prePARTICLE);
+		print(prePRTCL);
 
-		// 1) 粒子ごとに次状態を状態遷移確率を用いてサンプリング
-		transition(act);
-		std::cout << "移動, 粒子" << std::endl;
-		print(PARTICLE); // 粒子の表示
+		// 1) ロボットの行動に従った状態遷移確率
+		calcSONZAI(act);
+		std::cout << "状態遷移確率" << std::endl;
+		print(SONZAI);
 
-		// 2) センサ情報の観測確率を計算
+		// 2) 粒子ごとに次状態を状態遷移確率を用いてサンプリング
+		sampling(act);
+		std::cout << "粒子のサンプリング" << std::endl;
+		print(PRTCL); // 粒子の表示
+
+		// 3) センサ情報の観測確率を計算
 		calcSENSOR(walls);
-		std::cout << "センサ情報の観測確率観測" << std::endl;
+		std::cout << "センサ情報の観測確率" << std::endl;
 		print(SENSOR);
 
-		//// 3) 粒子の重み付け
-		//information_integration();
-		//std::cout << "情報統合" << std::endl;
-		//print(G);
+		// 4) 粒子の重み付け
+		update_weights();
+		std::cout << "粒子の重み付け" << std::endl;
+		print(PRTCL_weights);
 
-		//// 4) 粒子をリサンプリング
-		//normalization();
-		//std::cout << "正規化" << std::endl;
-		//print(SONZAI); // 存在確率の表示
+		// 5) 粒子を正規化
+		normalize_weights();
+		std::cout << "粒子を正規化" << std::endl;
+		print(PRTCL);
+
+		// 6) 粒子をリサンプリング
+		resampling();
+		std::cout << "粒子をリサンプリング" << std::endl;
+		//print(PRTCL);
 
 		//// 自己位置の表示
 		//maximum(SONZAI);
@@ -153,7 +169,7 @@ double RobotController::onAction(ActionEvent &evt)
 	case NEXTSTEP:
 		for (int r = 0; r < SIZE; r++)
 			for (int c = 0; c < SIZE; c++)
-				prePARTICLE[r][c] = PARTICLE[r][c];
+				prePRTCL[r][c] = PRTCL[r][c];
 
 		step++;
 		olds = news;
@@ -293,13 +309,23 @@ void RobotController::onCollision(CollisionEvent &evt)
 }
 
 /*
- * 粒子フィルタの初期化
+ * 存在確率を初期化する
  */
-void RobotController::init_PARTICLE()
+void RobotController::init_SONZAI()
 {
 	for (int r = 0; r < SIZE; r++)
 		for (int c = 0; c < SIZE; c++)
-			PARTICLE[r][c] = 0.0;
+			SONZAI[r][c] = 0.0;
+}
+
+/*
+ * 粒子フィルタの初期化
+ */
+void RobotController::init_PRTCL()
+{
+	for (int r = 0; r < SIZE; r++)
+		for (int c = 0; c < SIZE; c++)
+			PRTCL[r][c] = 0.0;
 }
 
 /*
@@ -321,9 +347,9 @@ std::vector<int> RobotController::get_wall_status(STATE pos)
 }
 
 /*
- * 1) 粒子ごとに次状態を状態遷移確率を用いてサンプリング
+ * 1) 状態遷移確率を計算
  */
-void RobotController::transition(ACTION act)
+void RobotController::calcSONZAI(ACTION act)
 {
 	STATE pos;
 	std::vector<int> tmpwall;
@@ -340,26 +366,33 @@ void RobotController::transition(ACTION act)
 			pos.col = c;
 			tmpwall = get_wall_status(pos);
 
-			double prePosPARTICLE;
-			if (act == 0) prePosPARTICLE = prePARTICLE[r + 1][c];
-			else if (act == 1) prePosPARTICLE = prePARTICLE[r][c - 1];
-			else if (act == 2) prePosPARTICLE = prePARTICLE[r - 1][c];
-			else if (act == 3) prePosPARTICLE = prePARTICLE[r][c + 1];
+			double prePosSONZAI;
+			if (act == 0) prePosSONZAI = preSONZAI[r + 1][c];
+			else if (act == 1) prePosSONZAI = preSONZAI[r][c - 1];
+			else if (act == 2) prePosSONZAI = preSONZAI[r - 1][c];
+			else if (act == 3) prePosSONZAI = preSONZAI[r][c + 1];
 
 			if (tmpwall[opposite] == 1) // actへの移動を失敗したということ
-				PARTICLE[r][c] = prePARTICLE[r][c] * (1 - TRANS);
+				SONZAI[r][c] = preSONZAI[r][c] * (1 - TRANS);
 			else if (tmpwall[opposite] == 0) { // actへの移動を成功したということ
 				if (tmpwall[act] == 1) // そもそもactへの移動ができない
-					PARTICLE[r][c] = prePosPARTICLE * TRANS + prePARTICLE[r][c];
+					SONZAI[r][c] = prePosSONZAI * TRANS + preSONZAI[r][c];
 				else if (tmpwall[act] == 0) // 動いたつもりが動けてない
-					PARTICLE[r][c] = prePosPARTICLE * TRANS + prePARTICLE[r][c] * (1 - TRANS);
+					SONZAI[r][c] = prePosSONZAI * TRANS + preSONZAI[r][c] * (1 - TRANS);
 			}
-
 		}
 }
 
 /*
- * 2) センサ情報を計算する
+ * 2) 粒子ごとに次状態を状態遷移確率を用いてサンプリング
+ */
+void RobotController::sampling(ACTION act)
+{
+	
+}
+
+/*
+ * 3) センサ情報を計算する(o_t)
  */
 void RobotController::calcSENSOR(std::vector<int> wall)
 {
@@ -379,28 +412,49 @@ void RobotController::calcSENSOR(std::vector<int> wall)
 }
 
 /*
- * 3) 移動と観測の情報統合
+ * 4) 粒子の重み付け
+ *    各粒子についてセンサ情報の観測確率w_iを計算し
+ *    それぞれの粒子の重みとする
  */
-void RobotController::information_integration()
+void RobotController::update_weights()
 {
-	for (int r = 0; r < SIZE; r++)
-		for (int c = 0; c < SIZE; c++)
-			G[r][c] = SONZAI[r][c] * SENSOR[r][c];
+	for (int r = 0; r < SIZE; r++) {
+		for (int c = 0; c < SIZE; c++) {
+			PRTCL_weights[r][c] = PRTCL[r][c] * SENSOR[r][c];
+		}
+	}
 }
 
 /*
- * 4) 正規化
+ * 5) 粒子を正規化
  */
-void RobotController::normalization()
+void RobotController::normalize_weights()
 {
-	double total;
+	double sum;
 	for (int r = 0; r < SIZE; r++)
 		for (int c = 0; c < SIZE; c++)
-			total += G[r][c];
+			sum += PRTCL_weights[r][c];
+	std::cout << "sum : " << sum << std::endl;
+	if (sum != 0.0) {
+		for (int r = 0; r < SIZE; r++)
+			for (int c = 0; c < SIZE; c++)
+				PRTCL[r][c] = (PRTCL_weights[r][c] / sum); //* PA;
+	}
+}
 
-	for (int r = 0; r < SIZE; r++)
-		for (int c = 0; c < SIZE; c++)
-			SONZAI[r][c] = G[r][c] / total;
+/*
+ * 6) 粒子をリサンプリング
+ */
+void RobotController::resampling()
+{
+	int np;
+	double new_PRTCL[SIZE][SIZE];
+
+
+	
+
+
+
 }
 
 /*
