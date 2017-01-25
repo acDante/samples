@@ -31,28 +31,21 @@ private:
 	RobotState ROBOT;
 	ACTION act;
 
+	void initPRTCL(double particle[SIZE][SIZE]);	// 粒子の初期化
+	void normalize_weights();	// 粒子の重みの正規化
+	std::vector<int> get_wall_status(STATE pos);
+	void sampling(ACTION act);	// サンプリング
+	void calcSENSOR(std::vector<int> wall);	// センサ情報の観測確率
+	void update_weights();	// 粒子の重み付け
+	void resampling();
+	void print(double particle[SIZE][SIZE]);	// 表示
+
+	double PRTCL[SIZE][SIZE];	// 粒子が格納されている配列
+	double PRTCL_weight[SIZE][SIZE];	// 重み付けされた粒子が格納されている配列
+	double SENSOR[SIZE][SIZE];	// センサ情報の観測確率が格納されている配列
+
 	int walkstep;
 	int	step;
-
-	void maximum(double probability[SIZE][SIZE]);
-
-	void init_PRTCL();
-	void init_SONZAI();
-	std::vector<int> get_wall_status(STATE pos);
-	void sampling(ACTION act);
-	void calcSONZAI(ACTION act);
-	void calcSENSOR(std::vector<int> wall);
-	void update_weights();
-	void normalize_weights();
-	void resampling();
-	void print(double particle[SIZE][SIZE]);
-
-	double SONZAI[SIZE][SIZE];
-	double preSONZAI[SIZE][SIZE];
-	double PRTCL[SIZE][SIZE];
-	double prePRTCL[SIZE][SIZE];
-	double PRTCL_weights[SIZE][SIZE];
-	double SENSOR[SIZE][SIZE];
 
 };
 
@@ -75,7 +68,7 @@ void RobotController::onInit(InitEvent &evt)
  */
 double RobotController::onAction(ActionEvent &evt) 
 {
-	static STATE olds, news;
+	static STATE pos;
 	static std::vector<int> walls;
 
 	switch (ROBOT)
@@ -87,97 +80,68 @@ double RobotController::onAction(ActionEvent &evt)
 		Collision = false;
 		Action = false;
 
-		init_PRTCL();
+		initPRTCL(PRTCL);
 
-		ROBOT = INITPOSITION;
+		ROBOT = POSITION;
 		break;
-	case INITPOSITION:
-		robot->getPosition(roboPos);
-		news.row = roboPos.z() / 100;
-		news.col = roboPos.x() / 100;
-		std::cout << "[〇] " /*<< olds.row << ", " << olds.col << std::endl*/;
-
-		ROBOT = CALCULATION;
-		break;
-	case CALCULATION:
-	{
+	case POSITION:
 		// 現在位置の壁の情報を取得
-		walls = get_wall_status(news);
+		robot->getPosition(roboPos);
+		pos.row = roboPos.z() / 100;
+		pos.col = roboPos.x() / 100;
+		walls = get_wall_status(pos);
 		for (int i = 0; i < walls.size(); i++)
 			std::cout << walls[i] << ", ";
 		std::cout << std::endl;
 
-		/* 
+		ROBOT = CALCULATION;
+		break;
+	case CALCULATION:
+		/*
 		 * step = 0 ：粒子の分布を初期化(均等に分布する)
-		 *   - ロボットは進む方角の指示を待つ
-		 */ 
+		 *   -> ロボットは進む方角の指示を待つ
+		 */
 		if (step == 0) {
 			for (int r = 0; r < SIZE; r++)
-				for (int c = 0; c < SIZE; c++) {
-					prePRTCL[r][c] = PA / (SIZE * SIZE);
-					preSONZAI[r][c] = 1.0 / (SIZE * SIZE);
-				}
-					
-			ROBOT = ACTIONDECISION;
-			std::cout << "粒子の分布を初期化" << std::endl;
-			print(prePRTCL);
-			std::cout << "無情報" << std::endl;
-			print(preSONZAI);
+				for (int c = 0; c < SIZE; c++) 
+					PRTCL[r][c] = PA / (SIZE * SIZE);
 			step++;
+
+			ROBOT = ACTIONDECISION;
 			break;
 		}
+		std::cout << "行動前の粒子" << std::endl;
+		print(PRTCL);
 
-		std::cout << "1ステップ前の粒子の分布" << std::endl;
-		print(prePRTCL);
-
-		// 1) ロボットの行動に従った状態遷移確率
-		calcSONZAI(act);
-		std::cout << "状態遷移確率" << std::endl;
-		print(SONZAI);
-
-		// 2) 粒子ごとに次状態を状態遷移確率を用いてサンプリング
+		// 1) 粒子ごとに次状態を状態遷移確率を用いてサンプリング
 		sampling(act);
 		std::cout << "粒子のサンプリング" << std::endl;
-		print(PRTCL); // 粒子の表示
+		print(PRTCL);
 
-		// 3) センサ情報の観測確率を計算
+		// 2) センサ情報の観測確率を計算
 		calcSENSOR(walls);
 		std::cout << "センサ情報の観測確率" << std::endl;
 		print(SENSOR);
 
-		// 4) 粒子の重み付け
+		// 3) 粒子の重み付け
 		update_weights();
 		std::cout << "粒子の重み付け" << std::endl;
-		print(PRTCL_weights);
+		print(PRTCL_weight);
 
-		// 5) 粒子を正規化
-		normalize_weights();
-		std::cout << "粒子を正規化" << std::endl;
+		// 4) リサンプリング
+		resampling();
+		std::cout << "リサンプリング" << std::endl;
 		print(PRTCL);
 
-		// 6) 粒子をリサンプリング
-		resampling();
-		std::cout << "粒子をリサンプリング" << std::endl;
-		//print(PRTCL);
-
-		//// 自己位置の表示
-		//maximum(SONZAI);
-		
 		ROBOT = NEXTSTEP;
 		break;
-	}
 	case NEXTSTEP:
-		for (int r = 0; r < SIZE; r++)
-			for (int c = 0; c < SIZE; c++)
-				prePRTCL[r][c] = PRTCL[r][c];
-
 		step++;
-		olds = news;
+
 		ROBOT = ACTIONDECISION;
 		break;
 	case ACTIONDECISION:
 		walkstep = 0;
-
 		if (Action == true) {
 			if (act == 0)
 				std::cout << "[↑:0] ";
@@ -194,10 +158,11 @@ double RobotController::onAction(ActionEvent &evt)
 	case PREPAREWALK:
 		// 選択した方向に壁があるとWALKの処理を飛ばす
 		if (walls[act] == 1) {
-			ROBOT = CALCULATION;
+			std::cout << "壁があって動けません" << std::endl;
+			ROBOT = STOP;
 			break;
 		}
-		//std::cout << "[olds pos] " << olds.row << ", " << olds.col << std::endl;
+
 		ROBOT = WALK;
 		break;
 	case WALK:
@@ -211,7 +176,7 @@ double RobotController::onAction(ActionEvent &evt)
 				pos.x(roboPos.x() - walkstep * 10);
 				pos.y(roboPos.y());
 				pos.z(roboPos.z());
-				
+
 				robot->setPosition(pos);
 
 				break;
@@ -219,7 +184,7 @@ double RobotController::onAction(ActionEvent &evt)
 				pos.x(roboPos.x() + walkstep * 10);
 				pos.y(roboPos.y());
 				pos.z(roboPos.z());
-				
+
 				robot->setPosition(pos);
 
 				break;
@@ -227,7 +192,7 @@ double RobotController::onAction(ActionEvent &evt)
 				pos.x(roboPos.x());
 				pos.y(roboPos.y());
 				pos.z(roboPos.z() - walkstep * 10);
-				
+
 				robot->setPosition(pos);
 
 				break;
@@ -235,20 +200,14 @@ double RobotController::onAction(ActionEvent &evt)
 				pos.x(roboPos.x());
 				pos.y(roboPos.y());
 				pos.z(roboPos.z() + walkstep * 10);
-				
+
 				robot->setPosition(pos);
 
 				break;
 			}
 			ROBOT = WALK;
 		}
-		else {
-			robot->getPosition(roboPos);
-			news.row = roboPos.z() / 100;
-			news.col = roboPos.x() / 100;
-			//std::cout << "[news pos] " << news.row << ", " << news.col << std::endl;
-			ROBOT = CALCULATION;
-		}
+		else ROBOT = POSITION;
 		break;
 	}
 	case STOP:
@@ -256,7 +215,6 @@ double RobotController::onAction(ActionEvent &evt)
 		// std::cout << "---------- STOP ----------" << std::endl;
 		break;
 	}
-
 	return 0.1;
 }
 
@@ -277,7 +235,6 @@ void RobotController::onRecvMsg(RecvMsgEvent &evt)
 
 	if (msg == "ParticleFilter")
 		ROBOT = INITIALIZE;
-		//ROBOT = INITPOSITION;
 	if (msg == "initial")
 		sendMsg("moderator_0", "initial");
 
@@ -309,27 +266,34 @@ void RobotController::onCollision(CollisionEvent &evt)
 }
 
 /*
- * 存在確率を初期化する
+ * 粒子の初期化
  */
-void RobotController::init_SONZAI()
+void RobotController::initPRTCL(double particle[SIZE][SIZE])
 {
 	for (int r = 0; r < SIZE; r++)
 		for (int c = 0; c < SIZE; c++)
-			SONZAI[r][c] = 0.0;
+			particle[r][c] = 0.0;
 }
 
 /*
- * 粒子フィルタの初期化
+ * 粒子の重みの正規化
  */
-void RobotController::init_PRTCL()
+void RobotController::normalize_weights()
 {
+	double sum = 0.0;
 	for (int r = 0; r < SIZE; r++)
 		for (int c = 0; c < SIZE; c++)
-			PRTCL[r][c] = 0.0;
+			sum += PRTCL_weight[r][c];
+	for (int r = 0; r < SIZE; r++)
+		for (int c = 0; c < SIZE; c++)
+			PRTCL_weight[r][c] /= sum;
 }
 
 /*
  * posの座標値において東西南北の各方向に壁があるのかどうかを検出
+ * 壁がある -> 1
+ * 壁がない -> 0
+ * 返り値 : 北東南西の壁の有無
  */
 std::vector<int> RobotController::get_wall_status(STATE pos)
 {
@@ -342,57 +306,73 @@ std::vector<int> RobotController::get_wall_status(STATE pos)
 	tmpwall.push_back(e);
 	tmpwall.push_back(s);
 	tmpwall.push_back(w);
-	
+
 	return tmpwall;
 }
 
 /*
- * 1) 状態遷移確率を計算
- */
-void RobotController::calcSONZAI(ACTION act)
-{
-	STATE pos;
-	std::vector<int> tmpwall;
-	int opposite;
-
-	if (act == 0) opposite = 2;
-	else if (act == 1) opposite = 3;
-	else if (act == 2) opposite = 0;
-	else if (act == 3) opposite = 1;
-
-	for (int r = 0; r < SIZE; r++)
-		for (int c = 0; c < SIZE; c++) {
-			pos.row = r;
-			pos.col = c;
-			tmpwall = get_wall_status(pos);
-
-			double prePosSONZAI;
-			if (act == 0) prePosSONZAI = preSONZAI[r + 1][c];
-			else if (act == 1) prePosSONZAI = preSONZAI[r][c - 1];
-			else if (act == 2) prePosSONZAI = preSONZAI[r - 1][c];
-			else if (act == 3) prePosSONZAI = preSONZAI[r][c + 1];
-
-			if (tmpwall[opposite] == 1) // actへの移動を失敗したということ
-				SONZAI[r][c] = preSONZAI[r][c] * (1 - TRANS);
-			else if (tmpwall[opposite] == 0) { // actへの移動を成功したということ
-				if (tmpwall[act] == 1) // そもそもactへの移動ができない
-					SONZAI[r][c] = prePosSONZAI * TRANS + preSONZAI[r][c];
-				else if (tmpwall[act] == 0) // 動いたつもりが動けてない
-					SONZAI[r][c] = prePosSONZAI * TRANS + preSONZAI[r][c] * (1 - TRANS);
-			}
-		}
-}
-
-/*
- * 2) 粒子ごとに次状態を状態遷移確率を用いてサンプリング
+ * 1) 粒子ごとに次状態を状態遷移確率を用いてサンプリング
  */
 void RobotController::sampling(ACTION act)
 {
-	
+	STATE tmp_pos;
+	double newPRTCL[SIZE][SIZE];
+	initPRTCL(newPRTCL);
+
+	for (int r = 0; r < SIZE; r++)
+		for (int c = 0; c < SIZE; c++) {
+			tmp_pos.row = r;
+			tmp_pos.col = c;
+			std::vector<int> tmpwall = get_wall_status(tmp_pos);
+			int numPRTCL = (int)PRTCL[r][c];
+
+			if (tmpwall[act] == 0) { // 壁がないので粒子の移動が可能
+				switch (act) 
+				{
+				case NORTH: {
+					for (int i = 0; i < numPRTCL; i++){
+						if ((double)rand() / RAND_MAX < TRANS) // TRNSの確率で粒子が移動可能
+							newPRTCL[r - 1][c] += 1;
+						else newPRTCL[r][c] += 1; // (1-TRNS)の確率で粒子が移動失敗
+					}
+					break;
+				}
+				case EAST: {
+					for (int i = 0; i < numPRTCL; i++){
+						if ((double)rand() / RAND_MAX < TRANS) // TRNSの確率で粒子が移動可能
+							newPRTCL[r][c + 1] += 1;
+						else newPRTCL[r][c] += 1; // (1-TRNS)の確率で粒子が移動失敗
+					}
+					break;
+				}
+				case SOUTH: {
+					for (int i = 0; i < numPRTCL; i++){
+						if ((double)rand() / RAND_MAX < TRANS) // TRNSの確率で粒子が移動可能
+							newPRTCL[r + 1][c] += 1;
+						else newPRTCL[r][c] += 1; // (1-TRNS)の確率で粒子が移動失敗
+					}
+					break;
+				}
+				case WEST: {
+					for (int i = 0; i < numPRTCL; i++){
+						if ((double)rand() / RAND_MAX < TRANS) // TRNSの確率で粒子が移動可能
+							newPRTCL[r][c - 1] += 1;
+						else newPRTCL[r][c] += 1; // (1-TRNS)の確率で粒子が移動失敗
+					}
+					break;
+				}
+				} // switch文 ここまで
+			}
+			else newPRTCL[r][c] = newPRTCL[r][c] + PRTCL[r][c]; // 壁があるので粒子が移動できなかった
+		}
+
+	for (int r = 0; r < SIZE; r++)
+		for (int c = 0; c < SIZE; c++)
+			PRTCL[r][c] = newPRTCL[r][c];
 }
 
 /*
- * 3) センサ情報を計算する(o_t)
+ * 2) センサ情報を計算する(o_t)
  */
 void RobotController::calcSENSOR(std::vector<int> wall)
 {
@@ -412,53 +392,79 @@ void RobotController::calcSENSOR(std::vector<int> wall)
 }
 
 /*
- * 4) 粒子の重み付け
- *    各粒子についてセンサ情報の観測確率w_iを計算し
- *    それぞれの粒子の重みとする
+ * 3) 粒子の重み付け
  */
 void RobotController::update_weights()
 {
-	for (int r = 0; r < SIZE; r++) {
-		for (int c = 0; c < SIZE; c++) {
-			PRTCL_weights[r][c] = PRTCL[r][c] * SENSOR[r][c];
-		}
-	}
-}
-
-/*
- * 5) 粒子を正規化
- */
-void RobotController::normalize_weights()
-{
-	double sum;
+	initPRTCL(PRTCL_weight);
+	// 各マスに存在する粒子の重さの合計
 	for (int r = 0; r < SIZE; r++)
 		for (int c = 0; c < SIZE; c++)
-			sum += PRTCL_weights[r][c];
-	std::cout << "sum : " << sum << std::endl;
-	if (sum != 0.0) {
-		for (int r = 0; r < SIZE; r++)
-			for (int c = 0; c < SIZE; c++)
-				PRTCL[r][c] = (PRTCL_weights[r][c] / sum); //* PA;
-	}
+			PRTCL_weight[r][c] = PRTCL[r][c] * SENSOR[r][c];
+
 }
 
 /*
- * 6) 粒子をリサンプリング
+ * 4) リサンプリング
+ *    粒子の重みに従って粒子をリサンプリング
  */
 void RobotController::resampling()
 {
-	int np;
-	double new_PRTCL[SIZE][SIZE];
+	std::cout << "粒子の重みの正規化" << std::endl;
+	normalize_weights();
+	print(PRTCL_weight);
 
-
+	// 累積分布
+	double box[SIZE * SIZE] = { 0.0 };
+	int n = 0;
+	for (int r = 0; r < SIZE; r++)
+		for (int c = 0; c < SIZE; c++) {
+			box[n] = box[n - 1] + PRTCL_weight[r][c];
+			n++;
+		}
 	
+	// ランダム値を生成
+	int tmpNum[PA];
+	int index[PA];
+	double rnd[PA];
+	for (int i = 0; i < PA; i++) {
+		tmpNum[i] = rand();
+		index[i] = 0;
+		for (int j = 0; j < i; j++) {
+			if (tmpNum[j] < tmpNum[i]) {
+				if (index[i] <= index[j])
+					index[i] = index[j] + 1;
+			}
+			else index[j]++;
+		}
+	}
+	for (int i = 0; i < PA; i++)
+		rnd[index[i]] = (double)tmpNum[i] / RAND_MAX;
 
+	// ランダム値をカウント
+	int i = 0, j = 0;
+	int NumBox[SIZE * SIZE] = { 0 };
+	while (i < PA) {
+		if (rnd[i] < box[j]) {
+			NumBox[j] += 1;
+			i++;
+		}
+		else {
+			j++;
+		}
+	}
 
-
+	// カウントした数を代入する
+	n = 0;
+	for (int r = 0; r < SIZE; r++)
+		for (int c = 0; c < SIZE; c++) {
+			PRTCL[r][c] = NumBox[n];
+			n++;
+		}
 }
 
 /*
- * すべての座標値における粒子を表示
+ * すべての座標の与えたデータを表示
  */
 void RobotController::print(double particle[SIZE][SIZE])
 {
@@ -472,34 +478,6 @@ void RobotController::print(double particle[SIZE][SIZE])
 		std::cout << std::endl;
 	}
 
-}
-
-/*
- * 存在確率の最大値である座標を表示させる
- */
-void RobotController::maximum(double probability[SIZE][SIZE])
-{
-	double max_value = probability[0][0];
-	std::vector<std::pair<int, int> > pair_pos;
-		
-	for (int r = 0; r < SIZE; r++) {
-		for (int c = 0; c < SIZE; c++) {
-			if (max_value < probability[r][c]) {
-				pair_pos.clear();
-				max_value = probability[r][c];
-				pair_pos.push_back(std::make_pair(r, c));
-			}
-			else if (max_value == probability[r][c]) 
-				pair_pos.push_back(std::make_pair(r, c));
-		}
-	}
-	if (max_value == probability[0][0]) 
-		pair_pos.push_back(std::make_pair(0, 0));
-	std::cout << "max value = " << max_value << std::endl;
-	std::cout << "max value pos" << std::endl;
-	for (int i = 0; i < pair_pos.size(); i++)
-		std::cout << "  ( " << pair_pos[i].first << ", " << pair_pos[i].second << " )" << std::endl;
-	
 }
 
 /*

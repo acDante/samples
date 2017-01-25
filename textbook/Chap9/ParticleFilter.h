@@ -14,7 +14,7 @@
 #define NUM_ACTIONS 4
 
 // èÛë‘ëJà⁄ämó¶
-#define TRANS 0.8
+#define TRANS 1.0
 // äœë™ämó¶
 #define KANSOKU 0.7
 
@@ -24,7 +24,7 @@
 typedef struct { int col; int row; } STATE;
 typedef enum { NORTH = 0, EAST, SOUTH, WEST } ACTION;
 
-typedef enum { STOP = 0, INITIALIZE, INITPOSITION, ACTIONDECISION, PREPAREWALK, WALK, CALCULATION, NEXTSTEP } RobotState;
+typedef enum { STOP = 0, INITIALIZE, POSITION, ACTIONDECISION, PREPAREWALK, WALK, CALCULATION, NEXTSTEP } RobotState;
 
 /* 5*5 */
 int WALL[2 * SIZE + 1][SIZE + 1] = {
